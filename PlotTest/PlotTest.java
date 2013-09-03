@@ -29,20 +29,20 @@ public class PlotTest{
   // Location and size of response plot.
   private static final int RP_X = O_X+O_WIDTH;
   private static final int RP_Y = 0;
-  private static final int RP_WIDTH = 500;
-  private static final int RP_HEIGHT = 700;
+  private static final int RP_WIDTH = 520;
+  private static final int RP_HEIGHT = 550;
   
   // Plot of source/receivers
   private ArrayList<Cdouble> _shots;
   private ArrayList<Cdouble> _recs;
   private BasePlot _bp;
-  // private ResponsePlot _rp;
+  private ResponsePlot _rp;
 
   private PlotTest(){
     _shots = new ArrayList<Cdouble>(0);
     _recs = new ArrayList<Cdouble>(0);
     _bp = new BasePlot();
-    // _rp = new ResponsePlot(false);
+    _rp = new ResponsePlot();
   }
 
 
@@ -109,6 +109,52 @@ public class PlotTest{
       _plotFrame.setVisible(true);
     }
   }
+
+  ///////////////////////////////////////////////////////////////////////////
+
+private class ResponsePlot {
+
+    private PlotPanel _plotPanelH;
+    private PlotPanel _plotPanelAP;
+    private PlotFrame _plotFrame;
+    private SequenceView _hView;
+    private PointsView _aView;
+    private PointsView _pView;
+
+    // The amplitude response can be in decibels (db).
+    private ResponsePlot() {
+
+      // One plot panel for the impulse response.
+      _plotPanelH = new PlotPanel();
+      _plotPanelH.setHLabel("Easting (UTM)");
+      _plotPanelH.setVLabel("Time (ms)");
+      _plotPanelH.setTitle("Title");
+
+      // This first update constructs a sequence view for the impulse 
+      // response, and a points view for amplitude and phase responses.
+      // updateViews();
+
+      _plotFrame = new PlotFrame(_plotPanelH);
+
+      // The menu bar.
+      JMenu fileMenu = new JMenu("File");
+      fileMenu.setMnemonic('F');
+      fileMenu.add(new SaveAsPngAction(_plotFrame)).setMnemonic('a');
+      fileMenu.add(new ExitAction()).setMnemonic('x');
+      JMenuBar menuBar = new JMenuBar();
+      menuBar.add(fileMenu);
+      _plotFrame.setJMenuBar(menuBar);
+
+      // Make the plot frame visible.
+      _plotFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      _plotFrame.setLocation(RP_X,RP_Y);
+      _plotFrame.setSize(RP_WIDTH,RP_HEIGHT);
+      _plotFrame.setFontSizeForPrint(8,240);
+      _plotFrame.setVisible(true);
+    }
+
+  }
+
 
   ///////////////////////////////////////////////////////////////////////////
   
