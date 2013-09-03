@@ -115,10 +115,8 @@ public class PlotTest{
 private class ResponsePlot {
 
     private PlotPanel _plotPanelH;
-    private PlotPanel _plotPanelAP;
     private PlotFrame _plotFrame;
     private SequenceView _hView;
-    private PointsView _aView;
     private PointsView _pView;
 
     // The amplitude response can be in decibels (db).
