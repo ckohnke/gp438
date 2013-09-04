@@ -448,6 +448,54 @@ public class PolesAndZerosDemo {
 
       return new Real1[]{a,p};
     }
+
+    // Computes the amplitude and phase responses from impulse response.
+    // This method is fast, because it uses an FFT, but it yields errors
+    // for long impulse responses that are truncated.
+    /*
+    private Real1[] computeAmplitudeAndPhaseResponses(Real1 h) {
+
+      // Time sampling.
+      Sampling st = h.getSampling();
+      int nt = st.getCount();
+      double dt = st.getDelta();
+      double ft = st.getFirst();
+
+      // Frequency sampling.
+      int nfft = FftReal.nfftSmall(5*nt);
+      int nf = nfft/2+1;
+      double df = 1.0/(nfft*dt);
+      double ff = 0.0;
+      Sampling sf = new Sampling(nf,df,ff);
+
+      // Real-to-complex fast Fourier transform.
+      FftReal fft = new FftReal(nfft);
+      float[] cf = new float[2*nf];
+      copy(nt,h.getValues(),cf);
+      fft.realToComplex(-1,cf,cf);
+
+      // Adjust phase for possibly non-zero time of first sample.
+      float[] wft = rampfloat(0.0f,-2.0f*FLT_PI*(float)(df*ft),nf);
+      cf = cmul(cf,cmplx(cos(wft),sin(wft)));
+
+      // Amplitude response, normalized.
+      float[] af = cabs(cf);
+      float amax = max(max(af),FLT_EPSILON);
+      af = mul(1.0f/amax,af);
+      if (_db) {
+        af = log10(af);
+        af = mul(20.0f,af);
+      }
+      Real1 a = new Real1(sf,af);
+
+      // Phase response, in cycles.
+      float[] pf = carg(cf);
+      pf = mul(0.5f/FLT_PI,pf);
+      Real1 p = new Real1(sf,pf);
+
+      return new Real1[]{a,p};
+    }
+    */
   }
 
   ///////////////////////////////////////////////////////////////////////////
