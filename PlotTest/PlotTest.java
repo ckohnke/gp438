@@ -252,6 +252,18 @@ public class PlotTest{
     }
 
     // Converts  complex number z to an point (x,y) in pixels.
+    private Phone pixelToPoint(double x, double y) {
+      Transcaler ts = _tile.getTranscaler();
+      Projector hp = _tile.getHorizontalProjector();
+      Projector vp = _tile.getVerticalProjector();
+      double xu = hp.u(x);
+      double yu = vp.u(y);
+      double xp = ts.x(xu);
+      double yp = ts.y(yu);
+      return new Phone(xp,yp);
+    }
+
+    // Converts  complex number z to an point (x,y) in pixels.
     private Point complexToPoint(Cdouble z) {
       Transcaler ts = _tile.getTranscaler();
       Projector hp = _tile.getHorizontalProjector();
@@ -287,7 +299,9 @@ public class PlotTest{
       _tile = (Tile)e.getSource();
       double x = e.getX();
       double y = e.getY();
-      addPhone(new Phone(x,y));      
+      Phone p = pixelToPoint(x,y);
+      System.out.println("x: " + x + " y: " + y + " p.x: " + p.x + " p.y: " + p.y);
+      addPhone(p);      
     }
     
     private void remove(MouseEvent e) {
@@ -354,7 +368,8 @@ public class PlotTest{
 
   public class Phone {
     Phone(double x, double y){
-      this.x =x; this.y = y;
+      this.x = x; 
+      this.y = y;
     }
 
     public double x, y, elev;
