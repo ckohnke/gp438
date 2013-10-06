@@ -66,8 +66,8 @@ public class PlotTest{
       _plotPanel.setTitle("Base Plot Test");
       _plotPanel.setHLabel("Easting (UTM)");
       _plotPanel.setVLabel("Northing (UTM)");
-      _plotPanel.setHLimits(-100.0,100.0);
-      _plotPanel.setVLimits(-100.0,100.0);
+      _plotPanel.setHLimits(4126145,4126345); //TODO: plot displays E+06
+      _plotPanel.setVLimits(321429,321629);   //TODO: plot displays E+06
 
       // A grid view for horizontal and vertical lines (axes).
       _plotPanel.addGrid("H0-V0-");
@@ -86,13 +86,22 @@ public class PlotTest{
       fileMenu.setMnemonic('F');
       fileMenu.add(new SaveAsPngAction(_plotFrame)).setMnemonic('a');
       fileMenu.add(new ExitAction()).setMnemonic('x');
+      
       JMenu modeMenu = new JMenu("Mode");
       modeMenu.setMnemonic('M');
       modeMenu.add(new ModeMenuItem(tzm));
       modeMenu.add(new ModeMenuItem(am));
+      
+      JMenu toolMenu = new JMenu("Tools");
+      toolMenu.setMnemonic('T');
+      toolMenu.add(new GetFlagsFromHH()).setMnemonic('f');
+      toolMenu.add(new GetDEM(_plotPanel)).setMnemonic('g');
+      
       JMenuBar menuBar = new JMenuBar();
       menuBar.add(fileMenu);
       menuBar.add(modeMenu);
+      menuBar.add(toolMenu);
+    
       _plotFrame.setJMenuBar(menuBar);
 
       // The tool bar includes toggle buttons for selecting a mode.
@@ -168,6 +177,7 @@ public class PlotTest{
       fileMenu.add(new ExitAction()).setMnemonic('x');
       JMenuBar menuBar = new JMenuBar();
       menuBar.add(fileMenu);
+      
       _plotFrame.setJMenuBar(menuBar);
 
       // Make the plot frame visible.
@@ -189,7 +199,7 @@ public class PlotTest{
         // setIcon(loadIcon(PolesAndZerosDemo.class,"Poles16.png"));
         setMnemonicKey(KeyEvent.VK_X);
         setAcceleratorKey(KeyStroke.getKeyStroke(KeyEvent.VK_X,0));
-        setShortDescription("Add (Shift), remove (Ctrl), or drag receivers");
+        setShortDescription("Add (Shift)");
       }
     
     // When this mode is activated (or deactivated) for a tile, it simply 
@@ -213,8 +223,6 @@ public class PlotTest{
       public void mousePressed(MouseEvent e) {
         if (e.isShiftDown()) {
           add(e);
-        } else if (e.isControlDown()) {
-          remove(e);
         } else {
           if (beginEdit(e)) {
             _editing = true;
@@ -260,7 +268,7 @@ public class PlotTest{
       double yu = vp.u(y);
       double xp = ts.x(xu);
       double yp = ts.y(yu);
-      return new Phone(xp,yp);
+      return new Phone(x,y);
     }
 
     // Converts  complex number z to an point (x,y) in pixels.
@@ -303,13 +311,7 @@ public class PlotTest{
       System.out.println("x: " + x + " y: " + y + " p.x: " + p.x + " p.y: " + p.y);
       addPhone(p);      
     }
-    
-    private void remove(MouseEvent e) {
-      _tile = (Tile)e.getSource();
-      int x = e.getX();
-      int y = e.getY();
-    }
-    
+      
     // Begins editing of an existing pole or zero, if close enough.
     // Returns true, if close enough so that we have begun editing; 
     // false, otherwise.
@@ -365,6 +367,28 @@ public class PlotTest{
       }
     }
   }
+  private class GetDEM extends AbstractAction {
+    private GetDEM(PlotPanel plotPanel){
+      super("Get USGS Elevation");
+     
+    }
+    public void actionPerformed(ActionEvent event){
+      //TODO
+    }
+  }
+  private class GetFlagsFromHH extends AbstractAction {
+    private GetFlagsFromHH(){
+      super("Get HandHeld GPS");
+    }
+    public void actionPerformed(ActionEvent event){
+      //TODO
+    }
+
+  }
+
+
+  ///////////////////////////////////////////////////////////////////////////
+
 
   public class Phone {
     Phone(double x, double y){
