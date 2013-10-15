@@ -249,18 +249,6 @@ public class PlotTest{
       }
     };
 
-    // Converts  complex number z to an point (x,y) in pixels.
-    private MPoint pixelToPoint(double x, double y) {
-      Transcaler ts = _tile.getTranscaler();
-      Projector hp = _tile.getHorizontalProjector();
-      Projector vp = _tile.getVerticalProjector();
-      double xu = hp.u(x);
-      double yu = vp.u(y);
-      double xp = ts.x(xu);
-      double yp = ts.y(yu);
-      return new MPoint(x,y);
-    }
-
     // Adds a pole or zero at mouse coordinates (x,y).
     // TODO: Convert pixels to actual
     private void add(MouseEvent e) {
