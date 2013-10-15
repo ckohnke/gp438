@@ -11,8 +11,8 @@ s3 = Sampling(105,1,1003) # first shotpoint is 1003
 n1,n2,n3 = s1.count,s2.count,s3.count
 #shotDir = "/data/seis/csm/fc2012/"
 #segdDir = "/data/seis/csm/fc2012/segd/test139/"
-shotDir = "/data/seis/csm/fc2013/segd/141/"
-segdDir = "/gpfc/ckohnke/fc2013/segd/141/"
+shotDir = "/data/seis/csm/fc2012/line141s10/"
+segdDir = "/data/seis/csm/fc2012/segd/line141s10/"
 
 #############################################################################
 def main(args):

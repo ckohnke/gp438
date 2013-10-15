@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DATADIR=/data/seis/csm/fc2013/segd/141
+DATADIR=/data/seis/csm/fc2012/line141s10
 #suaddhead <$DATADIR/shotsp.dat ntrpr=342 tsort=1 ns=4001 |
 #sushw key=dt a=2000 |
 #sushw key=tracf a=1 b=1 j=342 |

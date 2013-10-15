@@ -1,0 +1,4 @@
+#!/bin/bash
+export CLASSPATH=.:../edu_mines_jtk.jar
+rm *.class
+jython -Dpython.path=$CLASSPATH $*

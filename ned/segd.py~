@@ -30,8 +30,8 @@ s3 = Sampling(215,1.0,1003) # first shotpoint is 1003
 #s3 = Sampling(1,1.0,1001.0) # shotpoint station sampling A
 #shotDir = "/data/seis/csm/fc2012/"
 #segdDir = "/data/seis/csm/fc2012/segd/test139/"
-shotDir = "/data/seis/csm/fc2013/segd/141/"
-segdDir = "/gpfc/ckohnke/fc2013/segd/141/"
+shotDir = "/data/seis/csm/fc2012/line141s10/"
+segdDir = "/data/seis/csm/fc2012/segd/line141s10/"
 
 #############################################################################
 def main(args):

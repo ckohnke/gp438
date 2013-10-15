@@ -17,8 +17,8 @@ d1,d2,d3 = s1.delta,s2.delta,s3.delta
 f1,f2,f3 = s1.first,s2.first,s3.first
 #shotDir = "/data/seis/csm/fc2012/"
 #segdDir = "/data/seis/csm/fc2012/segd/test139/"
-shotDir = "/data/seis/csm/fc2012/line141s10/"
-segdDir = "/data/seis/csm/fc2012/segd/line141s10/"
+shotDir = "/data/seis/csm/fc2013/segd/141/"
+segdDir = "/gpfc/ckohnke/fc2013/segd/141/"
 
 #############################################################################
 def main(args):
