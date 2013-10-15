@@ -21,32 +21,33 @@ public class PlotTest{
   }
 
   // Location and size of overlay plot.
-  private static final int O_X = 100;
-  private static final int O_Y = 0;
-  private static final int O_WIDTH = 520;
-  private static final int O_HEIGHT = 550;
+  private static final int M_X = 100;
+  private static final int M_Y = 0;
+  private static final int M_WIDTH = 520;
+  private static final int M_HEIGHT = 550;
 
   // Location and size of response plot.
-  private static final int RP_X = O_X+O_WIDTH;
+  private static final int RP_X = M_X+M_WIDTH;
   private static final int RP_Y = 0;
   private static final int RP_WIDTH = 520;
   private static final int RP_HEIGHT = 550;
   
   // Plot of source/receivers
-  // private ArrayList<Phone> _shots;
-  private ArrayList<Phone> _recs;
+  // private ArrayList<MPoint> _shots;
+  private ArrayList<MPoint> _recs;
+  private ArrayList<MPoint> _gps;
   private BasePlot _bp;
   private ResponsePlot _rp;
 
   private PlotTest(){
-    // _shots = new ArrayList<Phone>(0);
-    _recs = new ArrayList<Phone>(0);
+    // _shots = new ArrayList<MPoint>(0);
+    _recs = new ArrayList<MPoint>(0);
     _bp = new BasePlot();
     _rp = new ResponsePlot();
   }
 
-  private void addPhone(Phone phone) {
-    _recs.add(phone);
+  private void addMPoint(MPoint p) {
+    _recs.add(p);
     _bp.updateBPView();
   }
 
@@ -66,8 +67,8 @@ public class PlotTest{
       _plotPanel.setTitle("Base Plot Test");
       _plotPanel.setHLabel("Easting (UTM)");
       _plotPanel.setVLabel("Northing (UTM)");
-      _plotPanel.setHLimits(4126145,4126345); //TODO: plot displays E+06
-      _plotPanel.setVLimits(321429,321629);   //TODO: plot displays E+06
+      _plotPanel.setHLimits(100,200); //TODO: plot displays E+06 for large ints
+      _plotPanel.setVLimits(100,200);   //TODO: plot displays E+06 for large ints
 
       // A grid view for horizontal and vertical lines (axes).
       _plotPanel.addGrid("H0-V0-");
@@ -116,8 +117,8 @@ public class PlotTest{
 
       // Make the plot frame visible.
       _plotFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      _plotFrame.setLocation(O_X,O_Y);
-      _plotFrame.setSize(O_WIDTH,O_HEIGHT);
+      _plotFrame.setLocation(M_X,M_Y);
+      _plotFrame.setSize(M_WIDTH,M_HEIGHT);
       _plotFrame.setFontSizeForPrint(8,240);
       _plotFrame.setVisible(true);
 
@@ -130,9 +131,10 @@ public class PlotTest{
       float[] yp = new float[np];
       boolean[] sel = new boolean[np];
       for (int ip=0; ip<np; ++ip) {
-        Phone p = _recs.get(ip);
-        xp[ip] = (float)p.x;
-        yp[ip] = (float)p.y;
+        MPoint p = _recs.get(ip);
+        xp[ip] = (float)p.px;
+        yp[ip] = (float)p.py;
+        System.out.println("xp[ip]: " + xp[ip] + " yp[ip]: " + yp[ip]);
         sel[ip] = p.selected;
       }
       if (_baseView==null) {
@@ -161,7 +163,7 @@ public class PlotTest{
       // One plot panel for the impulse response.
       _plotPanelH = new PlotPanel();
       _plotPanelH.setHLabel("Easting (UTM)");
-      _plotPanelH.setVLabel("Time (ms)");
+      _plotPanelH.setVLabel("Time (s)");
       _plotPanelH.setTitle("Title");
 
       // This first update constructs a sequence view for the impulse 
@@ -247,20 +249,8 @@ public class PlotTest{
       }
     };
 
-  // Converts an point (x,y) in pixels to a complex number z.
-    private Cdouble pointToComplex(int x, int y) {
-      Transcaler ts = _tile.getTranscaler();
-      Projector hp = _tile.getHorizontalProjector();
-      Projector vp = _tile.getVerticalProjector();
-      double xu = ts.x(x);
-      double yu = ts.y(y);
-      double xv = hp.v(xu);
-      double yv = vp.v(yu);
-      return roundToReal(new Cdouble(xv,yv));
-    }
-
     // Converts  complex number z to an point (x,y) in pixels.
-    private Phone pixelToPoint(double x, double y) {
+    private MPoint pixelToPoint(double x, double y) {
       Transcaler ts = _tile.getTranscaler();
       Projector hp = _tile.getHorizontalProjector();
       Projector vp = _tile.getVerticalProjector();
@@ -268,37 +258,7 @@ public class PlotTest{
       double yu = vp.u(y);
       double xp = ts.x(xu);
       double yp = ts.y(yu);
-      return new Phone(x,y);
-    }
-
-    // Converts  complex number z to an point (x,y) in pixels.
-    private Point complexToPoint(Cdouble z) {
-      Transcaler ts = _tile.getTranscaler();
-      Projector hp = _tile.getHorizontalProjector();
-      Projector vp = _tile.getVerticalProjector();
-      double xu = hp.u(z.r);
-      double yu = vp.u(z.i);
-      int xp = ts.x(xu);
-      int yp = ts.y(yu);
-      return new Point(xp,yp);
-    }
-
-    // If the specified complex number c is nearly on the real axis 
-    // (within a small fixed number of pixels), then rounds this 
-    // complex number to the nearest real number by setting the 
-    // imaginary part to zero.
-    private Cdouble roundToReal(Cdouble c) {
-      Cdouble cr = new Cdouble(c.r,0.0);
-      Point pr = complexToPoint(cr);
-      Point p = complexToPoint(c);
-      return (abs(p.y-pr.y)<6)?cr:c;
-    }
-
-    // Determines whether a specified point (x,y) is within a small
-    // fixed number of pixels to the specified complex number c.
-    private boolean closeEnough(int x, int y, Cdouble c) {
-      Point p = complexToPoint(c); 
-      return abs(p.x-x)<6 && abs(p.y-y)<6;
+      return new MPoint(x,y);
     }
 
     // Adds a pole or zero at mouse coordinates (x,y).
@@ -307,9 +267,9 @@ public class PlotTest{
       _tile = (Tile)e.getSource();
       double x = e.getX();
       double y = e.getY();
-      Phone p = pixelToPoint(x,y);
-      System.out.println("x: " + x + " y: " + y + " p.x: " + p.x + " p.y: " + p.y);
-      addPhone(p);      
+      MPoint p = new MPoint((int)x,(int)y, false);
+      System.out.println("p.px: " + p.px + " p.py: " + p.py);
+      addMPoint(p);
     }
       
     // Begins editing of an existing pole or zero, if close enough.
@@ -390,16 +350,31 @@ public class PlotTest{
   ///////////////////////////////////////////////////////////////////////////
 
 
-  public class Phone {
-    Phone(double x, double y){
+  public class MPoint {
+    // from gps coord
+    MPoint(double x, double y){
       this.x = x; 
       this.y = y;
+      calcPixFromGPS();
+    }
+    // from pixel
+    MPoint(int px, int py, boolean mode){
+      this.px = px; 
+      this.py = py;
+      calcGPSFromPix();
+    }
+
+    private void calcPixFromGPS(){
+      
+    }
+
+    private void calcGPSFromPix(){
+      
     }
 
     public double x, y, elev;
-    public Sampling s;
+    public int px, py;
     public boolean selected;
-    // public Shot s;
   }
 
 }
