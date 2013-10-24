@@ -132,8 +132,8 @@ public class PlotTest{
       boolean[] sel = new boolean[np];
       for (int ip=0; ip<np; ++ip) {
         MPoint p = _recs.get(ip);
-        xp[ip] = (float)p.px;
-        yp[ip] = (float)p.py;
+        xp[ip] = (float)p.x;
+        yp[ip] = (float)p.y;
         System.out.println("xp[ip]: " + xp[ip] + " yp[ip]: " + yp[ip]);
         sel[ip] = p.selected;
       }
@@ -255,8 +255,8 @@ public class PlotTest{
       _tile = (Tile)e.getSource();
       double x = e.getX();
       double y = e.getY();
-      MPoint p = new MPoint((int)x,(int)y, false);
-      System.out.println("p.px: " + p.px + " p.py: " + p.py);
+      MPoint p = new MPoint(x,y);
+      System.out.println("p.x: " + p.x + " p.y: " + p.y);
       addMPoint(p);
     }
       
@@ -327,9 +327,14 @@ public class PlotTest{
   private class GetFlagsFromHH extends AbstractAction {
     private GetFlagsFromHH(){
       super("Get HandHeld GPS");
+        
     }
     public void actionPerformed(ActionEvent event){
       //TODO
+      JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+      fc.showOpenDialog(null);
+      File f = fc.getSelectedFile();
+       
     }
 
   }
@@ -339,29 +344,21 @@ public class PlotTest{
 
 
   public class MPoint {
-    // from gps coord
+    // from xyz coord
+    MPoint(double x, double y, double z){
+      this.x = x; 
+      this.y = y;
+      this.z = z;
+    }
+    
+    // from xy coord
     MPoint(double x, double y){
       this.x = x; 
       this.y = y;
-      calcPixFromGPS();
     }
-    // from pixel
-    MPoint(int px, int py, boolean mode){
-      this.px = px; 
-      this.py = py;
-      calcGPSFromPix();
-    }
+    
 
-    private void calcPixFromGPS(){
-      
-    }
-
-    private void calcGPSFromPix(){
-      
-    }
-
-    public double x, y, elev;
-    public int px, py;
+    public double x, y, z;
     public boolean selected;
   }
 
