@@ -1,5 +1,0 @@
-#!/bin/bash
-export CLASSPATH=.:../edu_mines_jtk.jar
-rm *.class
-javac *.java
-java -ea -Xmx512m $*
