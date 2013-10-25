@@ -1,8 +1,9 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import javax.swing.*;
+import java.util.Scanner;
 
 import edu.mines.jtk.awt.*;
 import edu.mines.jtk.dsp.*;
@@ -35,13 +36,13 @@ public class PlotTest{
   // Plot of source/receivers
   // private ArrayList<MPoint> _shots;
   private ArrayList<MPoint> _recs;
-  private ArrayList<MPoint> _gps;
+  public ArrayList<MPoint> _gps;
   private BasePlot _bp;
   private ResponsePlot _rp;
 
   private PlotTest(){
     // _shots = new ArrayList<MPoint>(0);
-    _recs = new ArrayList<MPoint>(0);
+    _gps = new ArrayList<MPoint>(0);
     _bp = new BasePlot();
     _rp = new ResponsePlot();
   }
@@ -97,6 +98,7 @@ public class PlotTest{
       toolMenu.setMnemonic('T');
       toolMenu.add(new GetFlagsFromHH()).setMnemonic('f');
       toolMenu.add(new GetDEM(_plotPanel)).setMnemonic('g');
+      toolMenu.add(new ExportFlagsToCSV()).setMnemonic('e');
       
       JMenuBar menuBar = new JMenuBar();
       menuBar.add(fileMenu);
@@ -126,16 +128,13 @@ public class PlotTest{
 
     // Makes poles view consistent with the list of poles.
     private void updateBPView() {
-      int np = _recs.size();
+      int np = _gps.size();
       float[] xp = new float[np];
       float[] yp = new float[np];
-      boolean[] sel = new boolean[np];
       for (int ip=0; ip<np; ++ip) {
-        MPoint p = _recs.get(ip);
+        MPoint p = _gps.get(ip);
         xp[ip] = (float)p.x;
         yp[ip] = (float)p.y;
-        System.out.println("xp[ip]: " + xp[ip] + " yp[ip]: " + yp[ip]);
-        sel[ip] = p.selected;
       }
       if (_baseView==null) {
         _baseView = _plotPanel.addPoints(xp,yp);
@@ -250,12 +249,11 @@ public class PlotTest{
     };
 
     // Adds a pole or zero at mouse coordinates (x,y).
-    // TODO: Convert pixels to actual
     private void add(MouseEvent e) {
       _tile = (Tile)e.getSource();
       double x = e.getX();
       double y = e.getY();
-      MPoint p = new MPoint(x,y);
+      MPoint p = new MPoint(1,x,y);
       System.out.println("p.x: " + p.x + " p.y: " + p.y);
       addMPoint(p);
     }
@@ -329,14 +327,47 @@ public class PlotTest{
       super("Get HandHeld GPS");
         
     }
-    public void actionPerformed(ActionEvent event){
+    public void actionPerformed(ActionEvent event) {
       //TODO
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
       fc.showOpenDialog(null);
-      File f = fc.getSelectedFile();
-       
+      try{
+        File f = fc.getSelectedFile();
+        Scanner s = new Scanner(f);
+        s.nextLine(); // header skip = 1
+        while(s.hasNext()){
+          int stationID = s.nextInt();
+          double x = s.nextDouble();
+          double y = s.nextDouble();
+          double z = s.nextDouble();
+          System.out.println("ID: " + stationID + " x: " + x + " y: " + y + " z: " + z);
+          MPoint p = new MPoint(stationID, x, y, z);
+          _gps.add(p);
+          System.out.println(_gps.get(_gps.size()-1).stationID);
+        }
+        s.close();
+        _bp.updateBPView(); 
+      } catch(IOException ex){
+        System.out.println(ex);  
+      }
     }
+  }
+  private class ExportFlagsToCSV extends AbstractAction {
+    private ExportFlagsToCSV(){
+      super("Export GPS to CSV");
+        
+    }
+    public void actionPerformed(ActionEvent event) {
+      //TODO
+      JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+      fc.showSaveDialog(null);
+      File file = fc.getSelectedFile();
+      if (file!=null) {
+        String filename = file.getAbsolutePath();
+        
+      }
 
+    }
   }
 
 
@@ -345,19 +376,21 @@ public class PlotTest{
 
   public class MPoint {
     // from xyz coord
-    MPoint(double x, double y, double z){
+    MPoint(int stationID, double x, double y, double z){
+      this.stationID = stationID;
       this.x = x; 
       this.y = y;
       this.z = z;
     }
     
     // from xy coord
-    MPoint(double x, double y){
+    MPoint(int stationID, double x, double y){
+      this.stationID = stationID;
       this.x = x; 
       this.y = y;
     }
     
-
+    public int stationID;
     public double x, y, z;
     public boolean selected;
   }
