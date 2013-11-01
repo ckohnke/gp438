@@ -39,6 +39,8 @@ public class PlotTest{
   public ArrayList<MPoint> _gps;
   private BasePlot _bp;
   private ResponsePlot _rp;
+  private Waypoints wPoints;
+
 
   private PlotTest(){
     // _shots = new ArrayList<MPoint>(0);
@@ -128,11 +130,11 @@ public class PlotTest{
 
     // Makes poles view consistent with the list of poles.
     private void updateBPView() {
-      int np = _gps.size();
+      int np = wPoints._gps.size();
       float[] xp = new float[np];
       float[] yp = new float[np];
       for (int ip=0; ip<np; ++ip) {
-        MPoint p = _gps.get(ip);
+        MPoint p = wPoints._gps.get(ip);
         xp[ip] = (float)p.x;
         yp[ip] = (float)p.y;
       }
@@ -325,31 +327,14 @@ public class PlotTest{
   private class GetFlagsFromHH extends AbstractAction {
     private GetFlagsFromHH(){
       super("Get HandHeld GPS");
-        
     }
     public void actionPerformed(ActionEvent event) {
       //TODO
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
       fc.showOpenDialog(null);
-      try{
-        File f = fc.getSelectedFile();
-        Scanner s = new Scanner(f);
-        s.nextLine(); // header skip = 1
-        while(s.hasNext()){
-          int stationID = s.nextInt();
-          double x = s.nextDouble();
-          double y = s.nextDouble();
-          double z = s.nextDouble();
-          System.out.println("ID: " + stationID + " x: " + x + " y: " + y + " z: " + z);
-          MPoint p = new MPoint(stationID, x, y, z);
-          _gps.add(p);
-          System.out.println(_gps.get(_gps.size()-1).stationID);
-        }
-        s.close();
-        _bp.updateBPView(); 
-      } catch(IOException ex){
-        System.out.println(ex);  
-      }
+      File f = fc.getSelectedFile();
+      wPoints = new Waypoints(f);
+      _bp.updateBPView(); 
     }
   }
   private class ExportFlagsToCSV extends AbstractAction {
@@ -359,41 +344,18 @@ public class PlotTest{
     }
     public void actionPerformed(ActionEvent event) {
       //TODO
-      JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-      fc.showSaveDialog(null);
-      File file = fc.getSelectedFile();
-      if (file!=null) {
-        String filename = file.getAbsolutePath();
-        
-      }
-
+        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        fc.showSaveDialog(null);
+        File f = fc.getSelectedFile();
+        wPoints.exportToCSV(f);
+      } 
     }
-  }
+  
 
 
   ///////////////////////////////////////////////////////////////////////////
 
 
-  public class MPoint {
-    // from xyz coord
-    MPoint(int stationID, double x, double y, double z){
-      this.stationID = stationID;
-      this.x = x; 
-      this.y = y;
-      this.z = z;
-    }
-    
-    // from xy coord
-    MPoint(int stationID, double x, double y){
-      this.stationID = stationID;
-      this.x = x; 
-      this.y = y;
-    }
-    
-    public int stationID;
-    public double x, y, z;
-    public boolean selected;
-  }
 
 }
 
