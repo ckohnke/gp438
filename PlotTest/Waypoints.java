@@ -1,15 +1,8 @@
-/*
-public class Main{
-  public static void main(String[] args){
-    
-  }
-} 
-*/
-
 ///////////////////////////////////////////////////////////////////////////
 
 import java.io.*;
 import java.util.*;
+import java.xml.*;
 
 public class Waypoints{
   public ArrayList<MPoint> _gps;
@@ -20,7 +13,7 @@ public class Waypoints{
     Waypoints w = new Waypoints(input);
     for(int i=0; i< w._gps.size(); ++i){
       MPoint p = w._gps.get(i);
-      System.out.println("lat: " + p.lat + " lon: " + p.lon + " x: " + p.x + " y: " + p.y);
+      System.out.println("Station: " + p.stationID+ " lat: " + p.lat + " lon: " + p.lon + " x: " + p.x + " y: " + p.y + " z: " + p.z;);
     }
     System.out.println("GPS TEST FINISH");    
   }
@@ -48,10 +41,8 @@ public class Waypoints{
         double x = s.nextDouble();
         double y = s.nextDouble();
         double z = s.nextDouble();
-        System.out.println("ID: " + stationID + " x: " + x + " y: " + y + " z: " + z);
         MPoint p = new MPoint(stationID, x, y, z);
         _gps.add(p);
-        System.out.println(_gps.get(_gps.size()-1).stationID);
       }
       s.close();
     } catch(IOException ex){
@@ -77,6 +68,37 @@ public class Waypoints{
       System.out.println(ex);  
     }
   }
+  
+  public void readLatLongFromXML(File f){
+    try {
+
+      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+      Document doc = dBuilder.parse(f);
+      doc.getDocumentElement().normalize();
+
+      System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+      NodeList nList = doc.getElementsByTagName("test");
+      System.out.println("-----------------------");
+
+      for (int temp = 0; temp < nList.getLength(); temp++) {
+
+        Node nNode = nList.item(temp);
+        if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+
+          Element eElement = (Element) nNode;
+
+          System.out.println("First Name : " + getTagValue("id", eElement));
+          System.out.println("Last Name : " + getTagValue("result", eElement));
+
+       }
+    }
+    
+  } catch (Exception e) {
+    e.printStackTrace();
+  }
+    
+  }
 
   public void latLonToUTM(){
     for(int i=0; i<_gps.size(); ++i){
@@ -95,7 +117,7 @@ public class Waypoints{
       double a2 = n*n*(13.0/48.0-n*3.0/5.0);
       double a3 = n*n*n*61.0/240.0;
       double st = 2.0*Math.sqrt(n)/(1.0+n);
-      double lon0 = -183.0+(UTMzone*6.0); // reference longitude for UTM Zone 13
+      double lon0 = -183.0+(UTMzone*6.0); // reference longitude for arbitrary UTM Zone
       lon -= lon0;
       lat *= PI/180.0;
       lon *= PI/180.0;
@@ -117,6 +139,24 @@ public class Waypoints{
   }
 
   public void UTMToLatLong(){
+    
+  }
+  
+  public void readUTMFromCSV(File f){
+    try{
+      Scanner s = new Scanner(f);
+      s.useDelimeter(",");
+      s.nextLine(); // header skip = 1
+      while(s.hasNext()){
+        int stationID = s.nextInt();
+        double x = s.nextDouble();
+        double y = s.nextDouble();
+        double z = s.nextDouble();
+        MPoint p = new MPoint(stationID, x, y, z);
+        _gps.add(p);
+    } catch(IOException ex){
+      System.out.println(ex);
+    }
     
   }
 
