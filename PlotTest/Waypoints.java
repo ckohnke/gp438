@@ -2,25 +2,24 @@
 
 import java.io.*;
 import java.util.*;
-import java.xml.*;
 
 public class Waypoints{
   public ArrayList<MPoint> _gps;
 
   public static void main(String[] args){
     System.out.println("GPS TEST START");
-    File input = new File("/home/colton/Documents/School/SrDesign/PlotTest/gps_input_test1.txt");
+    File input = new File("/home/colton/Documents/School/SrDesign/PlotTest/Waypoints_20-OCT-13.gpx");
     Waypoints w = new Waypoints(input);
     for(int i=0; i< w._gps.size(); ++i){
       MPoint p = w._gps.get(i);
-      System.out.println("Station: " + p.stationID+ " lat: " + p.lat + " lon: " + p.lon + " x: " + p.x + " y: " + p.y + " z: " + p.z;);
+      System.out.println("Station: " + p.stationID+ " lat: " + p.lat + " lon: " + p.lon + " x: " + p.x + " y: " + p.y + " z: " + p.z);
     }
     System.out.println("GPS TEST FINISH");    
   }
 
   public Waypoints(File f){
     _gps = new ArrayList<MPoint>(0);
-    readLatLonFromTSV(f);
+    readLatLongFromXML(f);
     latLonToUTM();
   }
 
@@ -71,32 +70,29 @@ public class Waypoints{
   
   public void readLatLongFromXML(File f){
     try {
-
-      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-      Document doc = dBuilder.parse(f);
-      doc.getDocumentElement().normalize();
-
-      System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-      NodeList nList = doc.getElementsByTagName("test");
-      System.out.println("-----------------------");
-
-      for (int temp = 0; temp < nList.getLength(); temp++) {
-
-        Node nNode = nList.item(temp);
-        if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-
-          Element eElement = (Element) nNode;
-
-          System.out.println("First Name : " + getTagValue("id", eElement));
-          System.out.println("Last Name : " + getTagValue("result", eElement));
-
-       }
+      Scanner s = new Scanner(f);
+      String current = "";
+      String[] c = null;
+      while(s.hasNext()){
+        while(!current.contains("lat")){
+          current = s.next();
+        }
+        c = current.split("\"");
+        double lat = Double.parseDouble(c[1]);
+        current = s.next();
+        c = current.split("\"");
+        double lon = Double.parseDouble(c[1]);
+        c = current.split("[><]");
+        double elev = Double.parseDouble(c[3]);
+        int name = Integer.parseInt(c[11]);
+        MPoint p = new MPoint(name, lat, lon, elev);
+        _gps.add(p);
+        s.next();
+      }
+      s.close();
+    } catch(IOException ex){
+      System.out.println(ex);
     }
-    
-  } catch (Exception e) {
-    e.printStackTrace();
-  }
     
   }
 
@@ -145,7 +141,7 @@ public class Waypoints{
   public void readUTMFromCSV(File f){
     try{
       Scanner s = new Scanner(f);
-      s.useDelimeter(",");
+      s.useDelimiter(",");
       s.nextLine(); // header skip = 1
       while(s.hasNext()){
         int stationID = s.nextInt();
@@ -154,6 +150,7 @@ public class Waypoints{
         double z = s.nextDouble();
         MPoint p = new MPoint(stationID, x, y, z);
         _gps.add(p);
+      }
     } catch(IOException ex){
       System.out.println(ex);
     }
