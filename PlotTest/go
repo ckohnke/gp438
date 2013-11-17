@@ -2,4 +2,4 @@
 export CLASSPATH=.:../edu_mines_jtk.jar:../jcoord-1.0.jar
 rm *.class
 javac *.java
-java -ea -Xmx512m $*
+java -ea -Xmx2g $*
