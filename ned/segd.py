@@ -30,12 +30,12 @@ s3 = Sampling(215,1.0,1003) # first shotpoint is 1003
 #s3 = Sampling(1,1.0,1001.0) # shotpoint station sampling A
 #shotDir = "/data/seis/csm/fc2012/"
 #segdDir = "/data/seis/csm/fc2012/segd/test139/"
-shotDir = "/data/seis/csm/fc2013/segd/141/"
+shotDir = "/data/seis/csm/fc2013/"
 segdDir = "/gpfc/ckohnke/fc2013/segd/141/"
 
 #############################################################################
 def main(args):
-  #readLine141Segd()
+  readLine141Segd()
   displayLine141()
   #displayLine140S1()
   #readLine140Segd()
@@ -233,8 +233,8 @@ def readSegd(segdFile):
   ais.readBytes(gh) # general header 3
   sln = bin5(gh,3) # source line number
   spn = bin5(gh,8) # source point number
-  #print "file =",segdFile
-  #print "fn = ",fn," sln =",sln," spn =",spn
+  print "file =",segdFile
+  print "fn = ",fn," sln =",sln," spn =",spn
   cns = 0 # channel set number for seismic traces
   nct = 0 # total number of channels, including aux channels
   for ics in range(16): # for each channel set header, ...
@@ -243,12 +243,12 @@ def readSegd(segdFile):
     ct = (csh[10]>>4)&0xf # channel type (in high 4 bits)
     nc = bcd2(csh,8) # number of channels
     if nc>0: # if we have channels of this type, ...
-      #print "cn =",cn," nc =",nc," ct =",ct
+      print "cn =",cn," nc =",nc," ct =",ct
       if ct==1: # if seismic, ...
         cns = cn # remember channel set number for seismic
         ncs = nc # remember number of seismic channels
       nct += nc # count total number of channels
-  #print "nct =",nct,"cns =",cns
+  print "nct =",nct,"cns =",cns
   ais.skipBytes(1024) # skip extended header
   ais.skipBytes(1024) # skip external header
   rpf = 1
@@ -262,14 +262,14 @@ def readSegd(segdFile):
     rln = bin3(the,0) # receiver line number
     rpn = bin3(the,3) # receiver point number
     n1 = bin3(the,7) # number of samples
-    #print "ic =",ic," rln =",rln," rpn =",rpn," n1 =",n1
+    print "ic =",ic," rln =",rln," rpn =",rpn," n1 =",n1
     if ic==1:
       rpf = rpn
     elif ic==n2:
       rpl = rpn
     ais.skipBytes(6*len(the)) # skip trace header extensions 2-7
     if cn==cns: # if seismic channel, ...
-      #print "ic =",ic," rln =",rln," rpn =",rpn
+      print "ic =",ic," rln =",rln," rpn =",rpn
       if not f:
         f = zerofloat(n1,n2) # the traces
       ais.readFloats(f[ic-1]) # get the seismic trace
