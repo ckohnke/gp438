@@ -56,6 +56,7 @@ public class Segd{
     ais.readBytes(gh);
     ais.readBytes(gh);
     sln = bin5(gh,3);
+    //System.out.println("gh[3-7] = "+gh[3]+" "+gh[4]+" "+gh[5]+" "+gh[6]+" "+gh[7] );
     spn = bin5(gh,8);
     System.out.println("fn=" + fn + ", sln=" + sln + ", spn=" + spn);
     int cns = 0;
@@ -67,6 +68,7 @@ public class Segd{
       cn = csh[1];
       int ct = (csh[10]>>4)&0xf;
       int nc = bcd2(csh,8);
+      //System.out.println("csh[8] = "+csh[8]+" csh[9] = "+csh[9]+" nc = "+nc);
       if(nc>0){
         System.out.println("cn =" + cn + " nc =" + nc + " ct =" + ct);
         if(ct==1){ // if seismic
@@ -124,7 +126,7 @@ public class Segd{
     if(b2<0) b2 += 256;
     if(b3<0) b3 += 256;
     if(b4<0) b4 += 256;
-    return (int)(b0*65536.0+b1*256.0+b2+b3/256.0+b4/65536.0);
+    return (int)(256.0+b0*65536.0+b1*256.0+b2+b3/256.0+b4/65536.0);
   }
 
   public int bin3(byte[] b, int k){
@@ -137,7 +139,8 @@ public class Segd{
     return (int)((b0<<16)|(b1<<8)|(b2));
   }
   
-  public String segdDir = "/gpfc/ckohnke/fc2013/segd/141/";
+  // public String segdDir = "/gpfc/ckohnke/fc2013/segd/141/"; // Linux Lab
+  public String segdDir = "/home/colton/Documents/School/SrDesign/fc2013/segd/141/"; // Laptop
   public Sampling s1 = new Sampling(4001,0.002,0.000);
   public Sampling s2 = new Sampling(342,1,954);
   public Sampling s3 = new Sampling(215,1.0,1003);

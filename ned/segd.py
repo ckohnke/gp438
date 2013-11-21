@@ -30,13 +30,16 @@ s3 = Sampling(215,1.0,1003) # first shotpoint is 1003
 #s3 = Sampling(1,1.0,1001.0) # shotpoint station sampling A
 #shotDir = "/data/seis/csm/fc2012/"
 #segdDir = "/data/seis/csm/fc2012/segd/test139/"
-shotDir = "/data/seis/csm/fc2013/"
-segdDir = "/gpfc/ckohnke/fc2013/segd/141/"
 
+#shotDir = "/data/seis/csm/fc2013/" #Linux Lab
+#segdDir = "/gpfc/ckohnke/fc2013/segd/141/" #Linux Lab
+
+shotDir = "/home/colton/Documents/School/SrDesign/fc2013/" #Laptop
+segdDir = "/home/colton/Documents/School/SrDesign/fc2013/segd/141/" #Laptop
 #############################################################################
 def main(args):
   readLine141Segd()
-  displayLine141()
+  #displayLine141()
   #displayLine140S1()
   #readLine140Segd()
   #readTestSegd()
@@ -46,7 +49,7 @@ def readLine141Segd():
   segdList = File(segdDir).listFiles() # list of segd files
   nshot = len(segdList)-3 # ignore first 3 shots
   #s3 = Sampling(nshot,1,1003) # first shotpoint is 1003
-  g = zerofloat(s1.count,s2.count,s3.count)
+  #g = zerofloat(s1.count,s2.count,s3.count)
   #print segdList
   for segdFile in segdList[3:]:
     print segdFile
@@ -58,7 +61,7 @@ def readLine141Segd():
     #lowpass2(f)
     #tpow2(f)
     #gain2(f)
-    #plot(s1,s2,f,title="Shot "+str(sp))
+    plot(s1,s2,f,title="Shot "+str(sp))
     #plotAmp(s1,s2,f,title="Shot "+str(sp))
   writeData(g,shotDir+"shotsp.dat")
 
@@ -232,6 +235,7 @@ def readSegd(segdFile):
   ais.readBytes(gh) # general header 2
   ais.readBytes(gh) # general header 3
   sln = bin5(gh,3) # source line number
+  #print "gh[3-7] = ",gh[3], " ",gh[4]," ",gh[5]," ",gh[6]," ",gh[7] 
   spn = bin5(gh,8) # source point number
   print "file =",segdFile
   print "fn = ",fn," sln =",sln," spn =",spn
@@ -242,6 +246,7 @@ def readSegd(segdFile):
     cn = csh[1] # channel set number
     ct = (csh[10]>>4)&0xf # channel type (in high 4 bits)
     nc = bcd2(csh,8) # number of channels
+    #print "csh[8] = ",csh[8]," csh[9] = ",csh[9]," nc = ",nc
     if nc>0: # if we have channels of this type, ...
       print "cn =",cn," nc =",nc," ct =",ct
       if ct==1: # if seismic, ...
