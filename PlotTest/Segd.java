@@ -36,7 +36,10 @@ public class Segd{
     for(int i=3; i<segdList.length; ++i){
       System.out.println(segdList[i].getName());
       readSegd(segdList[i]);
-
+      System.out.println("sl ="+sln+" sp ="+spn+" rpf ="+rpf+" rpl ="+rpl);
+      int i3 = (int)(spn-s3.getFirst());
+      copy(f,g[i3]);
+      plot(s1,s2,f,"Shot "+spn);
     }
     }catch(IOException e){
       System.out.println(e);
@@ -51,31 +54,29 @@ public class Segd{
     byte[] the = zerobyte(32); // trace header extension
     byte[] csh = zerobyte(32); // channel set header
     ArrayInputStream ais = new ArrayInputStream(segdFile,ByteOrder.BIG_ENDIAN);
-    ais.readBytes(gh);
-    int fn = bcd2(gh,0);
-    ais.readBytes(gh);
-    ais.readBytes(gh);
-    sln = bin5(gh,3);
-    //System.out.println("gh[3-7] = "+gh[3]+" "+gh[4]+" "+gh[5]+" "+gh[6]+" "+gh[7] );
-    spn = bin5(gh,8);
+    ais.readBytes(gh); // general header 1
+    int fn = bcd2(gh,0); // file number
+    ais.readBytes(gh); // general header 2
+    ais.readBytes(gh); // general header 3
+    sln = bin5(gh,3); // source line number
+    spn = bin5(gh,8); // source point number
     System.out.println("fn=" + fn + ", sln=" + sln + ", spn=" + spn);
-    int cns = 0;
-    int nct = 0;
-    int cn;
-    f = zerofloat(n1,n2);
-    for(int i=0; i<16; ++i){
-      ais.readBytes(csh);
-      cn = csh[1];
-      int ct = (csh[10]>>4)&0xf;
-      int nc = bcd2(csh,8);
-      //System.out.println("csh[8] = "+csh[8]+" csh[9] = "+csh[9]+" nc = "+nc);
-      if(nc>0){
+    int cns = 0; // channel set number for seismic trace
+    int nct = 0; // total number of channels, including aux channels
+    int cn, ct, nc, ncs, ic, rln, rpn; 
+    f = zerofloat(n1,n2); 
+    for(int i=0; i<16; ++i){ // for each channel set header, ...
+      ais.readBytes(csh); // read channel set header 
+      cn = csh[1]; // channel set number
+      ct = (csh[10]>>4)&0xf; // channel type (high 4 bits)
+      nc = bcd2(csh,8); // number of channels
+      if(nc>0){ // if we have channels of this type, ...
         System.out.println("cn =" + cn + " nc =" + nc + " ct =" + ct);
-        if(ct==1){ // if seismic
-          cns = cn;
-          int ncs = nc;
+        if(ct==1){ // if seismic, ...
+          cns = cn; // remember channel set number for seismic
+          ncs = nc; // remember number of seismic channels
         }
-      nct += nc;
+      nct += nc; // count total number of channels
       }
     }
     System.out.println("nct =" + nct + " cns =" + cns);
@@ -83,36 +84,57 @@ public class Segd{
     ais.skipBytes(1024); // skip external header
     rpf = 1;
     rpl = 1;
-    for(int j=0; j<nct-1; ++j){
-      ais.readBytes(th);
-      cn = th[3];
-      int ic = bcd2(th,4);
-      ais.readBytes(the);
-      int rln = bin3(the,0);
-      int rpn = bin3(the,3);
-      n1 = bin3(the,7);
+    for(int j=0; j<nct-1; ++j){ // for all channels (including aux channels)
+      ais.readBytes(th); // trace header
+      cn = th[3]; // channel set number
+      ic = bcd2(th,4); // channel (trace) number
+      ais.readBytes(the); // trace header extension 1
+      rln = bin3(the,0); // receiver line number
+      rpn = bin3(the,3); // receiver point number
+      n1 = bin3(the,7); // number of samples
+      System.out.println("n1 = "+n1 + " the[7-9]: " + the[7] +" "+ the[8] +" "+the[9]); 
       System.out.println("ic =" + ic + " rln =" + rln + " rpn =" + rpn + " n1 =" + n1);
       if(ic==1){
         rpf = rpn;
       } else if(ic == n2){
         rpl = rpn;
       }
-      ais.skipBytes(6*the.length);
-      if(cn==cns){
-        System.out.println("ic =" + ic + " rln =" + rln + " rpn =" + rpn);
-        ais.readFloats(f[ic-1]); // ic-1
+      ais.skipBytes(6*the.length); // skip trace header extensions 2-7
+      if(cn==cns){ // if seismic channel, ...
+        //System.out.println("ic =" + ic + " rln =" + rln + " rpn =" + rpn);
+        ais.readFloats(f[ic-1]); // get the seismic trace
       } else{
-        ais.skipBytes(4*n1);
+        ais.skipBytes(4*n1); // skip the aux trace
       }
     }
     ais.close();
-    f = mul((float)1.0e-14,f);
+    f = mul((float)1.0e-14,f); // scale values to approx. range [-10,10]
 
   }
 
+  public void plot(Sampling s1, Sampling s2, float[][] f, String title){
+    SimplePlot sp = new SimplePlot(SimplePlot.Origin.UPPER_LEFT);
+    sp.setSize(900,900);
+    sp.setVLabel("Time (s)");
+    if(s2.getDelta() ==1.0)
+      sp.setHLabel("Station");
+    else
+      sp.setHLabel("Offset (km)");
+    sp.setTitle(title);
+    PixelsView pv = sp.addPixels(s1,s2,f);
+    pv.setPercentiles(1,99);
+  }
+
   public int bcd2(byte[] b, int k){
-    return (int)(1000*((b[k  ]>>4)&0xf)+100*(b[k  ]&0xf)+
-	           10*((b[k+1]>>4)&0xf)+  1*(b[k+1]&0xf));
+    return (1000*((b[k  ]>>4)&0xf)+100*(b[k  ]&0xf)+
+	      10*((b[k+1]>>4)&0xf)+  1*(b[k+1]&0xf));
+  }
+
+  public int bin3(byte[] b, int k){
+    byte b0 = b[k  ];
+    byte b1 = b[k+1];
+    byte b2 = b[k+2]; 
+    return (b2 & 0xFF) | ((b1 & 0xFF) << 8) | ((b0 & 0x0F) << 16);
   }
 
   public int bin5(byte[] b, int k){
@@ -121,26 +143,21 @@ public class Segd{
     byte b2 = b[k+2];
     byte b3 = b[k+3];
     byte b4 = b[k+4];
-    if(b0<0) b0 += 256;
-    if(b1<0) b1 += 256;
-    if(b2<0) b2 += 256;
-    if(b3<0) b3 += 256;
-    if(b4<0) b4 += 256;
+    //ByteBuffer bb = ByteBuffer.wrap(new byte[] {b0, b1, b2, b3, b4});
+    //int num = bb.getInt();
+    //if(b0<0) b0 += 256;
+    //if(b1<0) b1 += 256;
+    //if(b2<0) b2 += 256;
+    //if(b3<0) b3 += 256;
+    //if(b4<0) b4 += 256;
     return (int)(256.0+b0*65536.0+b1*256.0+b2+b3/256.0+b4/65536.0);
-  }
-
-  public int bin3(byte[] b, int k){
-    byte b0 = b[k  ];
-    byte b1 = b[k+1];
-    byte b2 = b[k+2]; 
-    if(b0<0) b0 += 256;
-    if(b1<0) b1 += 256;
-    if(b2<0) b2 += 256;
-    return (int)((b0<<16)|(b1<<8)|(b2));
+    //return (((b0 & 0x0F) << 32) | ((b1 & 0xFF) << 24) | ((b2 & 0xFF) << 16) | ((b3 & 0xFF) << 8) | (b4 & 0xFF));
+    //return (b4 & 0xFF)|((b3 & 0xFF) << 8)|((b2 & 0xFF) << 16)|((b1 & 0xFF) << 24)|((b0 & 0x0F) << 32);
+    //return num;
   }
   
-  // public String segdDir = "/gpfc/ckohnke/fc2013/segd/141/"; // Linux Lab
-  public String segdDir = "/home/colton/Documents/School/SrDesign/fc2013/segd/141/"; // Laptop
+  public String segdDir = "/gpfc/ckohnke/fc2013/segd/141/"; // Linux Lab
+  //public String segdDir = "/home/colton/Documents/School/SrDesign/fc2013/segd/141/"; // Laptop
   public Sampling s1 = new Sampling(4001,0.002,0.000);
   public Sampling s2 = new Sampling(342,1,954);
   public Sampling s3 = new Sampling(215,1.0,1003);

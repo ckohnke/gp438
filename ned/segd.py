@@ -31,11 +31,11 @@ s3 = Sampling(215,1.0,1003) # first shotpoint is 1003
 #shotDir = "/data/seis/csm/fc2012/"
 #segdDir = "/data/seis/csm/fc2012/segd/test139/"
 
-#shotDir = "/data/seis/csm/fc2013/" #Linux Lab
-#segdDir = "/gpfc/ckohnke/fc2013/segd/141/" #Linux Lab
+shotDir = "/data/seis/csm/fc2013/" #Linux Lab
+segdDir = "/gpfc/ckohnke/fc2013/segd/141/" #Linux Lab
 
-shotDir = "/home/colton/Documents/School/SrDesign/fc2013/" #Laptop
-segdDir = "/home/colton/Documents/School/SrDesign/fc2013/segd/141/" #Laptop
+#shotDir = "/home/colton/Documents/School/SrDesign/fc2013/" #Laptop
+#segdDir = "/home/colton/Documents/School/SrDesign/fc2013/segd/141/" #Laptop
 #############################################################################
 def main(args):
   readLine141Segd()
@@ -49,7 +49,7 @@ def readLine141Segd():
   segdList = File(segdDir).listFiles() # list of segd files
   nshot = len(segdList)-3 # ignore first 3 shots
   #s3 = Sampling(nshot,1,1003) # first shotpoint is 1003
-  #g = zerofloat(s1.count,s2.count,s3.count)
+  g = zerofloat(s1.count,s2.count,s3.count)
   #print segdList
   for segdFile in segdList[3:]:
     print segdFile
@@ -246,7 +246,6 @@ def readSegd(segdFile):
     cn = csh[1] # channel set number
     ct = (csh[10]>>4)&0xf # channel type (in high 4 bits)
     nc = bcd2(csh,8) # number of channels
-    #print "csh[8] = ",csh[8]," csh[9] = ",csh[9]," nc = ",nc
     if nc>0: # if we have channels of this type, ...
       print "cn =",cn," nc =",nc," ct =",ct
       if ct==1: # if seismic, ...
@@ -267,6 +266,7 @@ def readSegd(segdFile):
     rln = bin3(the,0) # receiver line number
     rpn = bin3(the,3) # receiver point number
     n1 = bin3(the,7) # number of samples
+    print "n1 = ",n1," the[7-9]: ",the[7]," ",the[8]," ",the[9]
     print "ic =",ic," rln =",rln," rpn =",rpn," n1 =",n1
     if ic==1:
       rpf = rpn
@@ -274,7 +274,7 @@ def readSegd(segdFile):
       rpl = rpn
     ais.skipBytes(6*len(the)) # skip trace header extensions 2-7
     if cn==cns: # if seismic channel, ...
-      print "ic =",ic," rln =",rln," rpn =",rpn
+      #print "ic =",ic," rln =",rln," rpn =",rpn
       if not f:
         f = zerofloat(n1,n2) # the traces
       ais.readFloats(f[ic-1]) # get the seismic trace
