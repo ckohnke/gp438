@@ -37,14 +37,17 @@ public class PlotTest{
   // private ArrayList<MPoint> _shots;
   private ArrayList<MPoint> _recs;
   public ArrayList<MPoint> _gps;
+  public ArrayList<Segdata> _segd;
   private BasePlot _bp;
   private ResponsePlot _rp;
   private Waypoints wPoints;
+  private Segd seg;
 
 
   private PlotTest(){
     // _shots = new ArrayList<MPoint>(0);
     _gps = new ArrayList<MPoint>(0);
+    _segd = new ArrayList<Segdata>(0);
     _bp = new BasePlot();
     _rp = new ResponsePlot();
   }
@@ -70,8 +73,8 @@ public class PlotTest{
       _plotPanel.setTitle("Base Plot Test");
       _plotPanel.setHLabel("Easting (UTM)");
       _plotPanel.setVLabel("Northing (UTM)");
-      _plotPanel.setHLimits(100,200); //TODO: plot displays E+06 for large ints
-      _plotPanel.setVLimits(100,200);   //TODO: plot displays E+06 for large ints
+      _plotPanel.setHLimits(317600,320600); //TODO: plot displays E+06 for large ints
+      _plotPanel.setVLimits(4121800,4123600);   //TODO: plot displays E+06 for large ints
 
       // A grid view for horizontal and vertical lines (axes).
       _plotPanel.addGrid("H0-V0-");
@@ -82,7 +85,7 @@ public class PlotTest{
 
       // We add two more modes for editing poles and zeros.
       ModeManager mm = _plotFrame.getModeManager();
-      AddMode am = new AddMode(mm); // for test points
+      RoamMode rm = new RoamMode(mm); // roam and plot
       // PoleZeroMode zm = new PoleZeroMode(mm,false);  // for zeros
 
       // The menu bar includes a mode menu for selecting a mode.
@@ -94,13 +97,14 @@ public class PlotTest{
       JMenu modeMenu = new JMenu("Mode");
       modeMenu.setMnemonic('M');
       modeMenu.add(new ModeMenuItem(tzm));
-      modeMenu.add(new ModeMenuItem(am));
+      modeMenu.add(new ModeMenuItem(rm));
       
       JMenu toolMenu = new JMenu("Tools");
       toolMenu.setMnemonic('T');
       toolMenu.add(new GetFlagsFromHH()).setMnemonic('f');
       toolMenu.add(new GetDEM(_plotPanel)).setMnemonic('g');
       toolMenu.add(new ExportFlagsToCSV()).setMnemonic('e');
+      toolMenu.add(new ImportSegdDir()).setMnemonic('s');
       
       JMenuBar menuBar = new JMenuBar();
       menuBar.add(fileMenu);
@@ -113,7 +117,7 @@ public class PlotTest{
       JToolBar toolBar = new JToolBar(SwingConstants.VERTICAL);
       toolBar.setRollover(true);
       toolBar.add(new ModeToggleButton(tzm));
-      toolBar.add(new ModeToggleButton(am));
+      toolBar.add(new ModeToggleButton(rm));
       _plotFrame.add(toolBar,BorderLayout.WEST);
 
       // Initially, enable editing of poles.
@@ -157,15 +161,17 @@ public class PlotTest{
     private PlotFrame _plotFrame;
     private SequenceView _hView;
     private PointsView _pView;
-
+    public SimplePlot sp;
+     
+   
     // The amplitude response can be in decibels (db).
     private ResponsePlot() {
 
       // One plot panel for the impulse response.
       _plotPanelH = new PlotPanel();
-      _plotPanelH.setHLabel("Easting (UTM)");
+      _plotPanelH.setHLabel("Station");
       _plotPanelH.setVLabel("Time (s)");
-      _plotPanelH.setTitle("Title");
+      _plotPanelH.setTitle("Shot");
 
       // This first update constructs a sequence view for the impulse 
       // response, and a points view for amplitude and phase responses.
@@ -188,21 +194,40 @@ public class PlotTest{
       _plotFrame.setLocation(RP_X,RP_Y);
       _plotFrame.setSize(RP_WIDTH,RP_HEIGHT);
       _plotFrame.setFontSizeForPrint(8,240);
-      _plotFrame.setVisible(true);
+      _plotFrame.setVisible(false);
+      sp = new SimplePlot(SimplePlot.Origin.UPPER_LEFT);
+      sp.setSize(900,900);
+      sp.setVLabel("Time (s)");
+
+    }
+
+    public void updateRP(Segdata seg){
+      int n1 = seg.f[0].length;
+      int n2 = seg.f.length;
+      Sampling s1 = new Sampling(n1, 0.001, 0.0);
+      Sampling s2 = new Sampling(n2, 1.0, seg.rpf);
+      if(s2.getDelta() ==1.0)
+        sp.setHLabel("Station");
+      else
+        sp.setHLabel("Offset (km)");
+      sp.setHLimits(seg.rpf, seg.rpl);
+      sp.setTitle("Shot "+seg.sp);
+      PixelsView pv = sp.addPixels(s1,s2,seg.f);
+      pv.setPercentiles(1,99);
     }
 
   }
 
   ///////////////////////////////////////////////////////////////////////////
 
-  private class AddMode extends Mode {
-    public AddMode(ModeManager modeManager) {
+  private class RoamMode extends Mode {
+    public RoamMode(ModeManager modeManager) {
       super(modeManager);
-        setName("Add Receivers");
+        setName("Roaming Mode");
         // setIcon(loadIcon(PolesAndZerosDemo.class,"Poles16.png"));
-        setMnemonicKey(KeyEvent.VK_X);
-        setAcceleratorKey(KeyStroke.getKeyStroke(KeyEvent.VK_X,0));
-        setShortDescription("Add (Shift)");
+        setMnemonicKey(KeyEvent.VK_R);
+        setAcceleratorKey(KeyStroke.getKeyStroke(KeyEvent.VK_R,0));
+        setShortDescription("Roaming Mode");
       }
     
     // When this mode is activated (or deactivated) for a tile, it simply 
@@ -216,78 +241,93 @@ public class PlotTest{
         }
       }
     }
-  }
-
-    private boolean _editing; // true, if currently editing
+    
+    private boolean _moving; // if true, currently moving
     private Tile _tile; // tile in which editing began
-
-    // Handles mouse pressed and released events.
+    
     private MouseListener _ml = new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
-        if (e.isShiftDown()) {
-          add(e);
-        } else {
-          if (beginEdit(e)) {
-            _editing = true;
-            _tile.addMouseMotionListener(_mml);
-          }
+        if(beginMove(e)){
+          _moving = true;
+          _tile.addMouseMotionListener(_mml);
         }
       }
       public void mouseReleased(MouseEvent e) {
-        if (_editing) {
-          _tile.removeMouseMotionListener(_mml);
-          endEdit(e);
-          _editing = false;
-        }
+        _tile.removeMouseMotionListener(_mml);
+        endMove(e);
+        _moving = false;
       }
     };
-
-  // Handles mouse dragged events.
+    // Handles mouse dragged events.
     private MouseMotionListener _mml = new MouseMotionAdapter() {
       public void mouseDragged(MouseEvent e) {
-        if (_editing)
-          duringEdit(e);
+        if (_moving)
+          duringMove(e);
       }
     };
 
-    // Adds a pole or zero at mouse coordinates (x,y).
-    private void add(MouseEvent e) {
-      _tile = (Tile)e.getSource();
-      double x = e.getX();
-      double y = e.getY();
-      MPoint p = new MPoint(1,x,y);
-      System.out.println("p.x: " + p.x + " p.y: " + p.y);
-      addMPoint(p);
-    }
-      
-    // Begins editing of an existing pole or zero, if close enough.
-    // Returns true, if close enough so that we have begun editing; 
-    // false, otherwise.
-    private boolean beginEdit(MouseEvent e) {
+    private boolean beginMove(MouseEvent e){
       _tile = (Tile)e.getSource();
       int x = e.getX();
       int y = e.getY();
-      return false;
+      MPoint nearest = getNearestGPS(x,y);    
+      return true;
     }
 
-  private void duringEdit(MouseEvent e) {
+    private void duringMove(MouseEvent e) {
       int x = e.getX();
       int y = e.getY();
-      // Cdouble z = pointToComplex(x,y);
-      // if (_poles) {
-      //  movePole(_zedit,z);
-      // } else {
-      //  moveZero(_zedit,z);
-      // }
-      // _zedit = z;
+      //System.out.println("x: " + x + " y: " + y);
+      MPoint gpsNear = getNearestGPS(x,y);
+      //System.out.println(gpsNear.stationID);
+      Segdata segNear = getNearestSegdata(gpsNear.stationID);
+      //System.out.println(segNear.sp);
+      _rp.updateRP(segNear);
     }
 
-    // Called when done editing a pole or zero.
-    private void endEdit(MouseEvent e) {
-      duringEdit(e);
-      _editing = false;
-    } 
- 
+    private void endMove(MouseEvent e) {
+      duringMove(e);      
+    }
+
+    private MPoint getNearestGPS(int x, int y){
+      Transcaler ts = _tile.getTranscaler();
+      Projector hp = _tile.getHorizontalProjector();
+      Projector vp = _tile.getVerticalProjector();
+      double xu = ts.x(x);
+      double yu = ts.y(y);
+      double xv = hp.v(xu);
+      double yv = vp.v(yu);
+      MPoint test = new MPoint(xv, yv, true);
+      MPoint near = wPoints._gps.get(0);
+      MPoint fin = wPoints._gps.get(0);
+      double d = near.xyDist(test);
+      for(int i = 1; i<wPoints._gps.size(); ++i){
+        near = wPoints._gps.get(i);
+        if(near.xyDist(test) < d){
+          fin = wPoints._gps.get(i);
+          d = fin.xyDist(test);
+        }
+      }
+      return fin;
+    }
+
+    private Segdata getNearestSegdata(int stationID){
+      Segdata seg1 = seg._segd.get(0);
+      Segdata seg2 = seg._segd.get(0);
+      int d1 = abs(seg1.sp-stationID);
+      for(int i=1; i<seg._segd.size(); ++i){
+        seg2 = seg._segd.get(i);
+        int d2 = abs(seg2.sp-stationID);
+        if(d2 < d1){
+          seg1 = seg2;
+          d1 = abs(seg1.sp-stationID);
+        }
+      }
+      return seg1;
+    }
+
+  }
+
   ///////////////////////////////////////////////////////////////////////////
   
   // Actions common to both plot frames.
@@ -329,7 +369,6 @@ public class PlotTest{
       super("Get HandHeld GPS");
     }
     public void actionPerformed(ActionEvent event) {
-      //TODO
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
       fc.showOpenDialog(null);
       File f = fc.getSelectedFile();
@@ -343,14 +382,26 @@ public class PlotTest{
         
     }
     public void actionPerformed(ActionEvent event) {
-      //TODO
         JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
         fc.showSaveDialog(null);
         File f = fc.getSelectedFile();
         wPoints.exportToCSV(f);
       } 
     }
-  
+  private class ImportSegdDir extends AbstractAction {
+    private ImportSegdDir(){
+      super("Import Segd Directory");
+        
+    }
+    public void actionPerformed(ActionEvent event) {
+        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.showSaveDialog(null);
+        File f = fc.getSelectedFile();
+        seg = new Segd(f.getAbsolutePath());
+        System.out.println("SEGD IMPORTED");
+      } 
+    }
 
 
   ///////////////////////////////////////////////////////////////////////////

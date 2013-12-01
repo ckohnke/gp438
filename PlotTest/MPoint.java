@@ -2,6 +2,12 @@ import java.util.*;
 
 public class MPoint {
   // from xyz coord
+  MPoint(double x, double y, boolean UTM){
+    this.x = x; 
+    this.y = y;
+  }
+
+  // from xyz coord
   MPoint(int stationID, double x, double y, double z, boolean UTM){
     this.stationID = stationID;
     this.x = x; 

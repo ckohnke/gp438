@@ -8,13 +8,13 @@ public class Waypoints{
 
   public static void main(String[] args){
     System.out.println("GPS TEST START");
-    File input = new File("/home/colton/Documents/School/SrDesign/PlotTest/gps_input_test1.txt");
+    //File input = new File("/home/colton/Documents/School/SrDesign/PlotTest/gps_input_test1.txt");
+    File input = new File("./gps_input_test1.txt");    
     Waypoints w = new Waypoints(input);
     //for(int i=0; i< w._gps.size(); ++i){
       //MPoint p = w._gps.get(i);
       //System.out.println("Station: " + p.stationID+ " lat: " + p.lat + " lon: " + p.lon + " x: " + p.x + " y: " + p.y + " z: " + p.z);
     //}
-    w.extrapolateGPS();
     for(int i=0; i< w._gps.size(); ++i){
       MPoint p = w._gps.get(i);
       System.out.println("Station: " + p.stationID+ " lat: " + p.lat + " lon: " + p.lon + " x: " + p.x + " y: " + p.y + " z: " + p.z);
@@ -27,6 +27,7 @@ public class Waypoints{
     _gps = new ArrayList<MPoint>(0);
     readLatLonFromTSV(f);
     latLonToUTM();
+    extrapolateGPS();
   }
 
   public double degToRad(double deg){
