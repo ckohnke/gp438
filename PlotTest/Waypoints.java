@@ -8,18 +8,24 @@ public class Waypoints{
 
   public static void main(String[] args){
     System.out.println("GPS TEST START");
-    File input = new File("/home/colton/Documents/School/SrDesign/PlotTest/Waypoints_20-OCT-13.gpx");
+    File input = new File("/home/colton/Documents/School/SrDesign/PlotTest/gps_input_test1.txt");
     Waypoints w = new Waypoints(input);
+    //for(int i=0; i< w._gps.size(); ++i){
+      //MPoint p = w._gps.get(i);
+      //System.out.println("Station: " + p.stationID+ " lat: " + p.lat + " lon: " + p.lon + " x: " + p.x + " y: " + p.y + " z: " + p.z);
+    //}
+    w.extrapolateGPS();
     for(int i=0; i< w._gps.size(); ++i){
       MPoint p = w._gps.get(i);
       System.out.println("Station: " + p.stationID+ " lat: " + p.lat + " lon: " + p.lon + " x: " + p.x + " y: " + p.y + " z: " + p.z);
     }
+
     System.out.println("GPS TEST FINISH");    
   }
 
   public Waypoints(File f){
     _gps = new ArrayList<MPoint>(0);
-    readLatLongFromXML(f);
+    readLatLonFromTSV(f);
     latLonToUTM();
   }
 
@@ -57,10 +63,8 @@ public class Waypoints{
         int stationID = s.nextInt();
         double lat = s.nextDouble();
         double lon = s.nextDouble();
-        System.out.println("ID: " + stationID + " lat: " + lat + " lon: " + lon);
         MPoint p = new MPoint(stationID, lat, lon);
         _gps.add(p);
-        System.out.println(_gps.get(_gps.size()-1).stationID);
       }
       s.close();
     } catch(IOException ex){
@@ -68,7 +72,7 @@ public class Waypoints{
     }
   }
   
-  public void readLatLongFromXML(File f){
+  public void readLatLonFromXML(File f){
     try {
       Scanner s = new Scanner(f);
       String current = "";
@@ -174,6 +178,35 @@ public class Waypoints{
     } catch(IOException ex){
       System.out.println(ex);  
     }
+  }
+
+  public void extrapolateGPS(){ //assumes 
+    Collections.sort(_gps, new MPointComp());    
+    int start, end, dn;
+    double dx, dy, dz, r;
+    double x, y, z;
+    ArrayList<MPoint> gnew = new ArrayList<MPoint>(0);
+    for(int i=0; i<_gps.size()-1; ++i){
+      MPoint p1 = _gps.get(i);
+      MPoint p2 = _gps.get(i+1);
+      start = p1.stationID;
+      end = p2.stationID;
+      dx = p1.xDist(p2);
+      dy = p1.yDist(p2);
+      dz = p1.zDist(p2);
+      r =  p1.xyzDist(p2);
+      dn = end-start-1;
+      for(int m=1; m<=dn; ++m){
+        x = p1.x + dx*m/dn;
+        y = p1.y + dy*m/dn;
+        z = p1.z + dz*m/dn;
+        MPoint a = new MPoint(start+m, x, y, z, true);
+        gnew.add(a);
+      }
+    }
+    for(int i=0; i<gnew.size(); ++i)
+      _gps.add(gnew.get(i));
+    Collections.sort(_gps, new MPointComp());
   }
 
   protected double atanh(double x){

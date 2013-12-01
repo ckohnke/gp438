@@ -31,11 +31,11 @@ s3 = Sampling(215,1.0,1003) # first shotpoint is 1003
 #shotDir = "/data/seis/csm/fc2012/"
 #segdDir = "/data/seis/csm/fc2012/segd/test139/"
 
-shotDir = "/data/seis/csm/fc2013/" #Linux Lab
-segdDir = "/gpfc/ckohnke/fc2013/segd/141/" #Linux Lab
+#shotDir = "/data/seis/csm/fc2013/" #Linux Lab
+#segdDir = "/gpfc/ckohnke/fc2013/segd/141/" #Linux Lab
 
-#shotDir = "/home/colton/Documents/School/SrDesign/fc2013/" #Laptop
-#segdDir = "/home/colton/Documents/School/SrDesign/fc2013/segd/141/" #Laptop
+shotDir = "/home/colton/Documents/School/SrDesign/fc2013/" #Laptop
+segdDir = "/home/colton/Documents/School/SrDesign/fc2013/segd/141/" #Laptop
 #############################################################################
 def main(args):
   readLine141Segd()
@@ -46,10 +46,13 @@ def main(args):
 
 def readLine141Segd():
   #global s3
-  segdList = File(segdDir).listFiles() # list of segd files
+  csegdList = File(segdDir).listFiles() # list of segd files
   nshot = len(segdList)-3 # ignore first 3 shots
-  #s3 = Sampling(nshot,1,1003) # first shotpoint is 1003
+  s3 = Sampling(nshot,1,1003) # first shotpoint is 1003
   g = zerofloat(s1.count,s2.count,s3.count)
+  print "s1.count ", s1.count
+  print "s2.count ", s2.count
+  print "s3.count ", s3.count
   #print segdList
   for segdFile in segdList[3:]:
     print segdFile
@@ -235,7 +238,7 @@ def readSegd(segdFile):
   ais.readBytes(gh) # general header 2
   ais.readBytes(gh) # general header 3
   sln = bin5(gh,3) # source line number
-  #print "gh[3-7] = ",gh[3], " ",gh[4]," ",gh[5]," ",gh[6]," ",gh[7] 
+  print "gh[3-7] = ",gh[3], " ",gh[4]," ",gh[5]," ",gh[6]," ",gh[7] 
   spn = bin5(gh,8) # source point number
   print "file =",segdFile
   print "fn = ",fn," sln =",sln," spn =",spn
@@ -266,7 +269,7 @@ def readSegd(segdFile):
     rln = bin3(the,0) # receiver line number
     rpn = bin3(the,3) # receiver point number
     n1 = bin3(the,7) # number of samples
-    print "n1 = ",n1," the[7-9]: ",the[7]," ",the[8]," ",the[9]
+    #print "n1 = ",n1," the[7-9]: ",the[7]," ",the[8]," ",the[9]
     print "ic =",ic," rln =",rln," rpn =",rpn," n1 =",n1
     if ic==1:
       rpf = rpn

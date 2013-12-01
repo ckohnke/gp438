@@ -1,3 +1,5 @@
+import java.util.*;
+
 public class MPoint {
   // from xyz coord
   MPoint(int stationID, double x, double y, double z, boolean UTM){
@@ -43,18 +45,42 @@ public class MPoint {
   }
 
 
-  public double xyDistance(MPoint p){
+  public double xyDist(MPoint p){
     return Math.sqrt((x-p.x)*(x-p.x)+(y-p.y)*(y-p.y));
   }
 
-  public double xyzDistance(MPoint p){
+  public double xDist(MPoint p){
+    return Math.sqrt((x-p.x)*(x-p.x));
+  }
+
+  public double yDist(MPoint p){
+    return Math.sqrt((y-p.y)*(y-p.y));
+  }
+
+  public double zDist(MPoint p){
+    return Math.sqrt((z-p.z)*(z-p.z));
+  }
+
+  public double xyzDist(MPoint p){
     return Math.sqrt((x-p.x)*(x-p.x)+(y-p.y)*(y-p.y)+(z-p.z)*(z-p.z));
   }
-  
+
   public int stationID;
   public double x, y, z;
   public double lat, lon;
   public int UTMzone;  
   public boolean selected;
+}
+
+class MPointComp implements Comparator<MPoint>{
+
+  //@Override
+  public int compare(MPoint p1, MPoint p2) {
+    if(p1.stationID > p2.stationID){
+       return 1;
+    } else {
+       return -1;
+    }
+  }
 }
 
