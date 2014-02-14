@@ -1,16 +1,16 @@
-import java.awt.*;
+import static edu.mines.jtk.util.ArrayMath.*;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.*;
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
+
 import javax.swing.*;
-import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 import edu.mines.jtk.awt.*;
-import edu.mines.jtk.dsp.*;
-import edu.mines.jtk.util.Cdouble;
+import edu.mines.jtk.dsp.Sampling;
 import edu.mines.jtk.mosaic.*;
-import static edu.mines.jtk.util.ArrayMath.*;
 
 public class PlotTest {
 
@@ -36,26 +36,24 @@ public class PlotTest {
 
 	// Plot of source/receivers
 	// private ArrayList<MPoint> _shots;
-	private ArrayList<MPoint> _recs;
-	public ArrayList<MPoint> _gps;
+	//private ArrayList<MPoint> _recs;
+	public static ArrayList<MPoint> _gps;
 	public ArrayList<Segdata> _segd;
-	private BasePlot _bp;
+	private static BasePlot _bp;
 	private ResponsePlot _rp;
-	private Waypoints wPoints;
-	private Segd seg;
 
 	private PlotTest() {
 		// _shots = new ArrayList<MPoint>(0);
-		_gps = new ArrayList<MPoint>(0);
+		//_gps = new ArrayList<MPoint>(0);
 		_segd = new ArrayList<Segdata>(0);
 		_bp = new BasePlot();
 		_rp = new ResponsePlot();
 	}
 
-	private void addMPoint(MPoint p) {
-		_recs.add(p);
-		_bp.updateBPView();
-	}
+//	private void addMPoint(MPoint p) {
+//		_recs.add(p);
+//		_bp.updateBPView();
+//	}
 
 	// /////////////////////////////////////////////////////////////////////////
 
@@ -138,13 +136,13 @@ public class PlotTest {
 
 		// Makes points visible
 		private void updateBPView() {
-			int np = wPoints._gps.size();
+			int np = _gps.size();
 			float[] xp = new float[np];
 			float[] yp = new float[np];
 			for (int ip = 0; ip < np; ++ip) {
-				MPoint p = wPoints._gps.get(ip);
-				xp[ip] = (float) p.x;
-				yp[ip] = (float) p.y;
+				MPoint p = _gps.get(ip);
+				xp[ip] = (float) p.getUTMX();
+				yp[ip] = (float) p.getUTMY();
 			}
 			if (_baseView == null) {
 				_baseView = _plotPanel.addPoints(xp, yp);
@@ -203,24 +201,24 @@ public class PlotTest {
 		}
 
 		public void updateRP(Segdata seg) {
-			int n1 = seg.f[0].length;
-			int n2 = seg.f.length;
+			int n1 = seg.getF()[0].length;
+			int n2 = seg.getF().length;
 			Sampling s1 = new Sampling(n1, 0.001, 0.0);
-			Sampling s2 = new Sampling(n2, 1.0, seg.rpf);
+			Sampling s2 = new Sampling(n2, 1.0, seg.getRPF());
 			if (s2.getDelta() == 1.0)
 				sp.setHLabel("Station");
 			else
 				sp.setHLabel("Offset (km)");
-			sp.setHLimits(seg.rpf, seg.rpl);
-			sp.setTitle("Shot " + seg.sp);
-			PixelsView pv = sp.addPixels(s1, s2, seg.f);
+			sp.setHLimits(seg.getRPF(), seg.getRPF());
+			sp.setTitle("Shot " + seg.getSP());
+			PixelsView pv = sp.addPixels(s1, s2, seg.getF());
 			pv.setPercentiles(1, 99);
 		}
 		
 		// Find segds within range
 	    // add them all together
 		// Display the plot
-		public void displayRange(int n1, int n2) {
+		/*public void displayRange(int n1, int n2) {
 			ArrayList<Segdata> range = new ArrayList<Segdata>(0);
 			for(int i=0; i<seg._segd.size();++i){
 				Segdata tmp = seg._segd.get(i);
@@ -232,12 +230,17 @@ public class PlotTest {
 			
 			
 		}
-
+*/
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
 
 	private class RoamMode extends Mode {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public RoamMode(ModeManager modeManager) {
 			super(modeManager);
 			setName("Roaming Mode");
@@ -286,9 +289,9 @@ public class PlotTest {
 
 		private boolean beginMove(MouseEvent e) {
 			_tile = (Tile) e.getSource();
-			int x = e.getX();
-			int y = e.getY();
-			MPoint nearest = getNearestGPS(x, y);
+			//int x = e.getX();
+			//int y = e.getY();
+			//getNearestGPS(x, y);
 			return true;
 		}
 
@@ -298,7 +301,7 @@ public class PlotTest {
 			// System.out.println("x: " + x + " y: " + y);
 			MPoint gpsNear = getNearestGPS(x, y);
 			// System.out.println(gpsNear.stationID);
-			Segdata segNear = getNearestSegdata(gpsNear.stationID);
+			Segdata segNear = getNearestSegdata(gpsNear.getStation());
 			// System.out.println(segNear.sp);
 			_rp.updateRP(segNear);
 		}
@@ -316,13 +319,13 @@ public class PlotTest {
 			double xv = hp.v(xu);
 			double yv = vp.v(yu);
 			MPoint test = new MPoint(xv, yv, true);
-			MPoint near = wPoints._gps.get(0);
-			MPoint fin = wPoints._gps.get(0);
+			MPoint near = _gps.get(0);
+			MPoint fin = _gps.get(0);
 			double d = near.xyDist(test);
-			for (int i = 1; i < wPoints._gps.size(); ++i) {
-				near = wPoints._gps.get(i);
+			for (int i = 1; i < _gps.size(); ++i) {
+				near = _gps.get(i);
 				if (near.xyDist(test) < d) {
-					fin = wPoints._gps.get(i);
+					fin = _gps.get(i);
 					d = fin.xyDist(test);
 				}
 			}
@@ -330,15 +333,15 @@ public class PlotTest {
 		}
 
 		private Segdata getNearestSegdata(int stationID) {
-			Segdata seg1 = seg._segd.get(0);
-			Segdata seg2 = seg._segd.get(0);
-			int d1 = abs(seg1.sp - stationID);
-			for (int i = 1; i < seg._segd.size(); ++i) {
-				seg2 = seg._segd.get(i);
-				int d2 = abs(seg2.sp - stationID);
+			Segdata seg1 = _segd.get(0);
+			Segdata seg2 = _segd.get(0);
+			int d1 = abs(seg1.getSP() - stationID);
+			for (int i = 1; i < _segd.size(); ++i) {
+				seg2 = _segd.get(i);
+				int d2 = abs(seg2.getSP() - stationID);
 				if (d2 < d1) {
 					seg1 = seg2;
-					d1 = abs(seg1.sp - stationID);
+					d1 = abs(seg1.getSP() - stationID);
 				}
 			}
 			return seg1;
@@ -349,6 +352,8 @@ public class PlotTest {
 	// /////////////////////////////////////////////////////////////////////////
 
 	private class PlayMode extends Mode {
+		private static final long serialVersionUID = 1L;
+
 		public PlayMode(ModeManager modeManager) {
 			super(modeManager);
 			setName("Play Mode");
@@ -372,10 +377,11 @@ public class PlotTest {
 			public void mousePressed(MouseEvent e) {
 				System.out.println("I'M ALIVE!!!!");
 				Segdata s = null;
-				System.out.println(seg._segd.size());
-				for (int i = 0; i < seg._segd.size(); ++i) {
-					s = seg._segd.get(i);
-					_rp.updateRP(s); // TODO: Only displays the last one after
+				System.out.println(_segd.size());
+				for (int i = 0; i < _segd.size(); ++i) {
+					s = _segd.get(i);
+					_rp.updateRP(s);
+					// TODO: Only displays the last one after
 										// massive lag...
 
 				}
@@ -388,6 +394,8 @@ public class PlotTest {
 
 	// Actions common to both plot frames.
 	private class ExitAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
 		private ExitAction() {
 			super("Exit");
 		}
@@ -398,6 +406,7 @@ public class PlotTest {
 	}
 
 	private class SaveAsPngAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
 		private PlotFrame _plotFrame;
 
 		private SaveAsPngAction(PlotFrame plotFrame) {
@@ -417,6 +426,8 @@ public class PlotTest {
 	}
 
 	private class GetDEM extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
 		private GetDEM(PlotPanel plotPanel) {
 			super("Get USGS Elevation");
 
@@ -428,6 +439,8 @@ public class PlotTest {
 	}
 
 	private class GetFlagsFromHH extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
 		private GetFlagsFromHH() {
 			super("Get HandHeld GPS");
 		}
@@ -436,12 +449,16 @@ public class PlotTest {
 			JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
 			fc.showOpenDialog(null);
 			File f = fc.getSelectedFile();
-			wPoints = new Waypoints(f);
+			_gps = Waypoints.readLatLonFromTSV(f);
+			Waypoints.latLonToUTM(_gps);
+			Waypoints.extrapolateGPS(_gps);
 			_bp.updateBPView();
 		}
 	}
 
 	private class ExportFlagsToCSV extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
 		private ExportFlagsToCSV() {
 			super("Export GPS to CSV");
 
@@ -451,11 +468,13 @@ public class PlotTest {
 			JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
 			fc.showSaveDialog(null);
 			File f = fc.getSelectedFile();
-			wPoints.exportToCSV(f);
+			Waypoints.exportToCSV(_gps, f);
 		}
 	}
 
 	private class ImportSegdDir extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
 		private ImportSegdDir() {
 			super("Import Segd Directory");
 
@@ -466,13 +485,15 @@ public class PlotTest {
 			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			fc.showSaveDialog(null);
 			File f = fc.getSelectedFile();
-			seg = new Segd(f.getAbsolutePath());
+			_segd = Segd.readLineSegd(f.getAbsolutePath());
 			System.out.println("SEGD IMPORTED");
 		}
 
 	}
 
 	private class DisplayRange extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+
 		private DisplayRange() {
 			super("Display Range");
 
@@ -481,7 +502,7 @@ public class PlotTest {
 		public void actionPerformed(ActionEvent event) {
 			int n1 = 3000;
 			int n2 = 3500;
-			_rp.displayRange(n1, n2);
+			// _rp.displayRange(n1, n2);
 		}
 	}
 
