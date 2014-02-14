@@ -163,8 +163,6 @@ public class PlotTest {
 
 		private PlotPanel _plotPanelH;
 		private PlotFrame _plotFrame;
-		private SequenceView _hView;
-		private PointsView _pView;
 		public SimplePlot sp;
 
 		// The Shot response
@@ -217,6 +215,22 @@ public class PlotTest {
 			sp.setTitle("Shot " + seg.sp);
 			PixelsView pv = sp.addPixels(s1, s2, seg.f);
 			pv.setPercentiles(1, 99);
+		}
+		
+		// Find segds within range
+	    // add them all together
+		// Display the plot
+		public void displayRange(int n1, int n2) {
+			ArrayList<Segdata> range = new ArrayList<Segdata>(0);
+			for(int i=0; i<seg._segd.size();++i){
+				Segdata tmp = seg._segd.get(i);
+				if(tmp.sp > n1 && tmp.sp < n2){
+					range.add(tmp);
+				}
+			}
+			int ysize = range.get(0).f[0].length;
+			
+			
 		}
 
 	}
@@ -361,8 +375,9 @@ public class PlotTest {
 				System.out.println(seg._segd.size());
 				for (int i = 0; i < seg._segd.size(); ++i) {
 					s = seg._segd.get(i);
-					_rp.updateRP(s); //TODO: Only displays the last one after massive lag...
-					
+					_rp.updateRP(s); // TODO: Only displays the last one after
+										// massive lag...
+
 				}
 			}
 		};
@@ -453,6 +468,20 @@ public class PlotTest {
 			File f = fc.getSelectedFile();
 			seg = new Segd(f.getAbsolutePath());
 			System.out.println("SEGD IMPORTED");
+		}
+
+	}
+
+	private class DisplayRange extends AbstractAction {
+		private DisplayRange() {
+			super("Display Range");
+
+		}
+
+		public void actionPerformed(ActionEvent event) {
+			int n1 = 3000;
+			int n2 = 3500;
+			_rp.displayRange(n1, n2);
 		}
 	}
 
