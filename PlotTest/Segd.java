@@ -180,8 +180,8 @@ public class Segd{
     return (int)(256.0+b0*65536.0+b1*256.0+b2+b3/256.0+b4/65536.0);
   }
   
-  public String segdDir = "/gpfc/ckohnke/fc2013/segd/140/"; // Linux Lab
-  //public String segdDir = "/home/colton/Documents/School/SrDesign/fc2013/segd/141/"; // Laptop
+  //public String segdDir = "/gpfc/ckohnke/fc2013/segd/140/"; // Linux Lab
+  public String segdDir = "/home/colton/Documents/School/SrDesign/fc2013/segd/139/"; // Laptop
 
   public ArrayList<Segdata> _segd;
   

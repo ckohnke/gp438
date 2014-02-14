@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<workbench progressCount="18" version="2.0">
+<workbench progressCount="17" version="2.0">
 <workbenchAdvisor/>
-<window height="768" maximized="true" width="1020" x="114" y="46">
+<window height="745" maximized="true" width="1020" x="114" y="0">
 <fastViewData fastViewLocation="1024"/>
 <perspectiveBar>
 <itemSize x="160"/>
 </perspectiveBar>
 <coolbarLayout>
 <coolItem id="group.file" itemType="typeGroupMarker"/>
-<coolItem id="org.eclipse.ui.workbench.file" itemType="typeToolBarContribution" x="132" y="30"/>
+<coolItem id="org.eclipse.ui.workbench.file" itemType="typeToolBarContribution" x="148" y="34"/>
 <coolItem id="additions" itemType="typeGroupMarker"/>
-<coolItem id="org.eclipse.debug.ui.launchActionSet" itemType="typeToolBarContribution" x="120" y="30"/>
-<coolItem id="org.eclipse.search.searchActionSet" itemType="typeToolBarContribution" x="76" y="30"/>
-<coolItem id="org.eclipse.ui.edit.text.actionSet.presentation" itemType="typeToolBarContribution" x="124" y="30"/>
-<coolItem id="group.nav" itemType="typeGroupMarker"/>
-<coolItem id="org.eclipse.ui.workbench.navigate" itemType="typeToolBarContribution" x="184" y="30"/>
-<coolItem id="group.editor" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.debug.ui.launch.toolbar" itemType="typeToolBarContribution" x="-1" y="-1"/>
+<coolItem id="org.eclipse.debug.ui.launchActionSet" itemType="typeToolBarContribution" x="160" y="34"/>
+<coolItem id="org.eclipse.debug.ui.main.toolbar" itemType="typeToolBarContribution" x="-1" y="-1"/>
 <coolItem id="org.eclipse.jdt.ui.CompilationUnitEditor" itemType="typeToolBarContribution" x="-1" y="-1"/>
+<coolItem id="org.eclipse.search.searchActionSet" itemType="typeToolBarContribution" x="92" y="34"/>
+<coolItem id="org.eclipse.ui.edit.text.actionSet.presentation" itemType="typeToolBarContribution" x="128" y="34"/>
+<coolItem id="group.nav" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.workbench.navigate" itemType="typeToolBarContribution" x="236" y="34"/>
+<coolItem id="group.editor" itemType="typeGroupMarker"/>
 <coolItem id="group.help" itemType="typeGroupMarker"/>
 <coolItem id="org.eclipse.ui.workbench.help" itemType="typeToolBarContribution" x="-1" y="-1"/>
 </coolbarLayout>
@@ -27,13 +29,33 @@
 <folder appearance="1" expanded="2">
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
 <part id="0"/>
+<part id="1"/>
+<part id="2"/>
+<part id="3"/>
+<part id="4"/>
 </presentation>
 </folder>
 </info>
 </editorArea>
-<editor activePart="true" focus="true" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="PlotTest.java" partName="PlotTest.java" path="/u/af/cf/ckohnke/gp438/novice/PlotTest.java" title="PlotTest.java" tooltip="novice/PlotTest.java" workbook="DefaultEditorWorkbook">
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Obs.java" partName="Obs.java" path="/home/colton/Documents/School/SrDesign/novice/Obs.java" title="Obs.java" tooltip="novice/Obs.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/novice/Obs.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="95" selectionTopPixel="0"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Segd.java" partName="Segd.java" path="/home/colton/Documents/School/SrDesign/novice/Segd.java" title="Segd.java" tooltip="novice/Segd.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/novice/Segd.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="5527" selectionTopPixel="0"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Waypoints.java" partName="Waypoints.java" path="/home/colton/Documents/School/SrDesign/novice/Waypoints.java" title="Waypoints.java" tooltip="novice/Waypoints.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/novice/Waypoints.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="5936" selectionTopPixel="3355"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Segdata.java" partName="Segdata.java" path="/home/colton/Documents/School/SrDesign/novice/Segdata.java" title="Segdata.java" tooltip="novice/Segdata.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/novice/Segdata.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="451" selectionTopPixel="0"/>
+</editor>
+<editor activePart="true" focus="true" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="PlotTest.java" partName="PlotTest.java" path="/home/colton/Documents/School/SrDesign/novice/PlotTest.java" title="PlotTest.java" tooltip="novice/PlotTest.java" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/novice/PlotTest.java"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="6406" selectionTopPixel="3230"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="943" selectionTopPixel="0"/>
 </editor>
 </editors>
 <views>
@@ -115,7 +137,7 @@
 </folder>
 </info>
 <info part="org.eclipse.ui.editorss" ratio="0.25940594" ratioLeft="262" ratioRight="748" relationship="2" relative="topLeft"/>
-<info folder="true" part="bottomRight" ratio="0.6599064" ratioLeft="423" ratioRight="218" relationship="4" relative="org.eclipse.ui.editorss">
+<info folder="true" part="bottomRight" ratio="0.7841845" ratioLeft="476" ratioRight="131" relationship="4" relative="org.eclipse.ui.editorss">
 <folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
 <page content="org.eclipse.ui.views.TaskList" label="Tasks"/>
 <page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
@@ -126,7 +148,7 @@
 </presentation>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@2cbfcb7c" ratio="0.7495268" ratioLeft="1188" ratioRight="397" relationship="2" relative="org.eclipse.ui.editorss">
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@2cbfcb7c" ratio="0.7302752" ratioLeft="796" ratioRight="294" relationship="2" relative="org.eclipse.ui.editorss">
 <folder activePageID="org.eclipse.ui.views.ContentOutline" appearance="2" expanded="2">
 <page content="org.eclipse.ui.views.ContentOutline" label="Outline"/>
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
@@ -147,52 +169,162 @@
 <workingSets/>
 <navigationHistory>
 <editors>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/novice/Obs.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/novice/Segd.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/novice/Waypoints.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/novice/MPoint.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/novice/Segdata.java"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/novice/PlotTest.java"/>
 </editors>
-<item historyLabel="PlotTest.java" index="0">
-<position info="not_deleted" x="0" y="0"/>
+<item historyLabel="Obs.java" index="0">
+<position info="not_deleted" x="95" y="0"/>
 </item>
-<item historyLabel="PlotTest.java" index="0">
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="952" y="0"/>
+</item>
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="5036" y="0"/>
+</item>
+<item historyLabel="MPoint.java" index="3">
 <position/>
 </item>
-<item historyLabel="PlotTest.java" index="0">
-<position info="not_deleted" x="10488" y="0"/>
+<item historyLabel="MPoint.java" index="3">
+<position info="not_deleted" x="1558" y="0"/>
 </item>
-<item historyLabel="PlotTest.java" index="0">
-<position/>
+<item historyLabel="MPoint.java" index="3">
+<position info="not_deleted" x="1609" y="0"/>
 </item>
-<item historyLabel="PlotTest.java" index="0">
-<position info="not_deleted" x="10038" y="0"/>
+<item historyLabel="MPoint.java" index="3">
+<position info="not_deleted" x="2245" y="0"/>
 </item>
-<item historyLabel="PlotTest.java" index="0">
-<position/>
+<item historyLabel="MPoint.java" index="3">
+<position info="not_deleted" x="2114" y="0"/>
 </item>
-<item historyLabel="PlotTest.java" index="0">
-<position/>
+<item historyLabel="Segdata.java" index="4">
+<position info="not_deleted" x="389" y="0"/>
 </item>
-<item historyLabel="PlotTest.java" index="0">
-<position info="not_deleted" x="10547" y="0"/>
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="5055" y="0"/>
 </item>
-<item historyLabel="PlotTest.java" index="0">
-<position info="not_deleted" x="10544" y="0"/>
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="6063" y="0"/>
 </item>
-<item historyLabel="PlotTest.java" index="0">
-<position/>
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="6027" y="0"/>
 </item>
-<item historyLabel="PlotTest.java" index="0">
-<position info="not_deleted" x="10533" y="0"/>
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="5991" y="0"/>
 </item>
-<item historyLabel="PlotTest.java" index="0">
-<position/>
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="5843" y="0"/>
 </item>
-<item historyLabel="PlotTest.java" index="0">
-<position info="not_deleted" x="10533" y="0"/>
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="5817" y="0"/>
 </item>
-<item historyLabel="PlotTest.java" index="0">
-<position info="not_deleted" x="10276" y="0"/>
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="5284" y="0"/>
 </item>
-<item active="true" historyLabel="PlotTest.java" index="0">
-<position/>
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="5324" y="0"/>
+</item>
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="5344" y="0"/>
+</item>
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="4344" y="0"/>
+</item>
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="4361" y="0"/>
+</item>
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="4385" y="0"/>
+</item>
+<item historyLabel="MPoint.java" index="3">
+<position info="not_deleted" x="2031" y="0"/>
+</item>
+<item historyLabel="Segdata.java" index="4">
+<position info="not_deleted" x="389" y="0"/>
+</item>
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="5936" y="0"/>
+</item>
+<item historyLabel="Segd.java" index="1">
+<position info="not_deleted" x="2385" y="1"/>
+</item>
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="5936" y="0"/>
+</item>
+<item historyLabel="MPoint.java" index="3">
+<position info="not_deleted" x="1888" y="0"/>
+</item>
+<item historyLabel="Segdata.java" index="4">
+<position info="not_deleted" x="451" y="0"/>
+</item>
+<item historyLabel="MPoint.java" index="3">
+<position info="not_deleted" x="155" y="0"/>
+</item>
+<item historyLabel="Segdata.java" index="4">
+<position info="not_deleted" x="451" y="0"/>
+</item>
+<item historyLabel="Segd.java" index="1">
+<position info="not_deleted" x="2385" y="1"/>
+</item>
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="5936" y="0"/>
+</item>
+<item historyLabel="PlotTest.java" index="5">
+<position info="not_deleted" x="463" y="0"/>
+</item>
+<item historyLabel="PlotTest.java" index="5">
+<position info="not_deleted" x="4304" y="0"/>
+</item>
+<item historyLabel="PlotTest.java" index="5">
+<position info="not_deleted" x="4338" y="0"/>
+</item>
+<item historyLabel="PlotTest.java" index="5">
+<position info="not_deleted" x="8700" y="0"/>
+</item>
+<item historyLabel="Segd.java" index="1">
+<position info="not_deleted" x="1472" y="6"/>
+</item>
+<item historyLabel="PlotTest.java" index="5">
+<position info="not_deleted" x="8700" y="0"/>
+</item>
+<item historyLabel="PlotTest.java" index="5">
+<position info="not_deleted" x="10821" y="5"/>
+</item>
+<item historyLabel="Segdata.java" index="4">
+<position info="not_deleted" x="451" y="0"/>
+</item>
+<item historyLabel="Waypoints.java" index="2">
+<position info="not_deleted" x="5936" y="0"/>
+</item>
+<item historyLabel="Segd.java" index="1">
+<position info="not_deleted" x="1548" y="0"/>
+</item>
+<item historyLabel="Obs.java" index="0">
+<position info="not_deleted" x="95" y="0"/>
+</item>
+<item historyLabel="PlotTest.java" index="5">
+<position info="not_deleted" x="10821" y="5"/>
+</item>
+<item historyLabel="PlotTest.java" index="5">
+<position info="not_deleted" x="9917" y="8"/>
+</item>
+<item historyLabel="PlotTest.java" index="5">
+<position info="not_deleted" x="9941" y="0"/>
+</item>
+<item historyLabel="PlotTest.java" index="5">
+<position info="not_deleted" x="943" y="0"/>
+</item>
+<item historyLabel="Segd.java" index="1">
+<position info="not_deleted" x="5527" y="0"/>
+</item>
+<item historyLabel="Segdata.java" index="4">
+<position info="not_deleted" x="451" y="0"/>
+</item>
+<item active="true" historyLabel="PlotTest.java" index="5">
+<position info="not_deleted" x="943" y="0"/>
 </item>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
@@ -213,6 +345,21 @@
 <mruList>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="PlotTest.java" tooltip="novice/PlotTest.java">
 <persistable path="/novice/PlotTest.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Segdata.java" tooltip="novice/Segdata.java">
+<persistable path="/novice/Segdata.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="MPoint.java" tooltip="novice/MPoint.java">
+<persistable path="/novice/MPoint.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Waypoints.java" tooltip="novice/Waypoints.java">
+<persistable path="/novice/Waypoints.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Segd.java" tooltip="novice/Segd.java">
+<persistable path="/novice/Segd.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Obs.java" tooltip="novice/Obs.java">
+<persistable path="/novice/Obs.java"/>
 </file>
 </mruList>
 </workbench>
