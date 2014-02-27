@@ -32,8 +32,8 @@ public class PlotTest {
 	// Location and size of overlay plot.
 	private static final int M_X = 100;
 	private static final int M_Y = 0;
-	private static final int M_WIDTH = 520;
-	private static final int M_HEIGHT = 550;
+	private static final int M_WIDTH = 600;
+	private static final int M_HEIGHT = 600;
 
 	// Location and size of response plot.
 	// private static final int RP_X = M_X + M_WIDTH;
@@ -46,11 +46,10 @@ public class PlotTest {
 	// private ArrayList<MPoint> _recs;
 	public static ArrayList<MPoint> _gps;
 	public ArrayList<Segdata> _segd;
-	public static BasePlot _bp;
+	public BasePlot _bp;
 	public ResponsePlot _rp;
 	public ElevPlot _elev;
-    
-	
+
 	private PlotTest() {
 		// _shots = new ArrayList<MPoint>(0);
 		// _gps = new ArrayList<MPoint>(0);
@@ -159,6 +158,8 @@ public class PlotTest {
 				xp[ip] = (float) p.getUTMX();
 				yp[ip] = (float) p.getUTMY();
 			}
+			_plotPanel.setHLimits(min(xp) - 25, max(xp) + 25);
+			_plotPanel.setVLimits(min(yp) - 25, max(yp) + 25);
 			if (_baseView == null) {
 				_baseView = _plotPanel.addPoints(xp, yp);
 				_baseView.setMarkStyle(PointsView.Mark.CROSS);
@@ -174,18 +175,19 @@ public class PlotTest {
 
 	private class ResponsePlot {
 
-		// private PlotPanel _plotPanelH;
+		// private PlotPanel _plotPanel;
 		// private PlotFrame _plotFrame;
 		public SimplePlot sp;
+		private PixelsView pv;
 
 		// The Shot response
 		private ResponsePlot() {
 
 			// One plot panel for the impulse response.
-			// _plotPanelH = new PlotPanel();
-			// _plotPanelH.setHLabel("Station");
-			// _plotPanelH.setVLabel("Time (s)");
-			// _plotPanelH.setTitle("Shot");
+			// _plotPanel = new PlotPanel();
+			// _plotPanel.setHLabel("Station");
+			// _plotPanel.setVLabel("Time (s)");
+			// _plotPanel.setTitle("Shot");
 			//
 			// // This first update constructs a sequence view for the impulse
 			// // response, and a points view for amplitude and phase responses.
@@ -212,6 +214,7 @@ public class PlotTest {
 			sp = new SimplePlot(SimplePlot.Origin.UPPER_LEFT);
 			sp.setSize(600, 600);
 			sp.setVLabel("Time (s)");
+			pv = null;
 
 		}
 
@@ -224,40 +227,44 @@ public class PlotTest {
 				sp.setHLabel("Station");
 			else
 				sp.setHLabel("Offset (km)");
-			sp.setHLimits(seg.getRPF(), seg.getRPF());
+			sp.setHLimits(seg.getRPF(), seg.getRPL());
 			sp.setTitle("Shot " + seg.getSP());
-			PixelsView pv = sp.addPixels(s1, s2, seg.getF());
+			pv = sp.addPixels(s1, s2, seg.getF());
 			pv.setPercentiles(1, 99);
 		}
 
-		// Find segds within range
-		// add them all together
-		// Display the plot
-		public void displayRange(int n1, int n2) {
-			ArrayList<Segdata> range = new ArrayList<Segdata>(0);
-			for (int i = 0; i < _segd.size(); ++i) {
-				Segdata tmp = _segd.get(i);
-				if (tmp.getSP() >= n1 && tmp.getSP() <= n2) {
-					range.add(tmp);
+		public void updateRP(ArrayList<Segdata> s) {
+			//TODO: DBA: First Segdata has what we want in it
+			float count = 0.0f;
+			Segdata seg = s.get(0);
+			int n1 = seg.getF()[0].length;
+			int n2 = seg.getF().length;
+			float[][] stot = seg.getF();
+			for (int i = 1; i < s.size(); ++i) {
+				Segdata segnew = s.get(i);
+				int n1tmp = segnew.getF()[0].length;
+				int n2tmp = segnew.getF().length;
+				if (n1tmp == n1 && n2tmp == n2 && segnew.getSP()>0) {
+					float[][] ftmp = segnew.getF();
+					for (int m = 0; m < n2; ++m) {
+						for (int n = 0; n < n1; ++n) {
+							stot[m][n] += ftmp[m][n];
+						}
+					}
+					count++;
 				}
 			}
-			int ysize = range.get(0).getF()[0].length;
-			int xsize = range.get(0).getF().length;
-			System.out.println(xsize + " " + ysize);
-			float[][] fnew = new float[ysize][xsize];
-
-			for (int i = 0; i < ysize; ++i) {
-				for (int j = 0; j < xsize; ++j) {
-					for (int k = 0; k < range.size(); ++k) {
-						fnew[i][j] += range.get(k).getF()[i][j];
-
+			if (count > 0) {
+				for (int m = 0; m < n2; ++m) {
+					for (int n = 0; n < n1; ++n) {
+						stot[m][n] = stot[m][n] / count;
 					}
 				}
+				//Segd.gain2(stot);
 			}
-			Sampling s1 = new Sampling(ysize, 0.001, 0.0);
-			Sampling s2 = new Sampling(xsize, 1.0, range.get(0).getRPF());
-
-			PixelsView pv = sp.addPixels(s1, s2, fnew);
+			Sampling s1 = new Sampling(n1, 0.001, 0.0);
+			Sampling s2 = new Sampling(n2, 1.0, s.get(0).getRPF());
+			pv = sp.addPixels(s1, s2, stot);
 			pv.setPercentiles(1, 99);
 
 		}
@@ -274,6 +281,23 @@ public class PlotTest {
 			elev = new SimplePlot(SimplePlot.Origin.LOWER_LEFT);
 			elev.setSize(600, 200);
 			elev.setVLabel("meters (m)");
+			elev.setHLabel("Station ID");
+		}
+
+		public void updateElev(ArrayList<MPoint> e) {
+			// TODO: Update to make xaxis distance between points instead of
+			// stationID
+			int n = e.size();
+			double[] x = new double[n];
+			double[] y = new double[n];
+			for (int i = 0; i < n; ++i) {
+				MPoint p = e.get(i);
+				x[i] = p.getStation();
+				y[i] = p.getElev();
+			}
+			elev.setHLimits(min(x) - 10, max(x) + 10);
+			elev.setVLimits(min(y) - 50, max(y) + 50);
+			elev.addPoints(x, y);
 		}
 
 	}
@@ -494,10 +518,22 @@ public class PlotTest {
 			JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
 			fc.showOpenDialog(null);
 			File f = fc.getSelectedFile();
-			_gps = Waypoints.readLatLonFromTSV(f);
+			// _gps = Waypoints.readLatLonFromTSV(f);
+			String ext = "";
+			int i = f.getName().lastIndexOf('.');
+			if (i > 0) {
+				ext = f.getName().substring(i + 1);
+			}
+			if (ext.equals("gpx"))
+				_gps = Waypoints.readLatLonFromXML(f);
+			else if (ext.equals("csv"))
+				_gps = Waypoints.readLatLonFromCSV(f);
+			else
+				_gps = Waypoints.readLatLonFromTSV(f);
 			Waypoints.latLonToUTM(_gps);
-			Waypoints.extrapolateGPS(_gps);
+			// Waypoints.extrapolateGPS(_gps);
 			_bp.updateBPView();
+			_elev.updateElev(_gps);
 		}
 	}
 
@@ -545,9 +581,7 @@ public class PlotTest {
 		}
 
 		public void actionPerformed(ActionEvent event) {
-			int n1 = 3000;
-			int n2 = 4000;
-			_rp.displayRange(n1, n2);
+			_rp.updateRP(_segd); //TODO: Write logic for dynamic shots
 		}
 	}
 

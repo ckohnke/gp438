@@ -72,6 +72,27 @@ public class Waypoints {
 		return _gps;
 	}
 
+	public static ArrayList<MPoint> readLatLonFromCSV(File f) {
+		ArrayList<MPoint> _gps = new ArrayList<MPoint>(0);
+		try {
+			Scanner s = new Scanner(f);
+			s.useDelimiter(",");
+			s.nextLine(); // header skip = 1
+			while (s.hasNext()) {
+				int stationID = s.nextInt();
+				double lat = s.nextDouble();
+				double lon = s.nextDouble();
+				double z = s.nextDouble();
+				MPoint p = new MPoint(stationID, lat, lon, z);
+				_gps.add(p);
+				s.close();
+			}
+		} catch (IOException ex) {
+			System.out.println(ex);
+		}
+		return _gps;
+	}
+	
 	public static ArrayList<MPoint> readLatLonFromXML(File f) {
 		ArrayList<MPoint> _gps = new ArrayList<MPoint>(0);
 		try {
@@ -159,7 +180,7 @@ public class Waypoints {
 				double x = s.nextDouble();
 				double y = s.nextDouble();
 				double z = s.nextDouble();
-				MPoint p = new MPoint(stationID, x, y, z);
+				MPoint p = new MPoint(stationID, x, y, z, true);
 				_gps.add(p);
 				s.close();
 			}

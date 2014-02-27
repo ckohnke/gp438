@@ -22,11 +22,11 @@ public class Segdata{
   }
 
   public int getRLN(){
-	  return rpf;
+	  return rln;
   }
   
   public int getRPF(){
-	  return rln;
+	  return rpf;
   }
   
   public int getRPL(){

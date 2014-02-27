@@ -1,5 +1,5 @@
 #!/bin/bash
-export CLASSPATH=.:../edu_mines_jtk.jar:../jcoord-1.0.jar
-rm *.class
+export CLASSPATH=.:../edu_mines_jtk.jar
+rm novice/*.class
 javac novice/*.java
 java -ea -Xmx2g $*
