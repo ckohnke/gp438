@@ -20,6 +20,8 @@ This month I also added a plot of the elevation profile from the GPS data. The x
 
 Finally I created a mode that will display a range of shots. Currently, this mode displays all of the shots that are in the in a range. This will be expanded in the next weeks to dynamically change to a range that is in a circle that the user selects on the map. I also attempted to create a ``movie mode'' that flips through shots and displays them, but there is a excessive amount of lag and it only displays the final shot in the stream.\\
 
-The timeline to finishing this project is currently being reviewed and modified. An updated timeline to finish the project will be included in the next report. A meeting with the client will be held to further review the timeline. In the coming weeks I will update the display range methods to be able to grab shots from a user defined circle in map view and display shots within that circle. Furthermore I will create methods to display different types of seismic organization schemes (such as common midpoint gathers).
+The timeline to finishing this project is currently being reviewed. 
+
+
 
 \end{document}
