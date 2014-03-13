@@ -34,8 +34,8 @@ s3 = Sampling(215,1.0,1003) # first shotpoint is 1003
 #shotDir = "/data/seis/csm/fc2013/" #Linux Lab
 #segdDir = "/gpfc/ckohnke/fc2013/segd/141/" #Linux Lab
 
-shotDir = "/home/colton/Documents/School/SrDesign/fc2013/" #Laptop
-segdDir = "/home/colton/Documents/School/SrDesign/fc2013/segd/141/" #Laptop
+shotDir = "/home/colton/Documents/School/fc2013/" #Laptop
+segdDir = "/home/colton/Documents/School/fc2013/segd/139/" #Laptop
 #############################################################################
 def main(args):
   readLine141Segd()
@@ -46,27 +46,27 @@ def main(args):
 
 def readLine141Segd():
   #global s3
-  csegdList = File(segdDir).listFiles() # list of segd files
+  segdList = File(segdDir).listFiles() # list of segd files
   nshot = len(segdList)-3 # ignore first 3 shots
-  s3 = Sampling(nshot,1,1003) # first shotpoint is 1003
-  g = zerofloat(s1.count,s2.count,s3.count)
-  print "s1.count ", s1.count
-  print "s2.count ", s2.count
-  print "s3.count ", s3.count
+  #s3 = Sampling(nshot,1,1003) # first shotpoint is 1003
+  #g = zerofloat(s1.count,s2.count,s3.count)
+  #print "s1.count ", s1.count
+  #print "s2.count ", s2.count
+  #print "s3.count ", s3.count
   #print segdList
   for segdFile in segdList[3:]:
     print segdFile
     sl,sp,rpf,rpl,f = readSegd(segdFile)
     print "sl =",sl," sp =",sp," rpf =",rpf," rpl =",rpl
-    i3 = int(sp-s3.first)
-    zero(f[42]) # no geophone string at station 996
-    copy(f,g[i3])
+    #i3 = int(sp-s3.first)
+    #zero(f[42]) # no geophone string at station 996
+    #copy(f,g[i3])
     #lowpass2(f)
     #tpow2(f)
     #gain2(f)
-    plot(s1,s2,f,title="Shot "+str(sp))
+    #plot(s1,s2,f,title="Shot "+str(sp))
     #plotAmp(s1,s2,f,title="Shot "+str(sp))
-  writeData(g,shotDir+"shotsp.dat")
+  #writeData(g,shotDir+"shotsp.dat")
 
 def displayLine141():
   f = readData(s1,s2,s3,shotDir+"shotsp.dat")
@@ -108,8 +108,8 @@ def readLine140Segd():
   #sf = SimpleFrame()
   #ip = sf.addImagePanels(g)
   #ip.setPercentiles(2,98)
-  writeData(g,shotDir+"shots.dat")
-  writeData(g,shotDir+"shotsp.dat",bo=ByteOrder.LITTLE_ENDIAN)
+  #writeData(g,shotDir+"shots.dat")
+  #writeData(g,shotDir+"shotsp.dat",bo=ByteOrder.LITTLE_ENDIAN)
 
 def readTestSegd():
   segdList = File(segdDir).listFiles() # list of segd files

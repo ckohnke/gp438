@@ -14,27 +14,27 @@ public class Segdata{
   }
   
   public int getSL(){
-	  return sl;
+    return sl;
   }
   
   public int getSP(){
-	  return sp;
+    return sp;
   }
 
   public int getRLN(){
-	  return rln;
+    return rln;
   }
   
   public int getRPF(){
-	  return rpf;
+    return rpf;
   }
   
   public int getRPL(){
-	  return rpl;
+    return rpl;
   }
   
   public float[][] getF(){
-	  return f;
+    return f;
   }
   
   private int sl; // Source line number

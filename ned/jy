@@ -20,7 +20,7 @@ $MINES_JTK_HOME/libs/jythonlib.jar:\
 
 # Run a server 64-bit VM with assertions enabled and a 1GB max Java heap.
 # Modify these flags and properties as necessary for your system.
-java -server -d64 -ea -Xmx4g \
+java -ea -Xmx4g \
 -Djava.library.path=$JAVA_LIBRARY_PATH \
 -Djava.util.logging.config.file=$HOME/.java_logging_config \
 -Dpython.cachedir.skip=false \
