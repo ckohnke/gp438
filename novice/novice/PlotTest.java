@@ -359,6 +359,7 @@ public class PlotTest {
       sp.setHLimits(seg.getRPF(), seg.getRPL());
       sp.setTitle("Shot " + seg.getSP());
       pv = sp.addPixels(s1, s2, Segd.gain2(seg.getF()));
+      // pv = sp.addPixels(s1, s2, seg.getF()));
       pv.setPercentiles(1, 99);
 
     }
@@ -396,6 +397,16 @@ public class PlotTest {
       Sampling s2 = new Sampling(n2, 1.0, s.get(0).getRPF());
       pv = sp.addPixels(s1, s2, Segd.gain2(stot));
       pv.setPercentiles(1, 99);
+    }
+
+    public void plot33214(){
+      Segdata s = null;
+      for(int i=0; i<_segd.size(); ++i){
+        Segdata tmp = _segd.get(i);
+        if(tmp.getSP() == 33214)
+          s = _segd.get(i);
+       }
+      updateRP(s);
     }
 
   }
@@ -718,9 +729,10 @@ public class PlotTest {
     }
 
     public void actionPerformed(ActionEvent event) {
-      _rp.updateRP(_segd); //TODO: Write logic for dynamic shots
-      _bp.drawCurrentGPS(_gps);
-      _bp.drawCurrentSeg(_segd);
+      //_rp.updateRP(_segd); //TODO: Write logic for dynamic shots
+      //_bp.drawCurrentGPS(_gps);
+      //_bp.drawCurrentSeg(_segd);
+	_rp.plot33214();
     }
   }
 

@@ -238,6 +238,7 @@ def readSegd(segdFile):
   ais.readBytes(gh) # general header 2
   ais.readBytes(gh) # general header 3
   sln = bin5(gh,3) # source line number
+  print "SLN:",sln
   print "gh[3-7] = ",gh[3], " ",gh[4]," ",gh[5]," ",gh[6]," ",gh[7] 
   spn = bin5(gh,8) # source point number
   print "file =",segdFile
@@ -410,11 +411,13 @@ def bin5(b,k):
   b2 = b[k+2] 
   b3 = b[k+3] 
   b4 = b[k+4] 
+  print b0,' ',b1,' ',b2,' ',b3,' ',b4
   if b0<0: b0 += 256
   if b1<0: b1 += 256
   if b2<0: b2 += 256
   if b3<0: b3 += 256
   if b4<0: b4 += 256
+  print b0,' ',b1,' ',b2,' ',b3,' ',b4
   return b0*65536.0+b1*256.0+b2+b3/256.0+b4/65536.0
 
 #############################################################################

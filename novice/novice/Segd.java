@@ -4,8 +4,10 @@ import static edu.mines.jtk.util.ArrayMath.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteOrder;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
+
 
 import edu.mines.jtk.dsp.ButterworthFilter;
 import edu.mines.jtk.dsp.RecursiveExponentialFilter;
@@ -38,7 +40,7 @@ public class Segd {
         // tpow2(seg.f);
         // gain2(seg.f);
         // plot(s1,s2,seg,"Shot "+seg.sp);
-        if (!(seg.getSP() < 0))
+        if (!(seg.getSP() < 3000) && notEmpty(seg) && !(seg.getSP() > 10000)) //min:max range for shots and don't add empty shots.
           _segd.add(seg);
       }
       Collections.sort(_segd, new SegdataComp());
@@ -136,6 +138,17 @@ public class Segd {
     pv.setPercentiles(1, 99);
   }
 
+  public static boolean notEmpty(Segdata seg){
+    float[][] f = seg.getF();
+    int n1 = f[0].length;
+    int n2 = f.length;
+    for(int i=0;i<n2;++i)
+      for(int j=0;j<n1;++j)
+        if(f[i][j]!=0)
+          return true;
+    return false;
+  }
+
   public static float[][] tpow2(float[][] f) {
     int n1 = f[0].length;
     int n2 = f.length;
@@ -185,14 +198,14 @@ public class Segd {
 
   // Returns binary integer from bytes k,k+1,...,k+4 in b.
   private static int bin5(byte[] b, int k) {
-    byte b0 = b[k];
-    byte b1 = b[k + 1];
-    byte b2 = b[k + 2];
-    byte b3 = b[k + 3];
-    byte b4 = b[k + 4];
-    return (int)(256.0 + b0 * 65536.0 + b1 * 256.0 + b2 + b3 / 256.0 + b4 / 65536.0);
-    //return (b4 & 0xFF) | ((b3 & 0xFF) << 8) | ((b2 & 0x0F) << 16)| ((b1 & 0x0F) << 32)| ((b0 & 0x0F) << 64);
+    int b0 = b[k] & 0xFF;
+    int b1 = b[k + 1] & 0xFF;
+    int b2 = b[k + 2] & 0xFF;
+    int b3 = b[k + 3] & 0xFF;
+    int b4 = b[k + 4] & 0xFF;
+    return (int)(b0 * 65536.0 + b1 * 256.0 + b2 + b3 / 256.0 + b4 / 65536.0);
   }
+
 
   // public String segdDir = "/gpfc/ckohnke/fc2013/segd/140/"; // Linux Lab
   // public String segdDir =
