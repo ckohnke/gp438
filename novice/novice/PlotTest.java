@@ -15,6 +15,8 @@ import edu.mines.jtk.awt.*;
 import edu.mines.jtk.dsp.Sampling;
 import edu.mines.jtk.mosaic.*;
 
+import static novice.Segd.*;
+
 public class PlotTest {
 
   public static void main(String[] args) {
@@ -358,55 +360,89 @@ public class PlotTest {
         sp.setHLabel("Offset (km)");
       sp.setHLimits(seg.getRPF(), seg.getRPL());
       sp.setTitle("Shot " + seg.getSP());
-      pv = sp.addPixels(s1, s2, Segd.gain2(seg.getF()));
+      pv = sp.addPixels(s1, s2, gain2(seg.getF()));
       // pv = sp.addPixels(s1, s2, seg.getF()));
       pv.setPercentiles(1, 99);
 
     }
 
     public void updateRP(ArrayList<Segdata> s) {
-      //TODO: DBA: First Segdata has what we want in it
-      float count = 0.0f;
-      Segdata seg = s.get(0);
-      int n1 = seg.getF()[0].length;
-      int n2 = seg.getF().length;
-      float[][] stot = seg.getF();
-      for (int i = 1; i < s.size(); ++i) {
-        Segdata segnew = s.get(i);
-        int n1tmp = segnew.getF()[0].length;
-        int n2tmp = segnew.getF().length;
-        if (n1tmp == n1 && n2tmp == n2 && segnew.getSP()>0) {
-          float[][] ftmp = segnew.getF();
-          for (int m = 0; m < n2; ++m) {
-            for (int n = 0; n < n1; ++n) {
-              stot[m][n] += ftmp[m][n];
+      int n1 = getN1(s);
+      int n2 = getN2(s);
+      int rpf = getRPF(s);
+      int rpl = rpf+n2;
+      float[] count = new float[n2];
+      float[][] stot = new float[n2][n1];
+      for (int i = 0; i < s.size(); ++i) {
+        Segdata seg = s.get(i);
+        int rpftmp = seg.getRPF();
+        int rpltmp = seg.getRPL();
+        float[][] f = seg.getF();
+        for(int j=0; j<f.length; ++j){
+          int index = j+(rpftmp-rpf);
+          //System.out.println("j: "+j+" rpftmp: "+rpftmp+" rpf: "+rpf);
+          System.out.println("index: "+index);
+          System.out.println("n2: "+n2);
+          if(isActive(f[j])){
+            for(int k=0; k<f[0].length; ++k){   
+              stot[index][k] += f[j][k];
             }
+           count[j] += 1.0f;
           }
-          count++;
         }
       }
-      if (count > 0) {
-        for (int m = 0; m < n2; ++m) {
-          for (int n = 0; n < n1; ++n) {
-            stot[m][n] = stot[m][n] / count;
-          }
+      for(int i=0;i<n2; ++i){
+        for(int j=0;j<n1;++j){
+          stot[i][j] = stot[i][j]/count[i];
         }
-        //Segd.gain2(stot);
       }
       Sampling s1 = new Sampling(n1, 0.001, 0.0);
-      Sampling s2 = new Sampling(n2, 1.0, s.get(0).getRPF());
-      pv = sp.addPixels(s1, s2, Segd.gain2(stot));
-      pv.setPercentiles(1, 99);
+      Sampling s2 = new Sampling(n2, 1.0, rpf);
+      pv = sp.addPixels(s1, s2, gain2(stot));
+      // pv.setPercentiles(1, 99);
     }
 
-    public void plot33214(){
-      Segdata s = null;
-      for(int i=0; i<_segd.size(); ++i){
-        Segdata tmp = _segd.get(i);
-        if(tmp.getSP() == 33214)
-          s = _segd.get(i);
-       }
-      updateRP(s);
+    private int getN1(ArrayList<Segdata> s){
+      int n1 = s.get(0).getF()[0].length;
+      for(int i=1; i<s.size(); ++i){
+        Segdata tmp = s.get(i);
+        int t = tmp.getF()[0].length;
+        if(t>n1) n1=t;
+      }
+      return n1;
+    }
+
+    private int getN2(ArrayList<Segdata> s){
+      int s1 = s.get(0).getRPF();
+      int s2 = s.get(0).getRPL();
+      for(int i=1; i<s.size(); ++i){
+        Segdata tmp = s.get(i);
+        int t1 = tmp.getRPF();
+        int t2 = tmp.getRPL();
+        if(t1<s1) s1=t1;
+        if(t2>s2) s2=t2;
+      }
+      return s2-s1+1;
+    }
+
+    private int getRPF(ArrayList<Segdata> s){
+      int s1 = s.get(0).getRPF();
+      for(int i=1; i<s.size(); ++i){
+        Segdata tmp = s.get(i);
+        int t1 = tmp.getRPF();
+        if(t1<s1) s1=t1;
+      }
+      return s1;
+    }
+
+    private boolean isActive(float[] f){
+      int n1 = f.length;
+      for(int i=0; i<n1; ++i){
+        if(f[i] != 0){
+          return true;
+        }
+      }
+      return false;
     }
 
   }
@@ -729,10 +765,9 @@ public class PlotTest {
     }
 
     public void actionPerformed(ActionEvent event) {
-      //_rp.updateRP(_segd); //TODO: Write logic for dynamic shots
-      //_bp.drawCurrentGPS(_gps);
-      //_bp.drawCurrentSeg(_segd);
-	_rp.plot33214();
+      _rp.updateRP(_segd); //TODO: Write logic for dynamic shots
+      _bp.drawCurrentGPS(_gps);
+      _bp.drawCurrentSeg(_segd);
     }
   }
 
