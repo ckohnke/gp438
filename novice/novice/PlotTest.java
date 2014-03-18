@@ -387,7 +387,7 @@ public class PlotTest {
             for(int k=0; k<f[0].length; ++k){   
               stot[index][k] += f[j][k];
             }
-           count[j] += 1.0f;
+           ++count[index];
           }
         }
       }
@@ -399,7 +399,44 @@ public class PlotTest {
       Sampling s1 = new Sampling(n1, 0.001, 0.0);
       Sampling s2 = new Sampling(n2, 1.0, rpf);
       pv = sp.addPixels(s1, s2, gain2(stot));
-      // pv.setPercentiles(1, 99);
+      sp.setHLimits(rpf, rpl);
+      sp.setTitle("Brute Combine");
+      sp.setHLabel("Station");
+      pv.setPercentiles(1, 99);
+    }
+
+    public void updateRP(ArrayList<Segdata> s, int channel) {
+      ArrayList<Segdata> seg = new ArrayList<Segdata>(0);
+      for(int i=0; i<s.size(); ++i){
+        Segdata t = s.get(i);
+        if((t.getRPF() <= channel) && (t.getRPL() >= channel))
+          seg.add(t);
+      }
+      int n1 = getN1(seg);
+      int n2 = getN2(seg);
+      int rpf = getRPF(seg);
+      int rpl = rpf+n2;
+     
+     // DONT TRUST ANYTHING
+
+      float[][] chan = new float[n2][n1];
+      for (int i = 0; i < seg.size(); ++i) {
+        Segdata tmp = seg.get(i);
+        int rpftmp = tmp.getRPF();
+        float[] c = tmp.getF()[channel-rpftmp];
+        if(isActive(c)){
+          for(int j=0;j<c.length; ++j)
+            chan[channel-rpf][j] = c[j];
+        }
+      }
+      Sampling s1 = new Sampling(n1, 0.001, 0.0);
+      Sampling s2 = new Sampling(n2, 1.0, rpf);
+      pv = sp.addPixels(s1, s2, gain2(chan));
+      sp.setHLimits(rpf, rpl);
+      sp.setTitle("Channel: "+channel);
+      sp.setHLabel("Shot");
+      pv.setPercentiles(1, 99);
+
     }
 
     private int getN1(ArrayList<Segdata> s){
@@ -765,7 +802,7 @@ public class PlotTest {
     }
 
     public void actionPerformed(ActionEvent event) {
-      _rp.updateRP(_segd); //TODO: Write logic for dynamic shots
+      _rp.updateRP(_segd, 3300); //TODO: Write logic for dynamic shots
       _bp.drawCurrentGPS(_gps);
       _bp.drawCurrentSeg(_segd);
     }
