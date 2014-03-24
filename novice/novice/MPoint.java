@@ -72,6 +72,10 @@ public class MPoint {
         + (z - p.z) * (z - p.z));
   }
 
+  public MPoint midpoint(MPoint p){
+    return new MPoint(0,0.5*xDist(p),0.5*yDist(p),0.5*zDist(p), true);
+  }
+
   public int getStation() {
     return stationID;
   }

@@ -16,6 +16,7 @@ import edu.mines.jtk.dsp.Sampling;
 import edu.mines.jtk.mosaic.*;
 
 import static novice.Segd.*;
+import static novice.Waypoints.*;
 
 public class PlotTest {
 
@@ -380,9 +381,9 @@ public class PlotTest {
         float[][] f = seg.getF();
         for(int j=0; j<f.length; ++j){
           int index = j+(rpftmp-rpf);
-          //System.out.println("j: "+j+" rpftmp: "+rpftmp+" rpf: "+rpf);
-          System.out.println("index: "+index);
-          System.out.println("n2: "+n2);
+          // System.out.println("j: "+j+" rpftmp: "+rpftmp+" rpf: "+rpf);
+          // System.out.println("index: "+index);
+          // System.out.println("n2: "+n2);
           if(isActive(f[j])){
             for(int k=0; k<f[0].length; ++k){   
               stot[index][k] += f[j][k];
@@ -407,32 +408,41 @@ public class PlotTest {
 
     public void updateRP(ArrayList<Segdata> s, int channel) {
       ArrayList<Segdata> seg = new ArrayList<Segdata>(0);
+      int min = getMinStationID(_gps);
+      int station = min+channel-1;
       for(int i=0; i<s.size(); ++i){
         Segdata t = s.get(i);
-        if((t.getRPF() <= channel) && (t.getRPL() >= channel))
+        if(t.getF().length>=channel){
           seg.add(t);
+          //System.out.println("added: "+t.getSP());
+        }
       }
-      int n1 = getN1(seg);
-      int n2 = getN2(seg);
       int rpf = getRPF(seg);
+      int fsp = getFirstSP(seg);
+      int lsp = getLastSP(seg);
+      int n1 = getN1(seg);
+      int n2 = lsp-fsp+1;
       int rpl = rpf+n2;
-     
-     // DONT TRUST ANYTHING
-
-      float[][] chan = new float[n2][n1];
+      float[][] chan = new float[n2][n1];     
+      // Start Trusting this more
+      System.out.println(seg.size());
       for (int i = 0; i < seg.size(); ++i) {
         Segdata tmp = seg.get(i);
+        int stmp = tmp.getSP();
         int rpftmp = tmp.getRPF();
-        float[] c = tmp.getF()[channel-rpftmp];
+        // float[] c = tmp.getF()[(rpf-rpftmp)+channel-1];
+        float[] c = tmp.getF()[channel-1];
         if(isActive(c)){
-          for(int j=0;j<c.length; ++j)
-            chan[channel-rpf][j] = c[j];
+          for(int j=0;j<c.length; ++j){
+            chan[stmp-fsp][j] += c[j];
+          }
         }
       }
       Sampling s1 = new Sampling(n1, 0.001, 0.0);
-      Sampling s2 = new Sampling(n2, 1.0, rpf);
+      Sampling s2 = new Sampling(n2, 1.0, fsp);
       pv = sp.addPixels(s1, s2, gain2(chan));
-      sp.setHLimits(rpf, rpl);
+      // pv = sp.addPixels(s1, s2, (chan));
+      sp.setHLimits(fsp, maxShot(seg));
       sp.setTitle("Channel: "+channel);
       sp.setHLabel("Shot");
       pv.setPercentiles(1, 99);
@@ -460,6 +470,26 @@ public class PlotTest {
         if(t2>s2) s2=t2;
       }
       return s2-s1+1;
+    }
+
+    private int getFirstSP(ArrayList<Segdata> s){
+      int s1 = s.get(0).getSP();
+      for(int i=1; i<s.size(); ++i){
+        Segdata tmp = s.get(i);
+        int t1 = tmp.getSP();
+        if(t1<s1) s1=t1;
+      }
+      return s1;
+    }
+
+    private int getLastSP(ArrayList<Segdata> s){
+      int s1 = s.get(0).getSP();
+      for(int i=1; i<s.size(); ++i){
+        Segdata tmp = s.get(i);
+        int t1 = tmp.getSP();
+        if(t1>s1) s1=t1;
+      }
+      return s1;
     }
 
     private int getRPF(ArrayList<Segdata> s){
@@ -802,7 +832,7 @@ public class PlotTest {
     }
 
     public void actionPerformed(ActionEvent event) {
-      _rp.updateRP(_segd, 3300); //TODO: Write logic for dynamic shots
+      _rp.updateRP(_segd, 200); //TODO: Write logic for dynamic shots
       _bp.drawCurrentGPS(_gps);
       _bp.drawCurrentSeg(_segd);
     }

@@ -173,6 +173,16 @@ public class Waypoints {
 
   }
 
+  public static int getMinStationID(ArrayList<MPoint> s){
+    int station = s.get(0).getStation();
+    for(MPoint tmp:s){
+      if(tmp.getStation()<station){
+        station = tmp.getStation();
+      }
+    }
+    return station; 
+  }
+
   public static ArrayList<MPoint> readUTMFromCSV(File f) {
     ArrayList<MPoint> _gps = new ArrayList<MPoint>(0);
     try {

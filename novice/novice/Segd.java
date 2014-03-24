@@ -149,6 +149,16 @@ public class Segd {
     return false;
   }
 
+  public static int maxShot(ArrayList<Segdata> s){
+    int max = s.get(0).getSP();
+    for(Segdata tmp:s){
+      if(tmp.getSP() > max){
+        max = tmp.getSP();
+      }
+    }
+    return max;
+  }
+
   public static float[][] tpow2(float[][] f) {
     int n1 = f[0].length;
     int n2 = f.length;
