@@ -222,6 +222,35 @@ public class Waypoints {
     }
   }
 
+  public static int maxStation(ArrayList<MPoint> gps){
+    int max = 0;
+    for(MPoint g:gps){
+      if(g.getStation()>max){
+        max = g.getStation();
+      }
+    }
+    return max;
+  }
+
+  public static int minStation(ArrayList<MPoint> gps){
+    int min = gps.get(0).getStation();
+    for(MPoint g:gps){
+      if(g.getStation()<min){
+        min = g.getStation();
+      }
+    }
+    return min;
+  }
+
+  public static MPoint getByStation(ArrayList<MPoint> gps, int station){
+    for(MPoint p:gps){
+      if(p.getStation() == station){
+        return p;
+      }
+    }
+    return null;
+  }
+
   public static void extrapolateGPS(ArrayList<MPoint> _gps) { // assumes
     Collections.sort(_gps, new MPointComp());
     int start, end, dn;

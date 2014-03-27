@@ -159,6 +159,46 @@ public class Segd {
     return max;
   }
 
+  public static int minShot(ArrayList<Segdata> s){
+    int min = s.get(0).getSP();
+    for(Segdata tmp:s){
+      if(tmp.getSP() < min){
+        min = tmp.getSP();
+      }
+    }
+    return min;
+  }
+
+  public static Segdata getSegdataByStationRoof(ArrayList<Segdata> s, int station){
+    for(Segdata d:s){
+      if(d.getSP() == station){
+        return d;
+      }
+    }
+    Segdata max = s.get(0);
+    for(Segdata tmp:s){
+      if(tmp.getSP() > max.getSP() && tmp.getSP() > station){
+        max = tmp;
+      }
+    }
+    return max;
+}
+
+  public static Segdata getSegdataByStationFloor(ArrayList<Segdata> s, int station){
+    for(Segdata d:s){
+      if(d.getSP() == station){
+        return d;
+      }
+    }
+    Segdata min = s.get(0);
+    for(Segdata tmp:s){
+      if(tmp.getSP() < min.getSP() && tmp.getSP() < station){
+        min = tmp;
+      }
+    }
+    return min;
+}
+
   public static float[][] tpow2(float[][] f) {
     int n1 = f[0].length;
     int n2 = f.length;
@@ -191,6 +231,17 @@ public class Segd {
         ButterworthFilter.Type.LOW_PASS);
     bf.apply1ForwardReverse(f, g);
     return g;
+  }
+
+  public static int getMaxNumChan(ArrayList<Segdata> seg){
+    int max = 0;
+    for(Segdata s:seg){
+      int rf = s.getRPF();
+      int rl = s.getRPL();
+      if((rl-rf)>max)
+        max = rl-rf;
+    }
+    return max;
   }
 
   private static int bcd2(byte[] b, int k) {

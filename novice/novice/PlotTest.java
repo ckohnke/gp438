@@ -2,14 +2,13 @@ package novice;
 
 import static edu.mines.jtk.util.ArrayMath.*;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.event.*;
-import java.awt.Color;
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.event.*;
 
 import edu.mines.jtk.awt.*;
 import edu.mines.jtk.dsp.Sampling;
@@ -34,10 +33,10 @@ public class PlotTest {
   // Display shot range (assume same active receiver)
 
   // Location and size of overlay plot.
-  private static final int M_X = 100;
+  private static final int M_X = 0;
   private static final int M_Y = 0;
-  private static final int M_WIDTH = 600;
-  private static final int M_HEIGHT = 600;
+  private static final int M_WIDTH = 500;
+  private static final int M_HEIGHT = 500;
 
   // Location and size of response plot.
   // private static final int RP_X = M_X + M_WIDTH;
@@ -101,7 +100,7 @@ public class PlotTest {
       // We add two more modes for editing poles and zeros.
       ModeManager mm = _plotFrame.getModeManager();
       RoamMode rm = new RoamMode(mm); // roam and plot
-      PlayMode pm = new PlayMode(mm);
+      ChannelMode cm = new ChannelMode(mm);
       // PoleZeroMode zm = new PoleZeroMode(mm,false); // for zeros
 
       // The menu bar includes a mode menu for selecting a mode.
@@ -114,7 +113,7 @@ public class PlotTest {
       modeMenu.setMnemonic('M');
       modeMenu.add(new ModeMenuItem(tzm));
       modeMenu.add(new ModeMenuItem(rm));
-      modeMenu.add(new ModeMenuItem(pm));
+      modeMenu.add(new ModeMenuItem(cm));
 
       JMenu toolMenu = new JMenu("Tools");
       toolMenu.setMnemonic('T');
@@ -140,7 +139,7 @@ public class PlotTest {
       toolBar.setRollover(true);
       toolBar.add(new ModeToggleButton(tzm));
       toolBar.add(new ModeToggleButton(rm));
-      toolBar.add(new ModeToggleButton(pm));
+      toolBar.add(new ModeToggleButton(cm));
       _plotFrame.add(toolBar, BorderLayout.WEST);
 
       // Initially, enable editing of poles.
@@ -291,6 +290,12 @@ public class PlotTest {
       }
     }
 
+    private void plotActiveReceivers(ArrayList<Segdata> seg){
+      for(Segdata s:seg){
+        plotActiveReceivers(s);
+      }
+    }
+
     private boolean isActive(float[] f){
       int n1 = f.length;
       for(int i=0; i<n1; ++i){
@@ -346,6 +351,7 @@ public class PlotTest {
       sp = new SimplePlot(SimplePlot.Origin.UPPER_LEFT);
       sp.setSize(600, 600);
       sp.setVLabel("Time (s)");
+      sp.setLocation(500,0);
       pv = null;
 
     }
@@ -381,9 +387,6 @@ public class PlotTest {
         float[][] f = seg.getF();
         for(int j=0; j<f.length; ++j){
           int index = j+(rpftmp-rpf);
-          // System.out.println("j: "+j+" rpftmp: "+rpftmp+" rpf: "+rpf);
-          // System.out.println("index: "+index);
-          // System.out.println("n2: "+n2);
           if(isActive(f[j])){
             for(int k=0; k<f[0].length; ++k){   
               stot[index][k] += f[j][k];
@@ -409,12 +412,11 @@ public class PlotTest {
     public void updateRP(ArrayList<Segdata> s, int channel) {
       ArrayList<Segdata> seg = new ArrayList<Segdata>(0);
       int min = getMinStationID(_gps);
-      int station = min+channel-1;
+      int station = min+channel;
       for(int i=0; i<s.size(); ++i){
         Segdata t = s.get(i);
         if(t.getF().length>=channel){
           seg.add(t);
-          //System.out.println("added: "+t.getSP());
         }
       }
       int rpf = getRPF(seg);
@@ -425,13 +427,12 @@ public class PlotTest {
       int rpl = rpf+n2;
       float[][] chan = new float[n2][n1];     
       // Start Trusting this more
-      System.out.println(seg.size());
       for (int i = 0; i < seg.size(); ++i) {
         Segdata tmp = seg.get(i);
         int stmp = tmp.getSP();
         int rpftmp = tmp.getRPF();
         // float[] c = tmp.getF()[(rpf-rpftmp)+channel-1];
-        float[] c = tmp.getF()[channel-1];
+        float[] c = tmp.getF()[channel];
         if(isActive(c)){
           for(int j=0;j<c.length; ++j){
             chan[stmp-fsp][j] += c[j];
@@ -446,6 +447,11 @@ public class PlotTest {
       sp.setTitle("Channel: "+channel);
       sp.setHLabel("Shot");
       pv.setPercentiles(1, 99);
+      
+      for(Segdata r:seg){
+        _bp.plotActiveReceivers(r);
+      }
+      _bp.drawCurrentSeg(seg);
 
     }
 
@@ -522,9 +528,10 @@ public class PlotTest {
 
     private ElevPlot() {
       elev = new SimplePlot(SimplePlot.Origin.LOWER_LEFT);
-      elev.setSize(600, 200);
+      elev.setSize(500, 250);
       elev.setVLabel("meters (m)");
       elev.setHLabel("Station ID");
+      elev.setLocation(0,500);
     }
 
     public void updateElev(ArrayList<MPoint> e) {
@@ -562,14 +569,39 @@ public class PlotTest {
       setShortDescription("Roaming Mode");
     }
 
+    private JFrame sliderFrame;
+    private JPanel sliderPanel;
+    private JSlider sliderNear;
+    private int sumNearestNum = 0;
+
     // When this mode is activated (or deactivated) for a tile, it simply
     // adds (or removes) its mouse listener to (or from) that tile.
     protected void setActive(Component component, boolean active) {
       if (component instanceof Tile) {
         if (active) {
           component.addMouseListener(_ml);
+          if(sliderFrame == null){
+            sliderFrame = new JFrame();
+            sliderFrame.setTitle("Summation Slider");
+            sliderFrame.setSize(250,100);
+            sliderFrame.setLocation(100,500);
+            sliderPanel = new JPanel();
+            sliderFrame.add(sliderPanel);
+
+            sliderNear = new JSlider(JSlider.HORIZONTAL,0,20,10);
+            sliderNear.setMajorTickSpacing(2);
+            sliderNear.setMinorTickSpacing(1);
+            sliderNear.setPaintTicks(true);
+            sliderNear.setPaintLabels(true);
+            sliderNear.setSize(200,100);
+            sliderPanel.add(sliderNear);
+          }
+          sliderNear.addChangeListener(cl);
+          sliderFrame.setVisible(true);
         } else {
           component.removeMouseListener(_ml);
+          sliderFrame.setVisible(false);
+          sliderNear.removeChangeListener(cl);
         }
       }
     }
@@ -591,6 +623,14 @@ public class PlotTest {
         _moving = false;
       }
     };
+
+    private ChangeListener cl = new ChangeListener(){
+      public void stateChanged(ChangeEvent e) {
+        if (!sliderNear.getValueIsAdjusting())
+          sumNearestNum = sliderNear.getValue();
+      }
+    };
+
     // Handles mouse dragged events.
     private MouseMotionListener _mml = new MouseMotionAdapter() {
       public void mouseDragged(MouseEvent e) {
@@ -610,15 +650,43 @@ public class PlotTest {
     private void duringMove(MouseEvent e) {
       int x = e.getX();
       int y = e.getY();
-      // System.out.println("x: " + x + " y: " + y);
+      ArrayList<MPoint> gpsPlot = new ArrayList<MPoint>(0);
+      ArrayList<Segdata> segPlot = new ArrayList<Segdata>(0);
       MPoint gpsNear = getNearestGPS(x, y);
-      _bp.drawCurrentGPS(gpsNear);
-      // System.out.println(gpsNear.stationID);
       Segdata segNear = getNearestSegdata(gpsNear.getStation());
-      _bp.drawCurrentSeg(segNear);
-      _bp.plotActiveReceivers(segNear);
-      // System.out.println(segNear.sp);
-      _rp.updateRP(segNear);
+      
+      gpsPlot.add(gpsNear);
+      segPlot.add(segNear);
+      if(sumNearestNum > 0){
+        int maxShot = maxShot(_segd);
+        int minShot = minShot(_segd);
+        int base = gpsNear.getStation();
+        int count = sumNearestNum;
+        int i = 1;
+        int j = 1;
+        Segdata segPlus = segNear;
+        Segdata segMinus = segNear;
+        while(count>0){
+          if(segPlus.getSP()+1 <= maxShot && count > 0){
+            segPlus = getSegdataByStationRoof(_segd, segPlus.getSP()+1);
+            segPlot.add(segPlus);
+            --count;
+          }
+          if(segMinus.getSP()-1 >= minShot && count > 0){
+            segMinus = getSegdataByStationFloor(_segd, segMinus.getSP()-1);
+            segPlot.add(segMinus);
+            --count;
+          }
+          if(!(segMinus.getSP()-1 >= minShot) && !(segPlus.getSP()+1 <= maxShot) && count > 0){
+            break;
+          }
+        }
+      }
+      _bp.drawCurrentSeg(segPlot);
+      _bp.plotActiveReceivers(segPlot);
+      //_bp.drawCurrentGPS(gpsPlot);
+
+      _rp.updateRP(segPlot);
     }
 
     private void endMove(MouseEvent e) {
@@ -666,42 +734,57 @@ public class PlotTest {
 
   // /////////////////////////////////////////////////////////////////////////
 
-  private class PlayMode extends Mode {
+  private class ChannelMode extends Mode {
     private static final long serialVersionUID = 1L;
 
-    public PlayMode(ModeManager modeManager) {
+    public ChannelMode(ModeManager modeManager) {
       super(modeManager);
-      setName("Play Mode");
+      setName("Channel Mode");
       // setIcon(loadIcon(PolesAndZerosDemo.class,"Poles16.png"));
       // setMnemonicKey(KeyEvent.VK_P);
       // setAcceleratorKey(KeyStroke.getKeyStroke(KeyEvent.VK_P, 0));
-      setShortDescription("Playing (Movie) Mode");
+      setShortDescription("Display a Channel Mode");
     }
+
+    private JFrame sliderFrame;
+    private JPanel sliderPanel;
+    private JSlider sliderChan;
 
     protected void setActive(Component component, boolean active) {
-      if (component instanceof Tile) {
-        if (active) {
-          component.addMouseListener(_ml);
-        } else {
-          component.removeMouseListener(_ml);
+      if (active) {
+        if(sliderFrame == null){
+          sliderFrame = new JFrame();
+          sliderFrame.setTitle("Channel Slider");
+          sliderFrame.setSize(250,100);
+          sliderFrame.setLocation(100,500);
+          sliderPanel = new JPanel();
+          sliderFrame.add(sliderPanel);
+
+          sliderChan = new JSlider(JSlider.HORIZONTAL,0,getMaxNumChan(_segd),50);
+          sliderChan.setMajorTickSpacing(50);
+          sliderChan.setPaintTicks(true);
+          sliderChan.setPaintLabels(true);
+          sliderChan.setSize(200,100);
+          sliderPanel.add(sliderChan);
         }
+        sliderChan.addChangeListener(cl);
+        sliderFrame.setVisible(true);
+      } else {
+        sliderFrame.setVisible(false);
+        sliderChan.removeChangeListener(cl);
       }
     }
 
-    private MouseListener _ml = new MouseAdapter() {
-      public void mousePressed(MouseEvent e) {
-        System.out.println("I'M ALIVE!!!!");
-        Segdata s = null;
-        System.out.println(_segd.size());
-        for (int i = 0; i < _segd.size(); ++i) {
-          s = _segd.get(i);
-          _rp.updateRP(s);
-          // TODO: Only displays the last one after
-          // massive lag...
-
-        }
+    private ChangeListener cl = new ChangeListener(){
+      public void stateChanged(ChangeEvent e) {
+        if (!sliderChan.getValueIsAdjusting())
+          adjust(sliderChan.getValue());
       }
-    };
+};
+
+    private void adjust(int chan){
+      _rp.updateRP(_segd,chan);
+    }
 
   }
 
@@ -833,8 +916,6 @@ public class PlotTest {
 
     public void actionPerformed(ActionEvent event) {
       _rp.updateRP(_segd, 200); //TODO: Write logic for dynamic shots
-      _bp.drawCurrentGPS(_gps);
-      _bp.drawCurrentSeg(_segd);
     }
   }
 
