@@ -53,6 +53,11 @@ public class PlotTest {
   public ResponsePlot _rp;
   public ElevPlot _elev;
 
+  // Sliders
+  public JSlider gainSlider;
+  public JSlider lowpassSlider;
+  public JSlider tpowSlider;
+
   private PlotTest() {
     // _shots = new ArrayList<MPoint>(0);
     // _gps = new ArrayList<MPoint>(0);
@@ -61,11 +66,6 @@ public class PlotTest {
     _rp = new ResponsePlot();
     _elev = new ElevPlot();
   }
-
-  // private void addMPoint(MPoint p) {
-  // _recs.add(p);
-  // _bp.updateBPView();
-  // }
 
   // /////////////////////////////////////////////////////////////////////////
 
@@ -125,6 +125,8 @@ public class PlotTest {
       JMenu testMenu = new JMenu("Test");
       testMenu.setMnemonic('E');
       testMenu.add(new DisplayRange()).setMnemonic('g');
+      testMenu.add(new ClearSegdata()).setMnemonic('c');
+      testMenu.add(new ShowPlotSettings()).setMnemonic('p');
 
       JMenuBar menuBar = new JMenuBar();
       menuBar.add(fileMenu);
@@ -316,38 +318,60 @@ public class PlotTest {
     // private PlotFrame _plotFrame;
     public SimplePlot sp;
     private PixelsView pv;
-
+    private double gainNum;
+    private float tpowNum;
+    private double lowpassNum;
+    private JFrame sliderFrame;
+    private JPanel sliderPanel;
     // The Shot response
     private ResponsePlot() {
 
-      // One plot panel for the impulse response.
-      // _plotPanel = new PlotPanel();
-      // _plotPanel.setHLabel("Station");
-      // _plotPanel.setVLabel("Time (s)");
-      // _plotPanel.setTitle("Shot");
-      //
-      // // This first update constructs a sequence view for the impulse
-      // // response, and a points view for amplitude and phase responses.
-      // // updateViews();
-      //
-      // _plotFrame = new PlotFrame(_plotPanelH);
-      //
-      // // The menu bar.
-      // JMenu fileMenu = new JMenu("File");
-      // fileMenu.setMnemonic('F');
-      // fileMenu.add(new SaveAsPngAction(_plotFrame)).setMnemonic('a');
-      // fileMenu.add(new ExitAction()).setMnemonic('x');
-      // JMenuBar menuBar = new JMenuBar();
-      // menuBar.add(fileMenu);
-      //
-      // _plotFrame.setJMenuBar(menuBar);
-      //
-      // // Make the plot frame visible.
-      // _plotFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      // _plotFrame.setLocation(RP_X, RP_Y);
-      // _plotFrame.setSize(RP_WIDTH, RP_HEIGHT);
-      // _plotFrame.setFontSizeForPrint(8, 240);
-      // _plotFrame.setVisible(false);
+      // Makes Sliders for gain, tpow and lowpass      
+      sliderFrame = new JFrame();
+      sliderFrame.setTitle("Plot Sliders");
+      sliderFrame.setSize(250,300);
+      sliderFrame.setLocation(100,500);
+      sliderPanel = new JPanel();
+      sliderFrame.add(sliderPanel);
+
+      gainSlider = new JSlider(JSlider.HORIZONTAL,0,100,40);
+      gainSlider.setMajorTickSpacing(20);
+      gainSlider.setMinorTickSpacing(1);
+      gainSlider.setPaintTicks(true);
+      gainSlider.setPaintLabels(true);
+      gainSlider.setSize(200,100);
+      sliderPanel.add(gainSlider);
+      gainSlider.addChangeListener(cl);
+      JLabel gainLabel = new JLabel("Gain Number", JLabel.CENTER);
+      gainLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+      sliderPanel.add(gainLabel);
+
+      lowpassSlider = new JSlider(JSlider.HORIZONTAL,0,100,40);
+      lowpassSlider.setMajorTickSpacing(20);
+      lowpassSlider.setMinorTickSpacing(1);
+      lowpassSlider.setPaintTicks(true);
+      lowpassSlider.setPaintLabels(true);
+      lowpassSlider.setSize(200,100);
+      sliderPanel.add(lowpassSlider);
+      lowpassSlider.addChangeListener(cl);
+      JLabel lowpassLabel = new JLabel("Low Pass", JLabel.CENTER);
+      lowpassLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+      sliderPanel.add(lowpassLabel);
+
+      tpowSlider = new JSlider(JSlider.HORIZONTAL,0,100,40);
+      tpowSlider.setMajorTickSpacing(20);
+      tpowSlider.setMinorTickSpacing(1);
+      tpowSlider.setPaintTicks(true);
+      tpowSlider.setPaintLabels(true);
+      tpowSlider.setSize(200,100);
+      sliderPanel.add(tpowSlider);
+      tpowSlider.addChangeListener(cl);
+      JLabel tpowLabel = new JLabel("Tpow Number", JLabel.CENTER);
+      tpowLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+      sliderPanel.add(tpowLabel);
+
+      sliderFrame.setVisible(false);
+
       sp = new SimplePlot(SimplePlot.Origin.UPPER_LEFT);
       sp.setSize(600, 600);
       sp.setVLabel("Time (s)");
@@ -355,6 +379,15 @@ public class PlotTest {
       pv = null;
 
     }
+
+      private ChangeListener cl = new ChangeListener(){
+        public void stateChanged(ChangeEvent e) {
+          if (!gainSlider.getValueIsAdjusting() && !lowpassSlider.getValueIsAdjusting() && !tpowSlider.getValueIsAdjusting() )
+            gainNum = gainSlider.getValue();
+            lowpassNum = lowpassSlider.getValue();
+            tpowNum = tpowSlider.getValue();
+        }
+      };
 
     public void updateRP(Segdata seg) {
       int n1 = seg.getF()[0].length;
@@ -367,7 +400,7 @@ public class PlotTest {
         sp.setHLabel("Offset (km)");
       sp.setHLimits(seg.getRPF(), seg.getRPL());
       sp.setTitle("Shot " + seg.getSP());
-      pv = sp.addPixels(s1, s2, gain2(seg.getF()));
+      pv = sp.addPixels(s1, s2, gain2(seg.getF(),gainNum));
       // pv = sp.addPixels(s1, s2, seg.getF()));
       pv.setPercentiles(1, 99);
 
@@ -402,7 +435,7 @@ public class PlotTest {
       }
       Sampling s1 = new Sampling(n1, 0.001, 0.0);
       Sampling s2 = new Sampling(n2, 1.0, rpf);
-      pv = sp.addPixels(s1, s2, gain2(stot));
+      pv = sp.addPixels(s1, s2, gain2(stot,gainNum));
       sp.setHLimits(rpf, rpl);
       sp.setTitle("Brute Combine");
       sp.setHLabel("Station");
@@ -441,7 +474,7 @@ public class PlotTest {
       }
       Sampling s1 = new Sampling(n1, 0.001, 0.0);
       Sampling s2 = new Sampling(n2, 1.0, fsp);
-      pv = sp.addPixels(s1, s2, gain2(chan));
+      pv = sp.addPixels(s1, s2, gain2(chan, gainNum));
       // pv = sp.addPixels(s1, s2, (chan));
       sp.setHLimits(fsp, maxShot(seg));
       sp.setTitle("Channel: "+channel);
@@ -518,6 +551,10 @@ public class PlotTest {
       return false;
     }
 
+    public void showPlotSlider(){
+      sliderFrame.setVisible(true);
+    }
+
   }
 
   // /////////////////////////////////////////////////////////////////////////
@@ -588,7 +625,7 @@ public class PlotTest {
             sliderPanel = new JPanel();
             sliderFrame.add(sliderPanel);
 
-            sliderNear = new JSlider(JSlider.HORIZONTAL,0,20,10);
+            sliderNear = new JSlider(JSlider.HORIZONTAL,0,20,0);
             sliderNear.setMajorTickSpacing(2);
             sliderNear.setMinorTickSpacing(1);
             sliderNear.setPaintTicks(true);
@@ -760,13 +797,14 @@ public class PlotTest {
           sliderPanel = new JPanel();
           sliderFrame.add(sliderPanel);
 
-          sliderChan = new JSlider(JSlider.HORIZONTAL,0,getMaxNumChan(_segd),50);
+          sliderChan = new JSlider(JSlider.HORIZONTAL,0,getMaxNumChan(_segd),0);
           sliderChan.setMajorTickSpacing(50);
           sliderChan.setPaintTicks(true);
           sliderChan.setPaintLabels(true);
           sliderChan.setSize(200,100);
           sliderPanel.add(sliderChan);
         }
+        sliderChan.setMaximum(getMaxNumChan(_segd));
         sliderChan.addChangeListener(cl);
         sliderFrame.setVisible(true);
       } else {
@@ -916,6 +954,32 @@ public class PlotTest {
 
     public void actionPerformed(ActionEvent event) {
       _rp.updateRP(_segd, 200); //TODO: Write logic for dynamic shots
+    }
+  }
+
+ private class ClearSegdata extends AbstractAction {
+    private static final long serialVersionUID = 1L;
+
+    private ClearSegdata() {
+      super("Clear Segdata");
+
+    }
+
+    public void actionPerformed(ActionEvent event) {
+      _segd.removeAll(_segd);
+    }
+  }
+
+ private class ShowPlotSettings extends AbstractAction {
+    private static final long serialVersionUID = 1L;
+
+    private ShowPlotSettings() {
+      super("Plot Controls");
+
+    }
+
+    public void actionPerformed(ActionEvent event) {
+      _rp.showPlotSlider();
     }
   }
 

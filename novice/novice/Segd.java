@@ -209,6 +209,19 @@ public class Segd {
     return g;
   }
 
+  public static float[][] gain2(float[][] f, double sigma) {
+    int n1 = f[0].length;
+    int n2 = f.length;
+    float[][] a = new float[n2][n1];
+    RecursiveExponentialFilter ref = new RecursiveExponentialFilter(sigma);
+    if (max(abs(f)) > 0.0f) {
+      float[][] g = mul(f, f);
+      ref.apply1(g, g);
+      div(f, sqrt(g), a);
+    }
+    return a;
+  }
+
   public static float[][] gain2(float[][] f) {
     int n1 = f[0].length;
     int n2 = f.length;
