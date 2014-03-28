@@ -961,12 +961,13 @@ public class PlotTest {
     private static final long serialVersionUID = 1L;
 
     private ClearSegdata() {
-      super("Clear Segdata");
+      super("Clear Data");
 
     }
 
     public void actionPerformed(ActionEvent event) {
       _segd.removeAll(_segd);
+      _gps.removeAll(_gps);
     }
   }
 
