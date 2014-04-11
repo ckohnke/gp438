@@ -4,7 +4,7 @@ import static edu.mines.jtk.util.ArrayMath.*;
 
 import java.awt.event.*;
 import java.awt.*;
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -100,6 +100,7 @@ public class PlotTest {
       // We add two more modes for editing poles and zeros.
       ModeManager mm = _plotFrame.getModeManager();
       RoamMode rm = new RoamMode(mm); // roam and plot
+      CircleMode om = new CircleMode(mm);
       ChannelMode cm = new ChannelMode(mm);
       // PoleZeroMode zm = new PoleZeroMode(mm,false); // for zeros
 
@@ -113,6 +114,7 @@ public class PlotTest {
       modeMenu.setMnemonic('M');
       modeMenu.add(new ModeMenuItem(tzm));
       modeMenu.add(new ModeMenuItem(rm));
+      modeMenu.add(new ModeMenuItem(om));
       modeMenu.add(new ModeMenuItem(cm));
 
       JMenu toolMenu = new JMenu("Tools");
@@ -121,6 +123,7 @@ public class PlotTest {
       toolMenu.add(new GetDEM(_plotPanel)).setMnemonic('g');
       toolMenu.add(new ExportFlagsToCSV()).setMnemonic('e');
       toolMenu.add(new ImportSegdDir()).setMnemonic('s');
+      toolMenu.add(new ImportSegdFile()).setMnemonic('d');
 
       JMenu testMenu = new JMenu("Test");
       testMenu.setMnemonic('E');
@@ -141,11 +144,9 @@ public class PlotTest {
       toolBar.setRollover(true);
       toolBar.add(new ModeToggleButton(tzm));
       toolBar.add(new ModeToggleButton(rm));
+      toolBar.add(new ModeToggleButton(om));
       toolBar.add(new ModeToggleButton(cm));
       _plotFrame.add(toolBar, BorderLayout.WEST);
-
-      // Initially, enable editing of poles.
-      // pm.setActive(true);
 
       // Make the plot frame visible.
       _plotFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -308,6 +309,28 @@ public class PlotTest {
       return false;
     }
 
+    public ArrayList<MPoint> gpsWithinRange(MPoint g, double d){
+      ArrayList<MPoint> p = new ArrayList<MPoint>(0);
+      for(MPoint m:_gps){
+        if(g.xyDist(m) <= d){
+          p.add(m);
+        }
+      }
+      return p;
+    }
+
+    public ArrayList<Segdata> segWithinRange(ArrayList<MPoint> g){
+      ArrayList<Segdata> p = new ArrayList<Segdata>(0);
+      int max = maxStation(g);
+      int min = minStation(g);
+      for(Segdata s:_segd){
+        if(s.getSP() <= max && s.getSP()>=min){
+          p.add(s);
+        }
+      }
+      return p;
+    }
+
   }
 
   // /////////////////////////////////////////////////////////////////////////
@@ -342,7 +365,7 @@ public class PlotTest {
       gainSlider.setSize(200,100);
       sliderPanel.add(gainSlider);
       gainSlider.addChangeListener(cl);
-      JLabel gainLabel = new JLabel("Gain Number", JLabel.CENTER);
+      JLabel gainLabel = new JLabel("Gain Controll", JLabel.CENTER);
       gainLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
       sliderPanel.add(gainLabel);
 
@@ -609,7 +632,7 @@ public class PlotTest {
     private JFrame sliderFrame;
     private JPanel sliderPanel;
     private JSlider sliderNear;
-    private int sumNearestNum = 0;
+    private int sumDist = 0;
 
     // When this mode is activated (or deactivated) for a tile, it simply
     // adds (or removes) its mouse listener to (or from) that tile.
@@ -619,18 +642,18 @@ public class PlotTest {
           component.addMouseListener(_ml);
           if(sliderFrame == null){
             sliderFrame = new JFrame();
-            sliderFrame.setTitle("Summation Slider");
+            sliderFrame.setTitle("Sum Slider (M)");
             sliderFrame.setSize(250,100);
             sliderFrame.setLocation(100,500);
             sliderPanel = new JPanel();
             sliderFrame.add(sliderPanel);
 
-            sliderNear = new JSlider(JSlider.HORIZONTAL,0,20,0);
-            sliderNear.setMajorTickSpacing(2);
-            sliderNear.setMinorTickSpacing(1);
+            sliderNear = new JSlider(JSlider.HORIZONTAL,0,1000,0);
+            sliderNear.setMajorTickSpacing(200);
+            sliderNear.setMinorTickSpacing(25);
             sliderNear.setPaintTicks(true);
             sliderNear.setPaintLabels(true);
-            sliderNear.setSize(200,100);
+            sliderNear.setSize(250,100);
             sliderPanel.add(sliderNear);
           }
           sliderNear.addChangeListener(cl);
@@ -664,7 +687,7 @@ public class PlotTest {
     private ChangeListener cl = new ChangeListener(){
       public void stateChanged(ChangeEvent e) {
         if (!sliderNear.getValueIsAdjusting())
-          sumNearestNum = sliderNear.getValue();
+          sumDist = sliderNear.getValue();
       }
     };
 
@@ -694,30 +717,9 @@ public class PlotTest {
       
       gpsPlot.add(gpsNear);
       segPlot.add(segNear);
-      if(sumNearestNum > 0){
-        int maxShot = maxShot(_segd);
-        int minShot = minShot(_segd);
-        int base = gpsNear.getStation();
-        int count = sumNearestNum;
-        int i = 1;
-        int j = 1;
-        Segdata segPlus = segNear;
-        Segdata segMinus = segNear;
-        while(count>0){
-          if(segPlus.getSP()+1 <= maxShot && count > 0){
-            segPlus = getSegdataByStationRoof(_segd, segPlus.getSP()+1);
-            segPlot.add(segPlus);
-            --count;
-          }
-          if(segMinus.getSP()-1 >= minShot && count > 0){
-            segMinus = getSegdataByStationFloor(_segd, segMinus.getSP()-1);
-            segPlot.add(segMinus);
-            --count;
-          }
-          if(!(segMinus.getSP()-1 >= minShot) && !(segPlus.getSP()+1 <= maxShot) && count > 0){
-            break;
-          }
-        }
+      if(sumDist > 0){
+        gpsPlot = _bp.gpsWithinRange(gpsNear, sumDist);
+        segPlot = _bp.segWithinRange(gpsPlot);
       }
       _bp.drawCurrentSeg(segPlot);
       _bp.plotActiveReceivers(segPlot);
@@ -824,6 +826,70 @@ public class PlotTest {
       _rp.updateRP(_segd,chan);
     }
 
+  }
+
+// /////////////////////////////////////////////////////////////////////////
+
+  private class CircleMode extends Mode {
+    private static final long serialVersionUID = 1L;
+
+    public CircleMode(ModeManager modeManager) {
+      super(modeManager);
+      setName("Circle Mode");
+      setShortDescription("Display within a Circle");
+    }
+
+    protected void setActive(Component component, boolean active) {
+      if (active) {
+        count=0;
+        component.addMouseListener(_ml);
+      } else {
+        component.removeMouseListener(_ml);
+      }
+    }
+
+    private MouseListener _ml = new MouseAdapter() {
+      public void mousePressed(MouseEvent e) {
+        _tile = (Tile) e.getSource();
+        addPoint(e);
+      }
+
+    };
+
+    private void addPoint(MouseEvent e){
+      if(count!=2){
+        int x = e.getX();
+        int y = e.getY();
+        Transcaler ts = _tile.getTranscaler();
+        Projector hp = _tile.getHorizontalProjector();
+        Projector vp = _tile.getVerticalProjector();
+        double xu = ts.x(x);
+        double yu = ts.y(y);
+        double xv = hp.v(xu);
+        double yv = vp.v(yu);
+        if(count==0){
+          p1 = new MPoint(xv,yv,true); //center of circle
+          ++count;
+        } else if(count==1){
+          p2 = new MPoint(xv,yv,true); //point on radius
+          ++count;
+        }
+      }
+      if(count==2){
+        ArrayList<Segdata> segPlot = _bp.segWithinRange(_bp.gpsWithinRange(p1, p1.xyDist(p2)));
+        _bp.drawCurrentSeg(segPlot);
+        _bp.plotActiveReceivers(segPlot);
+      //_bp.drawCurrentGPS(gpsPlot);        
+        count=0;
+        p1=null;
+        p2=null;
+      }
+      
+    }
+
+    private MPoint p1, p2;
+    private int count;
+    private Tile _tile;
   }
 
   // /////////////////////////////////////////////////////////////////////////
@@ -940,6 +1006,34 @@ public class PlotTest {
       for(int i=0; i<tmp.size(); ++i)
         _segd.add(tmp.get(i));
       System.out.println("SEGD IMPORTED");
+    }
+
+  }
+
+  private class ImportSegdFile extends AbstractAction {
+    private static final long serialVersionUID = 1L;
+
+    private ImportSegdFile() {
+      super("Import Segd File(s)");
+
+    }
+
+    public void actionPerformed(ActionEvent event) {
+      try{
+      JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+      fc.showSaveDialog(null);
+      File[] f = fc.getSelectedFiles();
+      ArrayList<Segdata> tmp = new ArrayList<Segdata>(0);
+      for(int i=0; i<f.length; ++i){
+        Segdata ts = readSegd(f[i]);
+        tmp.add(ts);
+      }
+      for(int i=0; i<tmp.size(); ++i)
+        _segd.add(tmp.get(i));
+      System.out.println("SEGD IMPORTED");
+      } catch(Exception e){
+        System.out.println(e);
+      }
     }
 
   }

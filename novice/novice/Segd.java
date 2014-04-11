@@ -50,7 +50,7 @@ public class Segd {
     return _segd;
   }
 
-  private static Segdata readSegd(File segdFile) throws IOException { 
+  public static Segdata readSegd(File segdFile) throws IOException { 
     byte[] gh = zerobyte(32); // general header
     byte[] th = zerobyte(20); // trace header
     byte[] the = zerobyte(32); // trace header extension
@@ -213,7 +213,7 @@ public class Segd {
     int n1 = f[0].length;
     int n2 = f.length;
     float[][] a = new float[n2][n1];
-    RecursiveExponentialFilter ref = new RecursiveExponentialFilter(sigma);
+    RecursiveExponentialFilter ref = new RecursiveExponentialFilter(sigma); //gain controll
     if (max(abs(f)) > 0.0f) {
       float[][] g = mul(f, f);
       ref.apply1(g, g);
@@ -239,7 +239,7 @@ public class Segd {
     int n1 = f[0].length;
     int n2 = f.length;
     float[][] g = new float[n2][n1];
-    double f3db = 25.0 * 0.002;
+    double f3db = 25.0 * 0.002; // cycles/sample
     ButterworthFilter bf = new ButterworthFilter(f3db, 6,
         ButterworthFilter.Type.LOW_PASS);
     bf.apply1ForwardReverse(f, g);
