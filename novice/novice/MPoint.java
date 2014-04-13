@@ -92,6 +92,10 @@ public class MPoint {
     return z;
   }
 
+  public void setElev(double d) {
+    z=d;
+  }
+
   public double getLat() {
     return lat;
   }

@@ -199,12 +199,11 @@ public class Segd {
     return min;
 }
 
-  public static float[][] tpow2(float[][] f) {
+  public static float[][] tpow2(float[][] f, float p) {
     int n1 = f[0].length;
     int n2 = f.length;
-    float[][] g = new float[n2][n1];
-    float[][] t = rampfloat(0.0f, 0.002f, 0.0f, n1, n2);
-    mul(t, t, t);
+    float[][] g = ccopy(f);
+    float[][] t = pow(rampfloat(0.0f, 0.002f, 0.0f, n1, n2),p);
     mul(t, g);
     return g;
   }
@@ -240,6 +239,17 @@ public class Segd {
     int n2 = f.length;
     float[][] g = new float[n2][n1];
     double f3db = 25.0 * 0.002; // cycles/sample
+    ButterworthFilter bf = new ButterworthFilter(f3db, 6,
+        ButterworthFilter.Type.LOW_PASS);
+    bf.apply1ForwardReverse(f, g);
+    return g;
+  }
+
+  public static float[][] lowpass2(float[][] f, double lowpassNum) {
+    int n1 = f[0].length;
+    int n2 = f.length;
+    float[][] g = new float[n2][n1];
+    double f3db = lowpassNum * 0.002; // cycles/sample
     ButterworthFilter bf = new ButterworthFilter(f3db, 6,
         ButterworthFilter.Type.LOW_PASS);
     bf.apply1ForwardReverse(f, g);

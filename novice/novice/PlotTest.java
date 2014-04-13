@@ -16,6 +16,7 @@ import edu.mines.jtk.mosaic.*;
 
 import static novice.Segd.*;
 import static novice.Waypoints.*;
+import static novice.NedReader.*;
 
 public class PlotTest {
 
@@ -49,6 +50,7 @@ public class PlotTest {
   // private ArrayList<MPoint> _recs;
   public static ArrayList<MPoint> _gps;
   public ArrayList<Segdata> _segd;
+  public ArrayList<NedFile> _nedFiles;
   public BasePlot _bp;
   public ResponsePlot _rp;
   public ElevPlot _elev;
@@ -61,7 +63,7 @@ public class PlotTest {
   private PlotTest() {
     // _shots = new ArrayList<MPoint>(0);
     // _gps = new ArrayList<MPoint>(0);
-    _segd = new ArrayList<Segdata>(0);
+    // _segd = new ArrayList<Segdata>(0);
     _bp = new BasePlot();
     _rp = new ResponsePlot();
     _elev = new ElevPlot();
@@ -77,6 +79,7 @@ public class PlotTest {
     private PointsView _redView;
     private PointsView _blueView;
     private PointsView _greenView;
+    private PointsView _circleView;
 
     private BasePlot() {
 
@@ -85,10 +88,10 @@ public class PlotTest {
       _plotPanel.setTitle("Base Plot Test");
       _plotPanel.setHLabel("Easting (UTM)");
       _plotPanel.setVLabel("Northing (UTM)");
-      _plotPanel.setHLimits(317600, 320600); // TODO: plot displays E+06
-                          // for large ints
-      _plotPanel.setVLimits(4121800, 4123600); // TODO: plot displays E+06
-                            // for large ints
+      _plotPanel.setHLimits(317600, 320600);  
+      _plotPanel.setVLimits(4121800, 4123600);
+      _plotPanel.setHFormat("%s");
+      _plotPanel.setVFormat("%s");
 
       // A grid view for horizontal and vertical lines (axes).
       _plotPanel.addGrid("H0-V0-");
@@ -121,6 +124,7 @@ public class PlotTest {
       toolMenu.setMnemonic('T');
       toolMenu.add(new GetFlagsFromHH()).setMnemonic('f');
       toolMenu.add(new GetDEM(_plotPanel)).setMnemonic('g');
+      toolMenu.add(new ReadNedElevation(_plotPanel));
       toolMenu.add(new ExportFlagsToCSV()).setMnemonic('e');
       toolMenu.add(new ImportSegdDir()).setMnemonic('s');
       toolMenu.add(new ImportSegdFile()).setMnemonic('d');
@@ -128,7 +132,7 @@ public class PlotTest {
       JMenu testMenu = new JMenu("Test");
       testMenu.setMnemonic('E');
       testMenu.add(new DisplayRange()).setMnemonic('g');
-      testMenu.add(new ClearSegdata()).setMnemonic('c');
+      testMenu.add(new ClearData()).setMnemonic('c');
       testMenu.add(new ShowPlotSettings()).setMnemonic('p');
 
       JMenuBar menuBar = new JMenuBar();
@@ -331,6 +335,31 @@ public class PlotTest {
       return p;
     }
 
+    public void drawCircle(MPoint mid, double r){
+      float[][] circlePoints = makeCirclePoints(mid, r);
+      if(_circleView == null){
+        _circleView = _plotPanel.addPoints(circlePoints[0],circlePoints[1]);
+        _circleView.setMarkStyle(PointsView.Mark.NONE);
+        _circleView.setLineStyle(PointsView.Line.SOLID);
+        _circleView.setLineColor(Color.RED);
+      } else{
+        _circleView.set(circlePoints[0],circlePoints[1]);
+      }
+    }
+
+    public float[][] makeCirclePoints(MPoint mid, double r){
+      int nt = 1000;
+      double dt = 2.0*DBL_PI/(nt-1);
+      float[] x = new float[nt];
+      float[] y = new float[nt];
+      for (int it=0; it<nt; ++it) {
+        float t = (float)(it*dt);
+        x[it] = (float)(mid.getUTMX()+r*cos(t));
+        y[it] = (float)(mid.getUTMY()-r*sin(t));
+      }
+      return new float[][]{x,y};
+    }
+
   }
 
   // /////////////////////////////////////////////////////////////////////////
@@ -341,11 +370,16 @@ public class PlotTest {
     // private PlotFrame _plotFrame;
     public SimplePlot sp;
     private PixelsView pv;
-    private double gainNum;
-    private float tpowNum;
-    private double lowpassNum;
+    private double gainNum = 40.0;
+    private float tpowNum = 1.0f;
+    private double lowpassNum = 25.0;
     private JFrame sliderFrame;
     private JPanel sliderPanel;
+
+    private Sampling s1;
+    private Sampling s2;
+    private float[][] plotArray;
+
     // The Shot response
     private ResponsePlot() {
 
@@ -357,39 +391,41 @@ public class PlotTest {
       sliderPanel = new JPanel();
       sliderFrame.add(sliderPanel);
 
-      gainSlider = new JSlider(JSlider.HORIZONTAL,0,100,40);
+      gainSlider = new JSlider(0,100,40);
+      gainSlider.setOrientation(JSlider.HORIZONTAL);
       gainSlider.setMajorTickSpacing(20);
-      gainSlider.setMinorTickSpacing(1);
+      gainSlider.setMinorTickSpacing(10);
       gainSlider.setPaintTicks(true);
       gainSlider.setPaintLabels(true);
       gainSlider.setSize(200,100);
       sliderPanel.add(gainSlider);
       gainSlider.addChangeListener(cl);
-      JLabel gainLabel = new JLabel("Gain Controll", JLabel.CENTER);
+      JLabel gainLabel = new JLabel("Gain Control", JLabel.CENTER);
       gainLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
       sliderPanel.add(gainLabel);
 
-      lowpassSlider = new JSlider(JSlider.HORIZONTAL,0,100,40);
+      lowpassSlider = new JSlider(0,100,25);
+      lowpassSlider.setOrientation(JSlider.HORIZONTAL);
       lowpassSlider.setMajorTickSpacing(20);
-      lowpassSlider.setMinorTickSpacing(1);
+      lowpassSlider.setMinorTickSpacing(10);
       lowpassSlider.setPaintTicks(true);
       lowpassSlider.setPaintLabels(true);
       lowpassSlider.setSize(200,100);
       sliderPanel.add(lowpassSlider);
       lowpassSlider.addChangeListener(cl);
-      JLabel lowpassLabel = new JLabel("Low Pass", JLabel.CENTER);
+      JLabel lowpassLabel = new JLabel("Lowpass Freq. (cycles/s)", JLabel.CENTER);
       lowpassLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
       sliderPanel.add(lowpassLabel);
 
-      tpowSlider = new JSlider(JSlider.HORIZONTAL,0,100,40);
-      tpowSlider.setMajorTickSpacing(20);
-      tpowSlider.setMinorTickSpacing(1);
+      tpowSlider = new JSlider(0,5,1);
+      tpowSlider.setOrientation(JSlider.HORIZONTAL);
+      tpowSlider.setMajorTickSpacing(1);
       tpowSlider.setPaintTicks(true);
       tpowSlider.setPaintLabels(true);
       tpowSlider.setSize(200,100);
       sliderPanel.add(tpowSlider);
       tpowSlider.addChangeListener(cl);
-      JLabel tpowLabel = new JLabel("Tpow Number", JLabel.CENTER);
+      JLabel tpowLabel = new JLabel("tpow Power", JLabel.CENTER);
       tpowLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
       sliderPanel.add(tpowLabel);
 
@@ -405,25 +441,31 @@ public class PlotTest {
 
       private ChangeListener cl = new ChangeListener(){
         public void stateChanged(ChangeEvent e) {
-          if (!gainSlider.getValueIsAdjusting() && !lowpassSlider.getValueIsAdjusting() && !tpowSlider.getValueIsAdjusting() )
             gainNum = gainSlider.getValue();
             lowpassNum = lowpassSlider.getValue();
             tpowNum = tpowSlider.getValue();
+            updateRP();
         }
       };
+
+    public void updateRP(){
+      pv = sp.addPixels(s1, s2, gain2(lowpass2(tpow2(plotArray, tpowNum), lowpassNum), gainNum));
+      pv.setPercentiles(1, 99);
+    }
 
     public void updateRP(Segdata seg) {
       int n1 = seg.getF()[0].length;
       int n2 = seg.getF().length;
-      Sampling s1 = new Sampling(n1, 0.001, 0.0);
-      Sampling s2 = new Sampling(n2, 1.0, seg.getRPF());
+      s1 = new Sampling(n1, 0.001, 0.0);
+      s2 = new Sampling(n2, 1.0, seg.getRPF());
       if (s2.getDelta() == 1.0)
         sp.setHLabel("Station");
       else
         sp.setHLabel("Offset (km)");
       sp.setHLimits(seg.getRPF(), seg.getRPL());
       sp.setTitle("Shot " + seg.getSP());
-      pv = sp.addPixels(s1, s2, gain2(seg.getF(),gainNum));
+      plotArray = seg.getF();
+      updateRP();
       // pv = sp.addPixels(s1, s2, seg.getF()));
       pv.setPercentiles(1, 99);
 
@@ -456,11 +498,12 @@ public class PlotTest {
           stot[i][j] = stot[i][j]/count[i];
         }
       }
-      Sampling s1 = new Sampling(n1, 0.001, 0.0);
-      Sampling s2 = new Sampling(n2, 1.0, rpf);
-      pv = sp.addPixels(s1, s2, gain2(stot,gainNum));
+      s1 = new Sampling(n1, 0.001, 0.0);
+      s2 = new Sampling(n2, 1.0, rpf);
+      plotArray = stot;
+      updateRP();
       sp.setHLimits(rpf, rpl);
-      sp.setTitle("Brute Combine");
+      sp.setTitle("Brute Stack");
       sp.setHLabel("Station");
       pv.setPercentiles(1, 99);
     }
@@ -495,9 +538,10 @@ public class PlotTest {
           }
         }
       }
-      Sampling s1 = new Sampling(n1, 0.001, 0.0);
-      Sampling s2 = new Sampling(n2, 1.0, fsp);
-      pv = sp.addPixels(s1, s2, gain2(chan, gainNum));
+      s1 = new Sampling(n1, 0.001, 0.0);
+      s2 = new Sampling(n2, 1.0, fsp);
+      plotArray = chan;
+      updateRP();
       // pv = sp.addPixels(s1, s2, (chan));
       sp.setHLimits(fsp, maxShot(seg));
       sp.setTitle("Channel: "+channel);
@@ -623,7 +667,7 @@ public class PlotTest {
     public RoamMode(ModeManager modeManager) {
       super(modeManager);
       setName("Roaming Mode");
-      // setIcon(loadIcon(PolesAndZerosDemo.class,"Poles16.png"));
+      setIcon(loadIcon(PlotTest.class,"Roam16.png"));
       setMnemonicKey(KeyEvent.VK_R);
       setAcceleratorKey(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0));
       setShortDescription("Roaming Mode");
@@ -634,6 +678,8 @@ public class PlotTest {
     private JSlider sliderNear;
     private int sumDist = 0;
 
+    private MPoint nearest;
+
     // When this mode is activated (or deactivated) for a tile, it simply
     // adds (or removes) its mouse listener to (or from) that tile.
     protected void setActive(Component component, boolean active) {
@@ -642,7 +688,7 @@ public class PlotTest {
           component.addMouseListener(_ml);
           if(sliderFrame == null){
             sliderFrame = new JFrame();
-            sliderFrame.setTitle("Sum Slider (M)");
+            sliderFrame.setTitle("Sum Slider (m)");
             sliderFrame.setSize(250,100);
             sliderFrame.setLocation(100,500);
             sliderPanel = new JPanel();
@@ -650,7 +696,7 @@ public class PlotTest {
 
             sliderNear = new JSlider(JSlider.HORIZONTAL,0,1000,0);
             sliderNear.setMajorTickSpacing(200);
-            sliderNear.setMinorTickSpacing(25);
+            sliderNear.setMinorTickSpacing(50);
             sliderNear.setPaintTicks(true);
             sliderNear.setPaintLabels(true);
             sliderNear.setSize(250,100);
@@ -686,8 +732,9 @@ public class PlotTest {
 
     private ChangeListener cl = new ChangeListener(){
       public void stateChanged(ChangeEvent e) {
-        if (!sliderNear.getValueIsAdjusting())
           sumDist = sliderNear.getValue();
+          _bp.drawCircle(nearest, sumDist);
+          updatePlot();
       }
     };
 
@@ -712,13 +759,32 @@ public class PlotTest {
       int y = e.getY();
       ArrayList<MPoint> gpsPlot = new ArrayList<MPoint>(0);
       ArrayList<Segdata> segPlot = new ArrayList<Segdata>(0);
-      MPoint gpsNear = getNearestGPS(x, y);
-      Segdata segNear = getNearestSegdata(gpsNear.getStation());
+      nearest = getNearestGPS(x, y);
+      Segdata segNear = getNearestSegdata(nearest.getStation());
       
-      gpsPlot.add(gpsNear);
+      gpsPlot.add(nearest);
       segPlot.add(segNear);
       if(sumDist > 0){
-        gpsPlot = _bp.gpsWithinRange(gpsNear, sumDist);
+        gpsPlot = _bp.gpsWithinRange(nearest, sumDist);
+        segPlot = _bp.segWithinRange(gpsPlot);
+      }
+      _bp.drawCurrentSeg(segPlot);
+      _bp.plotActiveReceivers(segPlot);
+      _bp.drawCircle(nearest, sumDist);
+      //_bp.drawCurrentGPS(gpsPlot);
+
+      _rp.updateRP(segPlot);
+    }
+
+    private void updatePlot() {
+      ArrayList<MPoint> gpsPlot = new ArrayList<MPoint>(0);
+      ArrayList<Segdata> segPlot = new ArrayList<Segdata>(0);
+      Segdata segNear = getNearestSegdata(nearest.getStation());
+      
+      gpsPlot.add(nearest);
+      segPlot.add(segNear);
+      if(sumDist > 0){
+        gpsPlot = _bp.gpsWithinRange(nearest, sumDist);
         segPlot = _bp.segWithinRange(gpsPlot);
       }
       _bp.drawCurrentSeg(segPlot);
@@ -779,9 +845,7 @@ public class PlotTest {
     public ChannelMode(ModeManager modeManager) {
       super(modeManager);
       setName("Channel Mode");
-      // setIcon(loadIcon(PolesAndZerosDemo.class,"Poles16.png"));
-      // setMnemonicKey(KeyEvent.VK_P);
-      // setAcceleratorKey(KeyStroke.getKeyStroke(KeyEvent.VK_P, 0));
+      setIcon(loadIcon(PlotTest.class,"Chan16.png"));
       setShortDescription("Display a Channel Mode");
     }
 
@@ -817,10 +881,9 @@ public class PlotTest {
 
     private ChangeListener cl = new ChangeListener(){
       public void stateChanged(ChangeEvent e) {
-        if (!sliderChan.getValueIsAdjusting())
           adjust(sliderChan.getValue());
       }
-};
+    };
 
     private void adjust(int chan){
       _rp.updateRP(_segd,chan);
@@ -836,6 +899,7 @@ public class PlotTest {
     public CircleMode(ModeManager modeManager) {
       super(modeManager);
       setName("Circle Mode");
+      setIcon(loadIcon(PlotTest.class,"Circle16.png"));
       setShortDescription("Display within a Circle");
     }
 
@@ -850,14 +914,19 @@ public class PlotTest {
 
     private MouseListener _ml = new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
-        _tile = (Tile) e.getSource();
-        addPoint(e);
+        if(beginMove(e)){
+          _tile.addMouseMotionListener(_mml);
+        }
       }
 
+      public void mouseReleased(MouseEvent e) {
+        endMove(e);
+        _tile.removeMouseMotionListener(_mml);
+      }
     };
 
-    private void addPoint(MouseEvent e){
-      if(count!=2){
+    private MouseMotionListener _mml = new MouseMotionAdapter() {
+      public void mouseDragged(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
         Transcaler ts = _tile.getTranscaler();
@@ -867,24 +936,48 @@ public class PlotTest {
         double yu = ts.y(y);
         double xv = hp.v(xu);
         double yv = vp.v(yu);
-        if(count==0){
-          p1 = new MPoint(xv,yv,true); //center of circle
-          ++count;
-        } else if(count==1){
-          p2 = new MPoint(xv,yv,true); //point on radius
-          ++count;
-        }
+        MPoint tmp = new MPoint(xv,yv,true);
+        plotCircle(p1, tmp);
       }
-      if(count==2){
-        ArrayList<Segdata> segPlot = _bp.segWithinRange(_bp.gpsWithinRange(p1, p1.xyDist(p2)));
+    };
+
+    private boolean beginMove(MouseEvent e){
+      _tile = (Tile) e.getSource();
+      int x = e.getX();
+      int y = e.getY();
+      Transcaler ts = _tile.getTranscaler();
+      Projector hp = _tile.getHorizontalProjector();
+      Projector vp = _tile.getVerticalProjector();
+      double xu = ts.x(x);
+      double yu = ts.y(y);
+      double xv = hp.v(xu);
+      double yv = vp.v(yu);
+      p1 = new MPoint(xv,yv,true);
+      return true;
+    }
+
+    private void endMove(MouseEvent e){
+      int x = e.getX();
+      int y = e.getY();
+      Transcaler ts = _tile.getTranscaler();
+      Projector hp = _tile.getHorizontalProjector();
+      Projector vp = _tile.getVerticalProjector();
+      double xu = ts.x(x);
+      double yu = ts.y(y);
+      double xv = hp.v(xu);
+      double yv = vp.v(yu);
+      p2 = new MPoint(xv,yv,true);
+      plotCircle(p1,p2);
+    }
+
+    private void plotCircle(MPoint m1, MPoint m2){
+      _bp.drawCircle(m1,m1.xyDist(m2));
+      ArrayList<Segdata> segPlot = _bp.segWithinRange(_bp.gpsWithinRange(m1, m1.xyDist(m2)));
+      if(segPlot.size()>0){
         _bp.drawCurrentSeg(segPlot);
         _bp.plotActiveReceivers(segPlot);
-      //_bp.drawCurrentGPS(gpsPlot);        
-        count=0;
-        p1=null;
-        p2=null;
+        _rp.updateRP(segPlot);
       }
-      
     }
 
     private MPoint p1, p2;
@@ -931,17 +1024,43 @@ public class PlotTest {
     private static final long serialVersionUID = 1L;
 
     private GetDEM(PlotPanel plotPanel) {
-      super("Get NED Elevation");
+      super("Import NED Files");
 
     }
 
     public void actionPerformed(ActionEvent event) {
+      try{
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
       fc.showOpenDialog(null);
       File f = fc.getSelectedFile();
-      Ned.readElevFromNed(f,_gps);
+      if(_nedFiles==null)
+        _nedFiles = new ArrayList<NedFile>(0);
+      _nedFiles.add(importNed(f));
+      } catch(Exception e){
+        System.out.println(e);
+      }
     }
   }
+  private class ReadNedElevation extends AbstractAction {
+    private static final long serialVersionUID = 1L;
+
+    private ReadNedElevation(PlotPanel plotPanel) {
+      super("Read Elevation from NED");
+
+    }
+
+    public void actionPerformed(ActionEvent event){
+      try{
+      for(NedFile f:_nedFiles){
+        readNed(f,_gps);
+      }
+      _elev.updateElev(_gps);
+      } catch (Exception e){
+        System.out.println(e);
+      }
+    }
+  }
+
 
   private class GetFlagsFromHH extends AbstractAction {
     private static final long serialVersionUID = 1L;
@@ -954,18 +1073,17 @@ public class PlotTest {
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
       fc.showOpenDialog(null);
       File f = fc.getSelectedFile();
-      // _gps = Waypoints.readLatLonFromTSV(f);
       String ext = "";
       int i = f.getName().lastIndexOf('.');
       if (i > 0) {
         ext = f.getName().substring(i + 1);
       }
       if (ext.equals("gpx"))
-        _gps = Waypoints.readLatLonFromXML(f);
+        _gps = readLatLonFromXML(f);
       else if (ext.equals("csv"))
-        _gps = Waypoints.readLatLonFromCSV(f);
+        _gps = readLatLonFromCSV(f);
       else
-        _gps = Waypoints.readLatLonFromTSV(f);
+        _gps = readLatLonFromTSV(f);
       Waypoints.latLonToUTM(_gps);
       // Waypoints.extrapolateGPS(_gps);
       _bp.updateBPView();
@@ -1003,6 +1121,9 @@ public class PlotTest {
       fc.showSaveDialog(null);
       File f = fc.getSelectedFile();
       ArrayList<Segdata> tmp = Segd.readLineSegd(f.getAbsolutePath());
+      if(_segd == null){
+        _segd = new ArrayList<Segdata>(0);
+      }
       for(int i=0; i<tmp.size(); ++i)
         _segd.add(tmp.get(i));
       System.out.println("SEGD IMPORTED");
@@ -1028,6 +1149,9 @@ public class PlotTest {
         Segdata ts = readSegd(f[i]);
         tmp.add(ts);
       }
+      if(_segd == null){
+        _segd = new ArrayList<Segdata>(0);
+      }
       for(int i=0; i<tmp.size(); ++i)
         _segd.add(tmp.get(i));
       System.out.println("SEGD IMPORTED");
@@ -1051,10 +1175,10 @@ public class PlotTest {
     }
   }
 
- private class ClearSegdata extends AbstractAction {
+ private class ClearData extends AbstractAction {
     private static final long serialVersionUID = 1L;
 
-    private ClearSegdata() {
+    private ClearData() {
       super("Clear Data");
 
     }
@@ -1062,6 +1186,7 @@ public class PlotTest {
     public void actionPerformed(ActionEvent event) {
       _segd.removeAll(_segd);
       _gps.removeAll(_gps);
+      _nedFiles.removeAll(_nedFiles);
     }
   }
 
