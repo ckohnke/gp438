@@ -1,11 +1,19 @@
 package novice;
-///////////////////////////////////////////////////////////////////////////
 
 import java.io.*;
 import java.util.*;
 
 import static java.lang.Math.*;
 
+/**
+ * The Class Waypoints.
+ * 
+ * <p> Tools for working with collection of MPoint objects.
+ * 
+ * @author Colton Kohnke, Colorado School of Mines
+ * @version 1.0
+ * @since April 13, 2014
+ */
 public class Waypoints {
 
   /*
@@ -23,16 +31,39 @@ public class Waypoints {
    * System.out.println("GPS TEST FINISH"); }
    */
 
+  /**
+   * Instantiates a new waypoints.
+   */
   private Waypoints() {}
 
+  /**
+   * Degree to radian conversion.
+   *
+   * @param deg the degree
+   * @return the double in radians
+   */
   public static double degToRad(double deg) {
     return (deg / 180 * PI);
   }
 
+  /**
+   * Radians to degree.
+   *
+   * @param rad the radians to convert
+   * @return the double in decimal degree
+   */
   public static double radToDeg(double rad) {
     return (rad / PI * 180);
   }
 
+  /**
+   * Read UTM data from Tab Separated Value file (TSV).
+   * Assumes data has a header and is of format:
+   * station#   Easting   Northing
+   *
+   * @param f the TSV file to read
+   * @return the array list of MPoints
+   */
   public static ArrayList<MPoint> readUTMFromTSV(File f) {
     ArrayList<MPoint> _gps = new ArrayList<MPoint>(0);
     try {
@@ -53,6 +84,14 @@ public class Waypoints {
     return _gps;
   }
 
+  /**
+   * Read lat/lon data from Tab Separated Value file (TSV).
+   * Assumes data has a header and is of format:
+   * station#   Latitude   Longitude
+   * 
+   * @param f the TSV file
+   * @return the array list of MPoints
+   */
   public static ArrayList<MPoint> readLatLonFromTSV(File f) {
     ArrayList<MPoint> _gps = new ArrayList<MPoint>(0);
     try {
@@ -72,6 +111,14 @@ public class Waypoints {
     return _gps;
   }
 
+  /**
+   * Read lat/lon data from Comma Separated Value file (CSV).
+   * Assumes data has a header and is of format:
+   * station#, Latitude, Longitude
+   * 
+   * @param f the CSV File
+   * @return the array list of MPoints
+   */
   public static ArrayList<MPoint> readLatLonFromCSV(File f) {
     ArrayList<MPoint> _gps = new ArrayList<MPoint>(0);
     try {
@@ -97,6 +144,12 @@ public class Waypoints {
     return _gps;
   }
   
+  /**
+   * Read lat/lon from Garmin XML file.
+   *
+   * @param f the XML file.
+   * @return the array list of MPoints.
+   */
   public static ArrayList<MPoint> readLatLonFromXML(File f) {
     ArrayList<MPoint> _gps = new ArrayList<MPoint>(0);
     try {
@@ -126,6 +179,12 @@ public class Waypoints {
     return _gps;
   }
 
+  /**
+   * Converts Lat/Lon data to UTM data. Fills the Easting/Northing fields 
+   * in the input ArrayList of MPoints
+   *
+   * @param _gps the ArrayList of MPoints to convert.
+   */
   public static void latLonToUTM(ArrayList<MPoint> _gps) {
     for (int i = 0; i < _gps.size(); ++i) {
       MPoint p = _gps.get(i);
@@ -169,10 +228,12 @@ public class Waypoints {
     }
   }
 
-  public static void UTMToLatLong() {
-
-  }
-
+  /**
+   * Gets the minimum station number.
+   *
+   * @param s the ArrayList of MPoints to check
+   * @return the min station number
+   */
   public static int getMinStationID(ArrayList<MPoint> s){
     int station = s.get(0).getStation();
     for(MPoint tmp:s){
@@ -183,6 +244,14 @@ public class Waypoints {
     return station; 
   }
 
+  /**
+   * Read UTM Easting/Northing from Comma Seperated Value (CSV) File.
+   * Assumes data has a header and is of format:
+   * station#, Easting, Northing
+   *
+   * @param f the CSV File
+   * @return the array list of MPoints from file
+   */
   public static ArrayList<MPoint> readUTMFromCSV(File f) {
     ArrayList<MPoint> _gps = new ArrayList<MPoint>(0);
     try {
@@ -204,6 +273,14 @@ public class Waypoints {
     return _gps;
   }
 
+  /**
+   * Export ArrayList of MPoints to CSV File.
+   * File is written with a header with a format:
+   * Station, Easting, Northing, Elevation
+   *
+   * @param _gps the MPoint ArrayList to export.
+   * @param f the file to write.
+   */
   public static void exportToCSV(ArrayList<MPoint> _gps, File f) {
     try {
       if (f != null) {
@@ -222,6 +299,12 @@ public class Waypoints {
     }
   }
 
+  /**
+   * Gets the maximum station number.
+   *
+   * @param gps the ArrayList of MPoints to check
+   * @return the max station number
+   */
   public static int maxStation(ArrayList<MPoint> gps){
     int max = 0;
     for(MPoint g:gps){
@@ -232,6 +315,12 @@ public class Waypoints {
     return max;
   }
 
+  /**
+   * Gets the minimum station number.
+   *
+   * @param gps the ArrayList of MPoints to search through.
+   * @return the lowest station number.
+   */
   public static int minStation(ArrayList<MPoint> gps){
     int min = gps.get(0).getStation();
     for(MPoint g:gps){
@@ -242,6 +331,13 @@ public class Waypoints {
     return min;
   }
 
+  /**
+   * Gets the MPoint with corresponding station number.
+   *
+   * @param gps the list of MPoint values to check for station.
+   * @param station the station number to search for.
+   * @return the MPoint with the correct station number (or null if not found)
+   */
   public static MPoint getByStation(ArrayList<MPoint> gps, int station){
     for(MPoint p:gps){
       if(p.getStation() == station){
@@ -251,6 +347,11 @@ public class Waypoints {
     return null;
   }
 
+  /**
+   * Extrapolate MPoints between MPoint.
+   *
+   * @param _gps the ArrayList of MPoints to extrapolate.
+   */
   public static void extrapolateGPS(ArrayList<MPoint> _gps) { // assumes
     Collections.sort(_gps, new MPointComp());
     int start, end, dn;
@@ -279,6 +380,12 @@ public class Waypoints {
     Collections.sort(_gps, new MPointComp());
   }
 
+  /**
+   * Arc-tangent function.
+   *
+   * @param x the x in degrees
+   * @return the result
+   */
   protected static double atanh(double x) {
     return 0.5 * Math.log((1.0 + x) / (1.0 - x));
   }

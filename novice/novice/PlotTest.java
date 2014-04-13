@@ -5,7 +5,6 @@ import static edu.mines.jtk.util.ArrayMath.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.*;
 
 import javax.swing.*;
@@ -19,8 +18,25 @@ import static novice.Segd.*;
 import static novice.Waypoints.*;
 import static novice.NedReader.*;
 
+/**
+ * The Class PlotTest.
+ * 
+ * <p> The main container class for the program. Controls the contained class for plot,
+ * data imports and other subroutines. Takes calls from contained classes
+ * and updates them accordingly.
+ * 
+ * @author Colton Kohnke, Colorado School of Mines
+ * @version 1.0
+ * @since April 13, 2014
+ * 
+ */
 public class PlotTest {
 
+  /**
+   * The main method.
+   *
+   * @param args the arguments
+   */
   public static void main(String[] args) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -29,38 +45,52 @@ public class PlotTest {
     });
   }
 
-  // TODO
-  // Location Plot
-  // Display common channel
-  // Display shot range (assume same active receiver)
 
   // Location and size of overlay plot.
+  /** The Constant M_X. */
   private static final int M_X = 0;
+  
+  /** The Constant M_Y. */
   private static final int M_Y = 0;
+  
+  /** The Constant M_WIDTH. */
   private static final int M_WIDTH = 500;
+  
+  /** The Constant M_HEIGHT. */
   private static final int M_HEIGHT = 500;
 
-  // Location and size of response plot.
-  // private static final int RP_X = M_X + M_WIDTH;
-  // private static final int RP_Y = 0;
-  // private static final int RP_WIDTH = 520;
-  // private static final int RP_HEIGHT = 550;
-
-  // Plot of source/receivers
-  // private ArrayList<MPoint> _shots;
-  // private ArrayList<MPoint> _recs;
+  /** The _gps. */
   public static ArrayList<MPoint> _gps;
+  
+  /** The _segd. */
   public ArrayList<Segdata> _segd;
+  
+  /** The _ned files. */
   public ArrayList<NedFile> _nedFiles;
+  
+  /** The _bp. */
   public BasePlot _bp;
+  
+  /** The _rp. */
   public ResponsePlot _rp;
+  
+  /** The _elev. */
   public ElevPlot _elev;
 
   // Sliders
+  /** The gain slider. */
   public JSlider gainSlider;
+  
+  /** The lowpass slider. */
   public JSlider lowpassSlider;
+  
+  /** The tpow slider. */
   public JSlider tpowSlider;
 
+  /**
+   * Instantiates a new plot test.
+   * Initiates the plots
+   */
   private PlotTest() {
     // _shots = new ArrayList<MPoint>(0);
     // _gps = new ArrayList<MPoint>(0);
@@ -72,16 +102,42 @@ public class PlotTest {
 
   // /////////////////////////////////////////////////////////////////////////
 
+  /**
+   * The Class BasePlot.
+   * 
+   * <p> Class for controlling the base map view.
+   * 
+   * @author Colton Kohnke, Colorado School of Mines
+   * @version 1.0
+   * @since April 13, 2014
+   * 
+   */
   private class BasePlot {
 
+    /** The _plot frame. */
     private PlotFrame _plotFrame;
+    
+    /** The _plot panel. */
     private PlotPanel _plotPanel;
+    
+    /** The _base view. */
     private PointsView _baseView;
+    
+    /** The _red view. */
     private PointsView _redView;
+    
+    /** The _blue view. */
     private PointsView _blueView;
+    
+    /** The _green view. */
     private PointsView _greenView;
+    
+    /** The _circle view. */
     private PointsView _circleView;
 
+    /**
+     * Instantiates a new base plot.
+     */
     private BasePlot() {
 
       // The plot panel.
@@ -163,6 +219,9 @@ public class PlotTest {
     }
 
     // Makes points visible
+    /**
+     * Update bp view.
+     */
     private void updateBPView() {
       int np = _gps.size();
       float[] xp = new float[np];
@@ -183,6 +242,11 @@ public class PlotTest {
       }
     }
 
+    /**
+     * Draw current gps.
+     *
+     * @param p the p
+     */
     private void drawCurrentGPS(MPoint p){
       float[] xp = new float[1];
       float[] yp = new float[1];
@@ -198,6 +262,11 @@ public class PlotTest {
       }
     }
 
+    /**
+     * Draw current gps.
+     *
+     * @param p the p
+     */
     private void drawCurrentGPS(ArrayList<MPoint> p){
       int np = p.size();
       float[] xp = new float[np];
@@ -217,6 +286,11 @@ public class PlotTest {
       }
     }
 
+    /**
+     * Draw current seg.
+     *
+     * @param s the s
+     */
     private void drawCurrentSeg(Segdata s){
       int g = s.getSP();
       MPoint p = getNearestGPSFromSegdata(s);
@@ -234,6 +308,11 @@ public class PlotTest {
       }
     }
 
+    /**
+     * Draw current seg.
+     *
+     * @param s the s
+     */
     private void drawCurrentSeg(ArrayList<Segdata> s){
       int np = s.size();
       float[] xp = new float[np];
@@ -254,6 +333,12 @@ public class PlotTest {
       }
     }
 
+    /**
+     * Gets the nearest gps from segdata.
+     *
+     * @param s the s
+     * @return the nearest gps from segdata
+     */
     private MPoint getNearestGPSFromSegdata(Segdata s){
       MPoint p = _gps.get(0);
       for(int i=1; i<_gps.size(); ++i){
@@ -263,6 +348,11 @@ public class PlotTest {
       return p;
     }
 
+    /**
+     * Plot active receivers.
+     *
+     * @param s the s
+     */
     private void plotActiveReceivers(Segdata s){
       ArrayList<Integer> recs = new ArrayList<Integer>(0);
       ArrayList<MPoint> g = new ArrayList<MPoint>(0);
@@ -298,12 +388,23 @@ public class PlotTest {
       }
     }
 
+    /**
+     * Plot active receivers.
+     *
+     * @param seg the seg
+     */
     private void plotActiveReceivers(ArrayList<Segdata> seg){
       for(Segdata s:seg){
         plotActiveReceivers(s);
       }
     }
 
+    /**
+     * Checks if is active.
+     *
+     * @param f the f
+     * @return true, if is active
+     */
     private boolean isActive(float[] f){
       int n1 = f.length;
       for(int i=0; i<n1; ++i){
@@ -314,6 +415,13 @@ public class PlotTest {
       return false;
     }
 
+    /**
+     * Gps within range.
+     *
+     * @param g the g
+     * @param d the d
+     * @return the array list
+     */
     public ArrayList<MPoint> gpsWithinRange(MPoint g, double d){
       ArrayList<MPoint> p = new ArrayList<MPoint>(0);
       for(MPoint m:_gps){
@@ -324,6 +432,12 @@ public class PlotTest {
       return p;
     }
 
+    /**
+     * Seg within range.
+     *
+     * @param g the g
+     * @return the array list
+     */
     public ArrayList<Segdata> segWithinRange(ArrayList<MPoint> g){
       ArrayList<Segdata> p = new ArrayList<Segdata>(0);
       int max = maxStation(g);
@@ -336,6 +450,12 @@ public class PlotTest {
       return p;
     }
 
+    /**
+     * Draw circle.
+     *
+     * @param mid the mid
+     * @param r the r
+     */
     public void drawCircle(MPoint mid, double r){
       float[][] circlePoints = makeCirclePoints(mid, r);
       if(_circleView == null){
@@ -348,6 +468,13 @@ public class PlotTest {
       }
     }
 
+    /**
+     * Make circle points.
+     *
+     * @param mid the mid
+     * @param r the r
+     * @return the float[][]
+     */
     public float[][] makeCirclePoints(MPoint mid, double r){
       int nt = 1000;
       double dt = 2.0*DBL_PI/(nt-1);
@@ -365,23 +492,53 @@ public class PlotTest {
 
   // /////////////////////////////////////////////////////////////////////////
 
+  /**
+   * The Class ResponsePlot.
+   * 
+   * Creates and controls the Response plot (shot record, brute stack, etc.)
+   * 
+   * @author Colton Kohnke, Colorado School of Mines
+   * @version 1.0
+   * @since April 13, 2014
+   */
   private class ResponsePlot {
 
     // private PlotPanel _plotPanel;
     // private PlotFrame _plotFrame;
+    /** The sp. */
     public SimplePlot sp;
+    
+    /** The pv. */
     private PixelsView pv;
+    
+    /** The gain num. */
     private double gainNum = 40.0;
+    
+    /** The tpow num. */
     private float tpowNum = 0.0f;
+    
+    /** The lowpass num. */
     private double lowpassNum = 25.0;
+    
+    /** The slider frame. */
     private JFrame sliderFrame;
+    
+    /** The slider panel. */
     private JPanel sliderPanel;
 
+    /** The s1. */
     private Sampling s1;
+    
+    /** The s2. */
     private Sampling s2;
+    
+    /** The plot array. */
     private float[][] plotArray;
 
     // The Shot response
+    /**
+     * Instantiates a new response plot.
+     */
     private ResponsePlot() {
 
       // Makes Sliders for gain, tpow and lowpass      
@@ -425,7 +582,7 @@ public class PlotTest {
       tpowSlider.setPaintTicks(true);
       tpowSlider.setPaintLabels(true);
 
-      Hashtable labelTable = new Hashtable();
+      Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
       labelTable.put(new Integer(0),  new JLabel("0.0"));
       labelTable.put(new Integer(10), new JLabel("1.0"));
       labelTable.put(new Integer(20), new JLabel("2.0"));
@@ -451,6 +608,7 @@ public class PlotTest {
 
     }
 
+      /** The cl. */
       private ChangeListener cl = new ChangeListener(){
         public void stateChanged(ChangeEvent e) {
             gainNum = gainSlider.getValue();
@@ -460,12 +618,20 @@ public class PlotTest {
         }
       };
 
+    /**
+     * Update rp.
+     */
     public void updateRP(){
       pv = sp.addPixels(s1, s2, gain2(lowpass2(tpow2(plotArray, tpowNum), lowpassNum), gainNum));
       // pv = sp.addPixels(s1, s2, tpow2(plotArray, tpowNum));
       pv.setPercentiles(1, 99);
     }
 
+    /**
+     * Update rp.
+     *
+     * @param seg the seg
+     */
     public void updateRP(Segdata seg) {
       int n1 = seg.getF()[0].length;
       int n2 = seg.getF().length;
@@ -484,6 +650,11 @@ public class PlotTest {
 
     }
 
+    /**
+     * Update rp.
+     *
+     * @param s the s
+     */
     public void updateRP(ArrayList<Segdata> s) {
       int n1 = getN1(s);
       int n2 = getN2(s);
@@ -521,6 +692,12 @@ public class PlotTest {
       pv.setPercentiles(1, 99);
     }
 
+    /**
+     * Update rp.
+     *
+     * @param s the s
+     * @param channel the channel
+     */
     public void updateRP(ArrayList<Segdata> s, int channel) {
       ArrayList<Segdata> seg = new ArrayList<Segdata>(0);
       int min = getMinStationID(_gps);
@@ -568,6 +745,12 @@ public class PlotTest {
 
     }
 
+    /**
+     * Gets the n1.
+     *
+     * @param s the s
+     * @return the n1
+     */
     private int getN1(ArrayList<Segdata> s){
       int n1 = s.get(0).getF()[0].length;
       for(int i=1; i<s.size(); ++i){
@@ -578,6 +761,12 @@ public class PlotTest {
       return n1;
     }
 
+    /**
+     * Gets the n2.
+     *
+     * @param s the s
+     * @return the n2
+     */
     private int getN2(ArrayList<Segdata> s){
       int s1 = s.get(0).getRPF();
       int s2 = s.get(0).getRPL();
@@ -591,6 +780,12 @@ public class PlotTest {
       return s2-s1+1;
     }
 
+    /**
+     * Gets the first sp.
+     *
+     * @param s the s
+     * @return the first sp
+     */
     private int getFirstSP(ArrayList<Segdata> s){
       int s1 = s.get(0).getSP();
       for(int i=1; i<s.size(); ++i){
@@ -601,6 +796,12 @@ public class PlotTest {
       return s1;
     }
 
+    /**
+     * Gets the last sp.
+     *
+     * @param s the s
+     * @return the last sp
+     */
     private int getLastSP(ArrayList<Segdata> s){
       int s1 = s.get(0).getSP();
       for(int i=1; i<s.size(); ++i){
@@ -611,6 +812,12 @@ public class PlotTest {
       return s1;
     }
 
+    /**
+     * Gets the rpf.
+     *
+     * @param s the s
+     * @return the rpf
+     */
     private int getRPF(ArrayList<Segdata> s){
       int s1 = s.get(0).getRPF();
       for(int i=1; i<s.size(); ++i){
@@ -621,6 +828,12 @@ public class PlotTest {
       return s1;
     }
 
+    /**
+     * Checks if is active.
+     *
+     * @param f the f
+     * @return true, if is active
+     */
     private boolean isActive(float[] f){
       int n1 = f.length;
       for(int i=0; i<n1; ++i){
@@ -631,6 +844,9 @@ public class PlotTest {
       return false;
     }
 
+    /**
+     * Show plot slider.
+     */
     public void showPlotSlider(){
       sliderFrame.setVisible(true);
     }
@@ -639,11 +855,26 @@ public class PlotTest {
 
   // /////////////////////////////////////////////////////////////////////////
 
+  /**
+   * The Class ElevPlot.
+   * 
+   * <p> Controls the Elevation plot
+   * 
+   * @author Colton Kohnke, Colorado School of Mines
+   * @version 1.0
+   * @since April 13, 2014
+   */
   private class ElevPlot {
 
+    /** The elev. */
     private SimplePlot elev;
+    
+    /** The pv. */
     private PointsView pv;
 
+    /**
+     * Instantiates a new elev plot.
+     */
     private ElevPlot() {
       elev = new SimplePlot(SimplePlot.Origin.LOWER_LEFT);
       elev.setSize(500, 250);
@@ -652,6 +883,11 @@ public class PlotTest {
       elev.setLocation(0,500);
     }
 
+    /**
+     * Update elev.
+     *
+     * @param e the e
+     */
     public void updateElev(ArrayList<MPoint> e) {
       // TODO: Update to make xaxis distance between points instead of
       // stationID
@@ -677,12 +913,25 @@ public class PlotTest {
 
   // /////////////////////////////////////////////////////////////////////////
 
+  /**
+   * The Class RoamMode.
+   * 
+   * <p> Mode that allows for click and drag exploration of imported seismic data. 
+   * 
+   * @author Colton Kohnke, Colorado School of Mines
+   * @version 1.0
+   * @since April 13, 2014
+   */
   private class RoamMode extends Mode {
-    /**
-     * 
-     */
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Instantiates a new roam mode.
+     *
+     * @param modeManager the mode manager
+     */
     public RoamMode(ModeManager modeManager) {
       super(modeManager);
       setName("Roaming Mode");
@@ -692,15 +941,26 @@ public class PlotTest {
       setShortDescription("Roaming Mode");
     }
 
+    /** The slider frame. */
     private JFrame sliderFrame;
+    
+    /** The slider panel. */
     private JPanel sliderPanel;
+    
+    /** The slider near. */
     private JSlider sliderNear;
+    
+    /** The sum dist. */
     private int sumDist = 0;
 
+    /** The nearest. */
     private MPoint nearest;
 
     // When this mode is activated (or deactivated) for a tile, it simply
     // adds (or removes) its mouse listener to (or from) that tile.
+    /* (non-Javadoc)
+     * @see edu.mines.jtk.awt.Mode#setActive(java.awt.Component, boolean)
+     */
     protected void setActive(Component component, boolean active) {
       if (component instanceof Tile) {
         if (active) {
@@ -731,9 +991,13 @@ public class PlotTest {
       }
     }
 
+    /** The _moving. */
     private boolean _moving; // if true, currently moving
+    
+    /** The _tile. */
     private Tile _tile; // tile in which editing began
 
+    /** The _ml. */
     private MouseListener _ml = new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
         if (beginMove(e)) {
@@ -749,6 +1013,7 @@ public class PlotTest {
       }
     };
 
+    /** The cl. */
     private ChangeListener cl = new ChangeListener(){
       public void stateChanged(ChangeEvent e) {
           sumDist = sliderNear.getValue();
@@ -758,6 +1023,7 @@ public class PlotTest {
     };
 
     // Handles mouse dragged events.
+    /** The _mml. */
     private MouseMotionListener _mml = new MouseMotionAdapter() {
       public void mouseDragged(MouseEvent e) {
         if (_moving)
@@ -765,6 +1031,12 @@ public class PlotTest {
       }
     };
 
+    /**
+     * Begin move.
+     *
+     * @param e the e
+     * @return true, if successful
+     */
     private boolean beginMove(MouseEvent e) {
       _tile = (Tile) e.getSource();
       // int x = e.getX();
@@ -773,6 +1045,11 @@ public class PlotTest {
       return true;
     }
 
+    /**
+     * During move.
+     *
+     * @param e the e
+     */
     private void duringMove(MouseEvent e) {
       int x = e.getX();
       int y = e.getY();
@@ -795,6 +1072,9 @@ public class PlotTest {
       _rp.updateRP(segPlot);
     }
 
+    /**
+     * Update plot.
+     */
     private void updatePlot() {
       ArrayList<MPoint> gpsPlot = new ArrayList<MPoint>(0);
       ArrayList<Segdata> segPlot = new ArrayList<Segdata>(0);
@@ -813,10 +1093,22 @@ public class PlotTest {
       _rp.updateRP(segPlot);
     }
 
+    /**
+     * End move.
+     *
+     * @param e the e
+     */
     private void endMove(MouseEvent e) {
       duringMove(e);
     }
 
+    /**
+     * Gets the nearest gps.
+     *
+     * @param x the x
+     * @param y the y
+     * @return the nearest gps
+     */
     private MPoint getNearestGPS(int x, int y) {
       Transcaler ts = _tile.getTranscaler();
       Projector hp = _tile.getHorizontalProjector();
@@ -839,6 +1131,12 @@ public class PlotTest {
       return fin;
     }
 
+    /**
+     * Gets the nearest segdata.
+     *
+     * @param stationID the station id
+     * @return the nearest segdata
+     */
     private Segdata getNearestSegdata(int stationID) {
       Segdata seg1 = _segd.get(0);
       Segdata seg2 = _segd.get(0);
@@ -858,9 +1156,24 @@ public class PlotTest {
 
   // /////////////////////////////////////////////////////////////////////////
 
+  /**
+   * The Class ChannelMode.
+   * 
+   * <p> Mode that allows for dynamic view of channels using a slider
+   * @author Colton Kohnke, Colorado School of Mines
+   * @version 1.0
+   * @since April 13, 2014
+   */
   private class ChannelMode extends Mode {
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Instantiates a new channel mode.
+     *
+     * @param modeManager the mode manager
+     */
     public ChannelMode(ModeManager modeManager) {
       super(modeManager);
       setName("Channel Mode");
@@ -868,10 +1181,18 @@ public class PlotTest {
       setShortDescription("Display a Channel Mode");
     }
 
+    /** The slider frame. */
     private JFrame sliderFrame;
+    
+    /** The slider panel. */
     private JPanel sliderPanel;
+    
+    /** The slider chan. */
     private JSlider sliderChan;
 
+    /* (non-Javadoc)
+     * @see edu.mines.jtk.awt.Mode#setActive(java.awt.Component, boolean)
+     */
     protected void setActive(Component component, boolean active) {
       if (active) {
         if(sliderFrame == null){
@@ -898,12 +1219,18 @@ public class PlotTest {
       }
     }
 
+    /** The cl. */
     private ChangeListener cl = new ChangeListener(){
       public void stateChanged(ChangeEvent e) {
           adjust(sliderChan.getValue());
       }
     };
 
+    /**
+     * Adjust.
+     *
+     * @param chan the chan
+     */
     private void adjust(int chan){
       _rp.updateRP(_segd,chan);
     }
@@ -912,9 +1239,26 @@ public class PlotTest {
 
 // /////////////////////////////////////////////////////////////////////////
 
-  private class CircleMode extends Mode {
+  /**
+ * The Class CircleMode.
+ * 
+ * <p> Mode that allows for the dynamic exploration of shot records based 
+ * on a circle that is created by clicking and dragging on the base map.
+ * 
+ * @author Colton Kohnke, Colorado School of Mines
+ * @version 1.0
+ * @since April 13, 2014
+ */
+private class CircleMode extends Mode {
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Instantiates a new circle mode.
+     *
+     * @param modeManager the mode manager
+     */
     public CircleMode(ModeManager modeManager) {
       super(modeManager);
       setName("Circle Mode");
@@ -922,15 +1266,18 @@ public class PlotTest {
       setShortDescription("Display within a Circle");
     }
 
+    /* (non-Javadoc)
+     * @see edu.mines.jtk.awt.Mode#setActive(java.awt.Component, boolean)
+     */
     protected void setActive(Component component, boolean active) {
       if (active) {
-        count=0;
         component.addMouseListener(_ml);
       } else {
         component.removeMouseListener(_ml);
       }
     }
 
+    /** The _ml. */
     private MouseListener _ml = new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
         if(beginMove(e)){
@@ -944,6 +1291,7 @@ public class PlotTest {
       }
     };
 
+    /** The _mml. */
     private MouseMotionListener _mml = new MouseMotionAdapter() {
       public void mouseDragged(MouseEvent e) {
         int x = e.getX();
@@ -960,6 +1308,12 @@ public class PlotTest {
       }
     };
 
+    /**
+     * Begin move.
+     *
+     * @param e the e
+     * @return true, if successful
+     */
     private boolean beginMove(MouseEvent e){
       _tile = (Tile) e.getSource();
       int x = e.getX();
@@ -975,6 +1329,11 @@ public class PlotTest {
       return true;
     }
 
+    /**
+     * End move.
+     *
+     * @param e the e
+     */
     private void endMove(MouseEvent e){
       int x = e.getX();
       int y = e.getY();
@@ -989,6 +1348,12 @@ public class PlotTest {
       plotCircle(p1,p2);
     }
 
+    /**
+     * Plot circle.
+     *
+     * @param m1 the m1
+     * @param m2 the m2
+     */
     private void plotCircle(MPoint m1, MPoint m2){
       _bp.drawCircle(m1,m1.xyDist(m2));
       ArrayList<Segdata> segPlot = _bp.segWithinRange(_bp.gpsWithinRange(m1, m1.xyDist(m2)));
@@ -999,35 +1364,63 @@ public class PlotTest {
       }
     }
 
+    /** The p2. */
     private MPoint p1, p2;
-    private int count;
+    
+    /** The _tile. */
     private Tile _tile;
   }
 
   // /////////////////////////////////////////////////////////////////////////
 
   // Actions common to both plot frames.
+  /**
+   * The Class ExitAction.
+   */
   private class ExitAction extends AbstractAction {
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Instantiates a new exit action.
+     */
     private ExitAction() {
       super("Exit");
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent event) {
       System.exit(0);
     }
   }
 
+  /**
+   * The Class SaveAsPngAction.
+   */
   private class SaveAsPngAction extends AbstractAction {
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
+    
+    /** The _plot frame. */
     private PlotFrame _plotFrame;
 
+    /**
+     * Instantiates a new save as png action.
+     *
+     * @param plotFrame the plot frame
+     */
     private SaveAsPngAction(PlotFrame plotFrame) {
       super("Save as PNG");
       _plotFrame = plotFrame;
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent event) {
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
       fc.showSaveDialog(_plotFrame);
@@ -1039,14 +1432,27 @@ public class PlotTest {
     }
   }
 
+  /**
+   * The Class GetDEM.
+   */
   private class GetDEM extends AbstractAction {
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Instantiates a new gets the dem.
+     *
+     * @param plotPanel the plot panel
+     */
     private GetDEM(PlotPanel plotPanel) {
       super("Import NED Files");
 
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent event) {
       try{
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
@@ -1060,14 +1466,28 @@ public class PlotTest {
       }
     }
   }
+  
+  /**
+   * The Class ReadNedElevation.
+   */
   private class ReadNedElevation extends AbstractAction {
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Instantiates a new read ned elevation.
+     *
+     * @param plotPanel the plot panel
+     */
     private ReadNedElevation(PlotPanel plotPanel) {
       super("Read Elevation from NED");
 
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent event){
       try{
       for(NedFile f:_nedFiles){
@@ -1081,13 +1501,24 @@ public class PlotTest {
   }
 
 
+  /**
+   * The Class GetFlagsFromHH.
+   */
   private class GetFlagsFromHH extends AbstractAction {
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Instantiates a new gets the flags from hh.
+     */
     private GetFlagsFromHH() {
       super("Get HandHeld GPS");
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent event) {
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
       fc.showOpenDialog(null);
@@ -1110,14 +1541,25 @@ public class PlotTest {
     }
   }
 
+  /**
+   * The Class ExportFlagsToCSV.
+   */
   private class ExportFlagsToCSV extends AbstractAction {
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Instantiates a new export flags to csv.
+     */
     private ExportFlagsToCSV() {
       super("Export GPS to CSV");
 
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent event) {
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
       fc.showSaveDialog(null);
@@ -1126,14 +1568,25 @@ public class PlotTest {
     }
   }
 
+  /**
+   * The Class ImportSegdDir.
+   */
   private class ImportSegdDir extends AbstractAction {
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Instantiates a new import segd dir.
+     */
     private ImportSegdDir() {
       super("Import Segd Directory");
 
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent event) {
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
       fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -1150,14 +1603,25 @@ public class PlotTest {
 
   }
 
+  /**
+   * The Class ImportSegdFile.
+   */
   private class ImportSegdFile extends AbstractAction {
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Instantiates a new import segd file.
+     */
     private ImportSegdFile() {
       super("Import Segd File(s)");
 
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent event) {
       try{
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
@@ -1181,27 +1645,49 @@ public class PlotTest {
 
   }
 
+  /**
+   * The Class DisplayRange.
+   */
   private class DisplayRange extends AbstractAction {
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Instantiates a new display range.
+     */
     private DisplayRange() {
       super("Display Range");
 
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent event) {
       _rp.updateRP(_segd, 200); //TODO: Write logic for dynamic shots
     }
   }
 
+ /**
+  * The Class ClearData.
+  */
  private class ClearData extends AbstractAction {
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Instantiates a new clear data.
+     */
     private ClearData() {
       super("Clear Data");
 
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent event) {
       _segd.removeAll(_segd);
       _gps.removeAll(_gps);
@@ -1209,14 +1695,25 @@ public class PlotTest {
     }
   }
 
+ /**
+  * The Class ShowPlotSettings.
+  */
  private class ShowPlotSettings extends AbstractAction {
+    
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Instantiates a new show plot settings.
+     */
     private ShowPlotSettings() {
       super("Plot Controls");
 
     }
 
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
     public void actionPerformed(ActionEvent event) {
       _rp.showPlotSlider();
     }

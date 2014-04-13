@@ -4,52 +4,63 @@ import static edu.mines.jtk.util.ArrayMath.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteOrder;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 
 
 import edu.mines.jtk.dsp.ButterworthFilter;
 import edu.mines.jtk.dsp.RecursiveExponentialFilter;
-import edu.mines.jtk.dsp.Sampling;
 import edu.mines.jtk.io.ArrayInputStream;
-import edu.mines.jtk.mosaic.PixelsView;
-import edu.mines.jtk.mosaic.SimplePlot;
 
+/**
+ * The Class Segd.
+ * 
+ * <p> Tools for working with collections of Segdata objects.
+ * Contains static methods for working with .segd files.
+ * 
+ * @author Colton Kohnke, Colorado School of Mines
+ * @version 1.0
+ * @since April 13, 2014
+ */
 public class Segd {
 
-  private Segd() {
-  }
+  /**
+   * Instantiates a new segd. Private. Contains only static public methods.
+   */
+  private Segd() {}
 
+  /**
+   * Reads all .segd files from a directory.
+   *
+   * @param segdDir the directory to read .segd files from
+   * @return an array list of Segdata from the directory.
+   */
   public static ArrayList<Segdata> readLineSegd(String segdDir) {
     ArrayList<Segdata> _segd = new ArrayList<Segdata>(0);
     try {
       File[] segdList = (new File(segdDir)).listFiles();
-      // File[] segdList = new File[1];
-      // segdList[0] = new File(segdDir+"/00000001.00000293.segd");
       int nshot = segdList.length;
       for (int i = 0; i < nshot; ++i) {
         System.out.println(segdList[i].getName());
         Segdata seg = readSegd(segdList[i]);
-        // System.out.println("sln ="+sln+" spn ="+spn+" rpf ="+rpf+" rpl ="+rpl);
-        //int n1 = seg.getF()[0].length;
-        //int n2 = seg.getF().length;
-        //Sampling s1 = new Sampling(n1, 0.001, 0.0);
-        //Sampling s2 = new Sampling(n2, 1.0, seg.getRPF());
-        // lowpass2(seg.f);
-        // tpow2(seg.f);
-        // gain2(seg.f);
-        // plot(s1,s2,seg,"Shot "+seg.sp);
-        if (!(seg.getSP() < 3000) && notEmpty(seg) && !(seg.getSP() > 10000)) //min:max range for shots and don't add empty shots.
+        // min:max range for shots to not add empty shots.
+        if (!(seg.getSP() < 3000) && notEmpty(seg) && !(seg.getSP() > 10000)) 
           _segd.add(seg);
       }
-      Collections.sort(_segd, new SegdataComp());
+      Collections.sort(_segd, new SegdataComp()); // sort by shot point number
     } catch (IOException e) {
       System.out.println(e);
     }
     return _segd;
   }
 
+  /**
+   * Read Segdata from a .segd file.
+   *
+   * @param segdFile the segd file
+   * @return the segdata
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
   public static Segdata readSegd(File segdFile) throws IOException { 
     byte[] gh = zerobyte(32); // general header
     byte[] th = zerobyte(20); // trace header
@@ -124,20 +135,12 @@ public class Segd {
     return new Segdata(sln, spn, rln, rpf, rpl, f);
   }
 
-  public static void plot(Sampling s1, Sampling s2, Segdata seg, String title) {
-    SimplePlot sp = new SimplePlot(SimplePlot.Origin.UPPER_LEFT);
-    sp.setSize(900, 900);
-    sp.setVLabel("Time (s)");
-    if (s2.getDelta() == 1.0)
-      sp.setHLabel("Station");
-    else
-      sp.setHLabel("Offset (km)");
-    sp.setHLimits(seg.getRPF(), seg.getRPL());
-    sp.setTitle(title);
-    PixelsView pv = sp.addPixels(s1, s2, seg.getF());
-    pv.setPercentiles(1, 99);
-  }
-
+  /**
+   * Not empty. Checks if the data in a Segdata is non-zero.
+   *
+   * @param seg the seg to check.
+   * @return true, if the Segdata contains data
+   */
   public static boolean notEmpty(Segdata seg){
     float[][] f = seg.getF();
     int n1 = f[0].length;
@@ -149,6 +152,12 @@ public class Segd {
     return false;
   }
 
+  /**
+   * Maximum shot in an ArrayList of Segdata.
+   *
+   * @param s the ArrayList to search.
+   * @return the maximum shot number in list s
+   */
   public static int maxShot(ArrayList<Segdata> s){
     int max = s.get(0).getSP();
     for(Segdata tmp:s){
@@ -159,6 +168,12 @@ public class Segd {
     return max;
   }
 
+  /**
+   * Minimum shot in an ArrayList of Segdata.
+   *
+   * @param s the ArrayList to search.
+   * @return the minimum shot number in list s
+   */
   public static int minShot(ArrayList<Segdata> s){
     int min = s.get(0).getSP();
     for(Segdata tmp:s){
@@ -169,36 +184,14 @@ public class Segd {
     return min;
   }
 
-  public static Segdata getSegdataByStationRoof(ArrayList<Segdata> s, int station){
-    for(Segdata d:s){
-      if(d.getSP() == station){
-        return d;
-      }
-    }
-    Segdata max = s.get(0);
-    for(Segdata tmp:s){
-      if(tmp.getSP() > max.getSP() && tmp.getSP() > station){
-        max = tmp;
-      }
-    }
-    return max;
-}
-
-  public static Segdata getSegdataByStationFloor(ArrayList<Segdata> s, int station){
-    for(Segdata d:s){
-      if(d.getSP() == station){
-        return d;
-      }
-    }
-    Segdata min = s.get(0);
-    for(Segdata tmp:s){
-      if(tmp.getSP() < min.getSP() && tmp.getSP() < station){
-        min = tmp;
-      }
-    }
-    return min;
-}
-
+ 
+  /**
+   * Tpow2. Tpow of a 2D array of data.
+   *
+   * @param f the data
+   * @param p the power to take time to.
+   * @return the tpow data
+   */
   public static float[][] tpow2(float[][] f, float p) {
     int n1 = f[0].length;
     int n2 = f.length;
@@ -207,11 +200,18 @@ public class Segd {
     return g;
   }
 
+  /**
+   * Gain2. Gaining of a 2D array of data.
+   *
+   * @param f the data to gain.
+   * @param sigma the sigma for the RecursiveExponentialFilter
+   * @return the gained data
+   */
   public static float[][] gain2(float[][] f, double sigma) {
     int n1 = f[0].length;
     int n2 = f.length;
     float[][] a = new float[n2][n1];
-    RecursiveExponentialFilter ref = new RecursiveExponentialFilter(sigma); //gain controll
+    RecursiveExponentialFilter ref = new RecursiveExponentialFilter(sigma); //gain control
     if (max(abs(f)) > 0.0f) {
       float[][] g = mul(f, f);
       ref.apply1(g, g);
@@ -220,30 +220,13 @@ public class Segd {
     return a;
   }
 
-  public static float[][] gain2(float[][] f) {
-    int n1 = f[0].length;
-    int n2 = f.length;
-    float[][] a = new float[n2][n1];
-    RecursiveExponentialFilter ref = new RecursiveExponentialFilter(40.0);
-    if (max(abs(f)) > 0.0f) {
-      float[][] g = mul(f, f);
-      ref.apply1(g, g);
-      div(f, sqrt(g), a);
-    }
-    return a;
-  }
-
-  public static float[][] lowpass2(float[][] f) {
-    int n1 = f[0].length;
-    int n2 = f.length;
-    float[][] g = new float[n2][n1];
-    double f3db = 25.0 * 0.002; // cycles/sample
-    ButterworthFilter bf = new ButterworthFilter(f3db, 6,
-        ButterworthFilter.Type.LOW_PASS);
-    bf.apply1ForwardReverse(f, g);
-    return g;
-  }
-
+   /**
+   * Lowpass2 filtering of the data.
+   *
+   * @param f the data array to filter
+   * @param lowpassNum the lowpass number (cycles/sample)
+   * @return the filtered float[][]
+   */
   public static float[][] lowpass2(float[][] f, double lowpassNum) {
     int n1 = f[0].length;
     int n2 = f.length;
@@ -255,6 +238,12 @@ public class Segd {
     return g;
   }
 
+  /**
+   * Gets the max number of channels from an ArrayList of Segdata.
+   *
+   * @param seg the ArrayList of Segdata to search
+   * @return the max number of channels
+   */
   public static int getMaxNumChan(ArrayList<Segdata> seg){
     int max = 0;
     for(Segdata s:seg){
@@ -266,12 +255,26 @@ public class Segd {
     return max;
   }
 
+  /**
+   * Bcd2.
+   *
+   * @param b the byte array
+   * @param k the index to start reading
+   * @return the converted int
+   */
   private static int bcd2(byte[] b, int k) {
     return (1000 * ((b[k] >> 4) & 0xf) + 100 * (b[k] & 0xf) + 10
         * ((b[k + 1] >> 4) & 0xf) + 1 * (b[k + 1] & 0xf));
   }
 
   // Returns binary integer from bytes k,k+1,k+2 in b.
+  /**
+   * Bin3. Converts 3 byte integer to integer type. 
+   *
+   * @param b the byte array
+   * @param k the index to start reading
+   * @return the converted int
+   */
   private static int bin3(byte[] b, int k) {
     byte b0 = b[k];
     byte b1 = b[k + 1];
@@ -280,6 +283,13 @@ public class Segd {
   }
 
   // Returns binary integer from bytes k,k+1,...,k+4 in b.
+  /**
+   * Bin5. Converts 5 byte integer to integer type. 
+   *
+   * @param b the byte array
+   * @param k the index to start reading
+   * @return the converted int
+   */
   private static int bin5(byte[] b, int k) {
     int b0 = b[k] & 0xFF;
     int b1 = b[k + 1] & 0xFF;
@@ -289,8 +299,4 @@ public class Segd {
     return (int)(b0 * 65536.0 + b1 * 256.0 + b2 + b3 / 256.0 + b4 / 65536.0);
   }
 
-
-  // public String segdDir = "/gpfc/ckohnke/fc2013/segd/140/"; // Linux Lab
-  // public String segdDir =
-  // "/home/colton/Documents/School/SrDesign/fc2013/segd/141/"; // Laptop
 }
