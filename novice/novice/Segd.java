@@ -202,9 +202,9 @@ public class Segd {
   public static float[][] tpow2(float[][] f, float p) {
     int n1 = f[0].length;
     int n2 = f.length;
-    float[][] g = ccopy(f);
+    float[][] g = new float[n2][n1];
     float[][] t = pow(rampfloat(0.0f, 0.002f, 0.0f, n1, n2),p);
-    mul(t, g);
+    mul(t, f, g);
     return g;
   }
 

@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -371,7 +372,7 @@ public class PlotTest {
     public SimplePlot sp;
     private PixelsView pv;
     private double gainNum = 40.0;
-    private float tpowNum = 1.0f;
+    private float tpowNum = 0.0f;
     private double lowpassNum = 25.0;
     private JFrame sliderFrame;
     private JPanel sliderPanel;
@@ -394,7 +395,7 @@ public class PlotTest {
       gainSlider = new JSlider(0,100,40);
       gainSlider.setOrientation(JSlider.HORIZONTAL);
       gainSlider.setMajorTickSpacing(20);
-      gainSlider.setMinorTickSpacing(10);
+      gainSlider.setMinorTickSpacing(5);
       gainSlider.setPaintTicks(true);
       gainSlider.setPaintLabels(true);
       gainSlider.setSize(200,100);
@@ -407,7 +408,7 @@ public class PlotTest {
       lowpassSlider = new JSlider(0,100,25);
       lowpassSlider.setOrientation(JSlider.HORIZONTAL);
       lowpassSlider.setMajorTickSpacing(20);
-      lowpassSlider.setMinorTickSpacing(10);
+      lowpassSlider.setMinorTickSpacing(5);
       lowpassSlider.setPaintTicks(true);
       lowpassSlider.setPaintLabels(true);
       lowpassSlider.setSize(200,100);
@@ -417,11 +418,22 @@ public class PlotTest {
       lowpassLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
       sliderPanel.add(lowpassLabel);
 
-      tpowSlider = new JSlider(0,5,1);
+      tpowSlider = new JSlider(0,50,0);
       tpowSlider.setOrientation(JSlider.HORIZONTAL);
-      tpowSlider.setMajorTickSpacing(1);
+      tpowSlider.setMajorTickSpacing(10);
+      tpowSlider.setMinorTickSpacing(1);
       tpowSlider.setPaintTicks(true);
       tpowSlider.setPaintLabels(true);
+
+      Hashtable labelTable = new Hashtable();
+      labelTable.put(new Integer(0),  new JLabel("0.0"));
+      labelTable.put(new Integer(10), new JLabel("1.0"));
+      labelTable.put(new Integer(20), new JLabel("2.0"));
+      labelTable.put(new Integer(30), new JLabel("3.0"));
+      labelTable.put(new Integer(40), new JLabel("4.0"));
+      labelTable.put(new Integer(50), new JLabel("5.0"));
+      tpowSlider.setLabelTable(labelTable);
+
       tpowSlider.setSize(200,100);
       sliderPanel.add(tpowSlider);
       tpowSlider.addChangeListener(cl);
@@ -443,13 +455,14 @@ public class PlotTest {
         public void stateChanged(ChangeEvent e) {
             gainNum = gainSlider.getValue();
             lowpassNum = lowpassSlider.getValue();
-            tpowNum = tpowSlider.getValue();
+            tpowNum = tpowSlider.getValue()/10.0f;
             updateRP();
         }
       };
 
     public void updateRP(){
       pv = sp.addPixels(s1, s2, gain2(lowpass2(tpow2(plotArray, tpowNum), lowpassNum), gainNum));
+      // pv = sp.addPixels(s1, s2, tpow2(plotArray, tpowNum));
       pv.setPercentiles(1, 99);
     }
 
@@ -628,7 +641,8 @@ public class PlotTest {
 
   private class ElevPlot {
 
-    public SimplePlot elev;
+    private SimplePlot elev;
+    private PointsView pv;
 
     private ElevPlot() {
       elev = new SimplePlot(SimplePlot.Origin.LOWER_LEFT);
@@ -642,16 +656,21 @@ public class PlotTest {
       // TODO: Update to make xaxis distance between points instead of
       // stationID
       int n = e.size();
-      double[] x = new double[n];
-      double[] y = new double[n];
+      float[] x = new float[n];
+      float[] y = new float[n];
       for (int i = 0; i < n; ++i) {
         MPoint p = e.get(i);
         x[i] = p.getStation();
-        y[i] = p.getElev();
+        y[i] = (float) p.getElev();
       }
       elev.setHLimits(min(x) - 10, max(x) + 10);
       elev.setVLimits(min(y) - 50, max(y) + 50);
-      elev.addPoints(x, y);
+      if(pv == null){
+        pv = elev.addPoints(x,y);
+      }
+      else{
+        pv.set(x, y);
+      }
     }
 
   }
