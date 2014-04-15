@@ -1,3 +1,15 @@
 \boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {1}{\ignorespaces Senior Design Project Timeline}}{7}{figure.1}
+\contentsline {figure}{\numberline {1}{\ignorespaces Senior Design Project Timeline}}{8}{figure.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {2}{\ignorespaces JFileChooser for importing data.}}{10}{figure.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {3}{\ignorespaces An expected plot of the base map after data has been imported.}}{12}{figure.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {4}{\ignorespaces An expected response plot during Roam Mode with no summation.}}{14}{figure.4}
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {5}{\ignorespaces An expected response plot during Roam Mode with summation.}}{15}{figure.5}
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {6}{\ignorespaces An expected response plot during Channel Mode.}}{16}{figure.6}
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {7}{\ignorespaces An exceptive elevation profile after NED data has been imported and read.}}{17}{figure.7}

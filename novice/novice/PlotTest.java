@@ -735,7 +735,7 @@ public class PlotTest {
       // pv = sp.addPixels(s1, s2, (chan));
       sp.setHLimits(fsp, maxShot(seg));
       sp.setTitle("Channel: "+channel);
-      sp.setHLabel("Shot");
+      sp.setHLabel("Station Number");
       pv.setPercentiles(1, 99);
       
       for(Segdata r:seg){
