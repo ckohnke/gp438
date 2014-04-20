@@ -2,5 +2,5 @@
 export CLASSPATH=.:../edu_mines_jtk.jar
 rm novice/*.class
 javac novice/*.java
-javadoc -d ./javadoc novice
+#javadoc -d ./javadoc novice
 java -ea -Xmx8g $*

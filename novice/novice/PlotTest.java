@@ -157,12 +157,11 @@ public class PlotTest {
       _plotFrame = new PlotFrame(_plotPanel);
       TileZoomMode tzm = _plotFrame.getTileZoomMode();
 
-      // We add two more modes for editing poles and zeros.
+      // Modes for Base plot
       ModeManager mm = _plotFrame.getModeManager();
       RoamMode rm = new RoamMode(mm); // roam and plot
       CircleMode om = new CircleMode(mm);
       ChannelMode cm = new ChannelMode(mm);
-      // PoleZeroMode zm = new PoleZeroMode(mm,false); // for zeros
 
       // The menu bar includes a mode menu for selecting a mode.
       JMenu fileMenu = new JMenu("File");
@@ -504,7 +503,7 @@ public class PlotTest {
   private class ResponsePlot {
 
     // private PlotPanel _plotPanel;
-    // private PlotFrame _plotFrame;
+
     /** The sp. */
     public SimplePlot sp;
     
@@ -605,6 +604,18 @@ public class PlotTest {
       sp.setVLabel("Time (s)");
       sp.setLocation(500,0);
       pv = null;
+
+      // Menu for Response Plot
+      JMenu fileMenu = new JMenu("File");
+      fileMenu.setMnemonic('F');
+      fileMenu.add(new SaveAsPngAction(sp)).setMnemonic('a');
+      fileMenu.add(new ExitAction()).setMnemonic('x');
+
+      // Menu bar for Response Plot
+      JMenuBar menuBar = new JMenuBar();
+      menuBar.add(fileMenu);
+
+      sp.setJMenuBar(menuBar);
 
     }
 
@@ -881,6 +892,19 @@ public class PlotTest {
       elev.setVLabel("meters (m)");
       elev.setHLabel("Station ID");
       elev.setLocation(0,500);
+
+      // Menu for Elev Plot
+      JMenu fileMenu = new JMenu("File");
+      fileMenu.setMnemonic('F');
+      fileMenu.add(new SaveAsPngAction(elev)).setMnemonic('a');
+      fileMenu.add(new ExitAction()).setMnemonic('x');
+
+      // Menu bar for Elev Plot
+      JMenuBar menuBar = new JMenuBar();
+      menuBar.add(fileMenu);
+
+      elev.setJMenuBar(menuBar);
+
     }
 
     /**
