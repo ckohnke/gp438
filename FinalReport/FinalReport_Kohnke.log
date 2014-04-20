@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Debian) (format=pdflatex 2013.11.17)  14 APR 2014 22:45
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Debian) (format=pdflatex 2013.11.17)  20 APR 2014 17:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -648,7 +648,21 @@ Package biblatex Info: Reference segment=0 on input line 38.
  [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-(./FinalReport_Kohnke.toc [2])
+Underfull \hbox (badness 10000) in paragraph at lines 44--45
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 46--47
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 48--49
+
+ []
+
+[2] (./FinalReport_Kohnke.toc [3])
 \tf@toc=\write5
 \openout5 = `FinalReport_Kohnke.toc'.
 
@@ -661,167 +675,153 @@ Package biblatex Info: Reference segment=0 on input line 38.
 \tf@lot=\write7
 \openout7 = `FinalReport_Kohnke.lot'.
 
- [3]
-Underfull \hbox (badness 10000) in paragraph at lines 49--50
+ [4]
+Underfull \hbox (badness 10000) in paragraph at lines 64--65
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 51--52
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 53--54
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 63--64
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 65--66
-
- []
-
-[4]
-Underfull \hbox (badness 10000) in paragraph at lines 89--90
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 95--96
+Underfull \hbox (badness 10000) in paragraph at lines 66--67
 
  []
 
 [5]
-Underfull \hbox (badness 10000) in paragraph at lines 103--104
+Underfull \hbox (badness 10000) in paragraph at lines 90--91
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 109--110
+Underfull \hbox (badness 10000) in paragraph at lines 96--97
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 111--112
+Underfull \hbox (badness 10000) in paragraph at lines 104--105
 
  []
 
 [6]
-Underfull \hbox (badness 10000) in paragraph at lines 113--114
+Underfull \hbox (badness 10000) in paragraph at lines 110--111
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 117--118
+Underfull \hbox (badness 10000) in paragraph at lines 112--113
 
  []
 
+
+Underfull \hbox (badness 10000) in paragraph at lines 114--115
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 118--119
+
+ []
+
+[7]
 \chartwidth=\count308
-[7] [8]
-Underfull \hbox (badness 10000) in paragraph at lines 175--176
+ [8]
+Underfull \hbox (badness 10000) in paragraph at lines 176--177
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 181--182
+Underfull \hbox (badness 10000) in paragraph at lines 182--183
 
  []
 
 [9] <./figs/fig0.png, id=277, 518.93875pt x 327.2225pt>
 File: ./figs/fig0.png Graphic file (type png)
  <use ./figs/fig0.png>
-Package pdftex.def Info: ./figs/fig0.png used on input line 189.
+Package pdftex.def Info: ./figs/fig0.png used on input line 190.
 (pdftex.def)             Requested size: 352.31625pt x 222.16882pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 194--195
+Underfull \hbox (badness 10000) in paragraph at lines 195--196
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 196--197
+Underfull \hbox (badness 10000) in paragraph at lines 197--198
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 198--199
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 211--212
+Underfull \hbox (badness 10000) in paragraph at lines 199--200
 
  []
 
 [10 <./figs/fig0.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 213--214
+Underfull \hbox (badness 10000) in paragraph at lines 212--213
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 215--216
+Underfull \hbox (badness 10000) in paragraph at lines 214--215
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 217--218
+Underfull \hbox (badness 10000) in paragraph at lines 216--217
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 218--219
 
  []
 
 <./figs/fig1.png, id=284, 495.8525pt x 474.77374pt>
 File: ./figs/fig1.png Graphic file (type png)
  <use ./figs/fig1.png>
-Package pdftex.def Info: ./figs/fig1.png used on input line 227.
+Package pdftex.def Info: ./figs/fig1.png used on input line 228.
 (pdftex.def)             Requested size: 352.31625pt x 337.33803pt.
 
 [11] [12 <./figs/fig1.png>]
 <./figs/fig4.png, id=296, 596.2275pt x 575.14874pt>
 File: ./figs/fig4.png Graphic file (type png)
  <use ./figs/fig4.png>
-Package pdftex.def Info: ./figs/fig4.png used on input line 256.
+Package pdftex.def Info: ./figs/fig4.png used on input line 257.
 (pdftex.def)             Requested size: 352.31625pt x 339.86137pt.
 
 [13] <./figs/fig3.png, id=302, 596.2275pt x 575.14874pt>
 File: ./figs/fig3.png Graphic file (type png)
  <use ./figs/fig3.png>
-Package pdftex.def Info: ./figs/fig3.png used on input line 271.
+Package pdftex.def Info: ./figs/fig3.png used on input line 272.
 (pdftex.def)             Requested size: 352.31625pt x 339.86137pt.
 
 [14 <./figs/fig4.png>] <./figs/fig5.png, id=308, 612.2875pt x 575.14874pt>
 File: ./figs/fig5.png Graphic file (type png)
 
 <use ./figs/fig5.png>
-Package pdftex.def Info: ./figs/fig5.png used on input line 286.
+Package pdftex.def Info: ./figs/fig5.png used on input line 287.
 (pdftex.def)             Requested size: 352.31625pt x 330.94492pt.
  [15 <./figs/fig3.png>]
 <figs/fig2.png, id=314, 495.8525pt x 223.83624pt>
 File: figs/fig2.png Graphic file (type png)
  <use figs/fig2.png>
-Package pdftex.def Info: figs/fig2.png used on input line 297.
+Package pdftex.def Info: figs/fig2.png used on input line 298.
 (pdftex.def)             Requested size: 352.31625pt x 159.04097pt.
  [16 <./figs/fig5.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 304--305
+Underfull \hbox (badness 10000) in paragraph at lines 305--306
 
  []
 
 [17 <./figs/fig2.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 318--319
+Underfull \hbox (badness 10000) in paragraph at lines 319--320
 
  []
 
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 329.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 330.
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 329.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 330.
  [18] [19]
-Overfull \hbox (33.50285pt too wide) in paragraph at lines 361--361
+Overfull \hbox (33.50285pt too wide) in paragraph at lines 362--362
 [][]\OT1/cmr/m/n/12 Drakos, Nikos (2013). \OT1/cmr/m/it/12 Time-power amplitude
 -gain cor-rec-tion\OT1/cmr/m/n/12 . \OT1/cmr/m/sc/12 url\OT1/cmr/m/n/12 : []$\O
 T1/cmtt/m/n/12 http : / / www . reproducibility .
@@ -830,18 +830,18 @@ T1/cmtt/m/n/12 http : / / www . reproducibility .
 Missing character: There is no Ã in font cmr12!
 Missing character: There is no ¡ in font cmr12!
 [20] [21]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 374.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 375.
  [22]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 374.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 375.
  (./FinalReport_Kohnke.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 374.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 374.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 375.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 375.
 Package rerunfilecheck Info: File `FinalReport_Kohnke.out' has not changed.
 (rerunfilecheck)             Checksum: 57324EC5B03BFCB4CDF8B110283EABDC;2816.
 Package logreq Info: Writing requests to 'FinalReport_Kohnke.run.xml'.
 \openout1 = `FinalReport_Kohnke.run.xml'.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 374.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 375.
  ) 
 Here is how much of TeX's memory you used:
  12781 strings out of 495059
@@ -862,7 +862,7 @@ ublic/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
 sfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
 /cm/cmti12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
 tt12.pfb>
-Output written on FinalReport_Kohnke.pdf (22 pages, 1172435 bytes).
+Output written on FinalReport_Kohnke.pdf (22 pages, 1172459 bytes).
 PDF statistics:
  432 PDF objects out of 1000 (max. 8388607)
  387 compressed objects within 4 object streams
