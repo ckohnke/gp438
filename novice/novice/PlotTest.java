@@ -9,6 +9,7 @@ import java.util.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.filechooser.*;
 
 import edu.mines.jtk.awt.*;
 import edu.mines.jtk.dsp.Sampling;
@@ -142,7 +143,7 @@ public class PlotTest {
 
       // The plot panel.
       _plotPanel = new PlotPanel();
-      _plotPanel.setTitle("Base Plot Test");
+      _plotPanel.setTitle("Base Plot");
       _plotPanel.setHLabel("Easting (UTM)");
       _plotPanel.setVLabel("Northing (UTM)");
       _plotPanel.setHLimits(317600, 320600);  
@@ -187,7 +188,6 @@ public class PlotTest {
 
       JMenu testMenu = new JMenu("Test");
       testMenu.setMnemonic('E');
-      testMenu.add(new DisplayRange()).setMnemonic('g');
       testMenu.add(new ClearData()).setMnemonic('c');
       testMenu.add(new ShowPlotSettings()).setMnemonic('p');
 
@@ -222,22 +222,24 @@ public class PlotTest {
      * Update bp view.
      */
     private void updateBPView() {
-      int np = _gps.size();
-      float[] xp = new float[np];
-      float[] yp = new float[np];
-      for (int ip = 0; ip < np; ++ip) {
-        MPoint p = _gps.get(ip);
-        xp[ip] = (float) p.getUTMX();
-        yp[ip] = (float) p.getUTMY();
-      }
-      _plotPanel.setHLimits(min(xp) - 25, max(xp) + 25);
-      _plotPanel.setVLimits(min(yp) - 25, max(yp) + 25);
-      if (_baseView == null) {
-        _baseView = _plotPanel.addPoints(xp, yp);
-        _baseView.setMarkStyle(PointsView.Mark.CROSS);
-        _baseView.setLineStyle(PointsView.Line.NONE);
-      } else {
-        _baseView.set(xp, yp);
+      if(_gps != null){
+        int np = _gps.size();
+        float[] xp = new float[np];
+        float[] yp = new float[np];
+        for (int ip = 0; ip < np; ++ip) {
+          MPoint p = _gps.get(ip);
+          xp[ip] = (float) p.getUTMX();
+          yp[ip] = (float) p.getUTMY();
+        }
+        _plotPanel.setHLimits(min(xp) - 25, max(xp) + 25);
+        _plotPanel.setVLimits(min(yp) - 25, max(yp) + 25);
+        if (_baseView == null) {
+          _baseView = _plotPanel.addPoints(xp, yp);
+          _baseView.setMarkStyle(PointsView.Mark.CROSS);
+          _baseView.setLineStyle(PointsView.Line.NONE);
+        } else {
+          _baseView.set(xp, yp);
+        }
       }
     }
 
@@ -267,21 +269,23 @@ public class PlotTest {
      * @param p the p
      */
     private void drawCurrentGPS(ArrayList<MPoint> p){
-      int np = p.size();
-      float[] xp = new float[np];
-      float[] yp = new float[np];
-      for (int ip = 0; ip < np; ++ip) {
-        MPoint m = p.get(ip);
-        xp[ip] = (float) m.getUTMX();
-        yp[ip] = (float) m.getUTMY();
-      }
-      if(_redView == null){
-        _redView = _plotPanel.addPoints(xp, yp);
-        _redView.setMarkStyle(PointsView.Mark.CROSS);
-        _redView.setLineStyle(PointsView.Line.NONE);
-        _redView.setMarkColor(Color.RED);
-      } else{
-        _redView.set(xp, yp);
+      if(p.size() > 0){
+        int np = p.size();
+        float[] xp = new float[np];
+        float[] yp = new float[np];
+        for (int ip = 0; ip < np; ++ip) {
+          MPoint m = p.get(ip);
+          xp[ip] = (float) m.getUTMX();
+          yp[ip] = (float) m.getUTMY();
+        }
+        if(_redView == null){
+          _redView = _plotPanel.addPoints(xp, yp);
+          _redView.setMarkStyle(PointsView.Mark.CROSS);
+          _redView.setLineStyle(PointsView.Line.NONE);
+          _redView.setMarkColor(Color.RED);
+        } else{
+          _redView.set(xp, yp);
+        }
       }
     }
 
@@ -313,22 +317,24 @@ public class PlotTest {
      * @param s the s
      */
     private void drawCurrentSeg(ArrayList<Segdata> s){
-      int np = s.size();
-      float[] xp = new float[np];
-      float[] yp = new float[np];
-      for (int ip = 0; ip < np; ++ip) {
-        Segdata m = s.get(ip);
-        MPoint p = getNearestGPSFromSegdata(m);
-        xp[ip] = (float) p.getUTMX();
-        yp[ip] = (float) p.getUTMY();
-      }
-      if(_blueView == null){
-        _blueView = _plotPanel.addPoints(xp, yp);
-        _blueView.setMarkStyle(PointsView.Mark.HOLLOW_CIRCLE);
-        _blueView.setLineStyle(PointsView.Line.NONE);
-        _blueView.setMarkColor(Color.BLUE);
-      } else{
-        _blueView.set(xp, yp);
+      if(s.size() > 0){
+        int np = s.size();
+        float[] xp = new float[np];
+        float[] yp = new float[np];
+        for (int ip = 0; ip < np; ++ip) {
+          Segdata m = s.get(ip);
+          MPoint p = getNearestGPSFromSegdata(m);
+          xp[ip] = (float) p.getUTMX();
+          yp[ip] = (float) p.getUTMY();
+        }
+        if(_blueView == null){
+          _blueView = _plotPanel.addPoints(xp, yp);
+          _blueView.setMarkStyle(PointsView.Mark.HOLLOW_CIRCLE);
+          _blueView.setLineStyle(PointsView.Line.NONE);
+          _blueView.setMarkColor(Color.BLUE);
+        } else{
+          _blueView.set(xp, yp);
+        }
       }
     }
 
@@ -339,12 +345,16 @@ public class PlotTest {
      * @return the nearest gps from segdata
      */
     private MPoint getNearestGPSFromSegdata(Segdata s){
-      MPoint p = _gps.get(0);
-      for(int i=1; i<_gps.size(); ++i){
-        if(abs(p.getStation()-s.getSP())>abs(_gps.get(i).getStation()-s.getSP()))
-          p = _gps.get(i);
+      if(_gps != null && _gps.size() > 0){
+        MPoint p = _gps.get(0);
+        for(int i=1; i<_gps.size(); ++i){
+          if(abs(p.getStation()-s.getSP())>abs(_gps.get(i).getStation()-s.getSP())){
+            p = _gps.get(i);
+          }
+        }
+        return p;
       }
-      return p;
+      return null;
     }
 
     /**
@@ -353,40 +363,41 @@ public class PlotTest {
      * @param s the s
      */
     private void plotActiveReceivers(Segdata s){
-      ArrayList<Integer> recs = new ArrayList<Integer>(0);
-      ArrayList<MPoint> g = new ArrayList<MPoint>(0);
-      float[][] f = s.getF();
-      int n2 = f.length;
-      int start = s.getRPF();
-      for(int i=0; i<n2; ++i){
-        if(isActive(f[i])){
-          recs.add(start+i);
+      if(_gps != null && _gps.size()>0){
+        ArrayList<Integer> recs = new ArrayList<Integer>(0);
+        ArrayList<MPoint> g = new ArrayList<MPoint>(0);
+        float[][] f = s.getF();
+        int n2 = f.length;
+        int start = s.getRPF();
+        for(int i=0; i<n2; ++i){
+          if(isActive(f[i])){
+            recs.add(start+i);
+          }
         }
-      }
-      for(int i=0; i<_gps.size(); ++i){
-        MPoint p = _gps.get(i);
-        if(recs.contains(p.getStation())){
-          g.add(p);
+        for(int i=0; i<_gps.size(); ++i){
+          MPoint p = _gps.get(i);
+          if(recs.contains(p.getStation())){
+            g.add(p);
+          }
         }
-      }
-      int np = g.size();
-      float[] xp = new float[np];
-      float[] yp = new float[np];
-      for (int ip = 0; ip < np; ++ip) {
-        MPoint m = g.get(ip);
-        xp[ip] = (float) m.getUTMX();
-        yp[ip] = (float) m.getUTMY();
-      }
-      if(_greenView == null){
-        _greenView = _plotPanel.addPoints(xp, yp);
-        _greenView.setMarkStyle(PointsView.Mark.CROSS);
-        _greenView.setLineStyle(PointsView.Line.NONE);
-        _greenView.setMarkColor(Color.GREEN);
-      } else{
-        _greenView.set(xp, yp);
+        int np = g.size();
+        float[] xp = new float[np];
+        float[] yp = new float[np];
+        for (int ip = 0; ip < np; ++ip) {
+          MPoint m = g.get(ip);
+          xp[ip] = (float) m.getUTMX();
+          yp[ip] = (float) m.getUTMY();
+        }
+        if(_greenView == null){
+          _greenView = _plotPanel.addPoints(xp, yp);
+          _greenView.setMarkStyle(PointsView.Mark.CROSS);
+          _greenView.setLineStyle(PointsView.Line.NONE);
+          _greenView.setMarkColor(Color.GREEN);
+        } else{
+          _greenView.set(xp, yp);
+        }
       }
     }
-
     /**
      * Plot active receivers.
      *
@@ -422,15 +433,17 @@ public class PlotTest {
      * @return the array list
      */
     public ArrayList<MPoint> gpsWithinRange(MPoint g, double d){
-      ArrayList<MPoint> p = new ArrayList<MPoint>(0);
-      for(MPoint m:_gps){
-        if(g.xyDist(m) <= d){
-          p.add(m);
+      if(_gps!=null && _gps.size()>0){
+        ArrayList<MPoint> p = new ArrayList<MPoint>(0);
+        for(MPoint m:_gps){
+          if(g.xyDist(m) <= d){
+            p.add(m);
+          }
         }
+        return p;
       }
-      return p;
+      return null;
     }
-
     /**
      * Seg within range.
      *
@@ -633,9 +646,10 @@ public class PlotTest {
      * Update rp.
      */
     public void updateRP(){
-      pv = sp.addPixels(s1, s2, gain2(lowpass2(tpow2(plotArray, tpowNum), lowpassNum), gainNum));
-      // pv = sp.addPixels(s1, s2, tpow2(plotArray, tpowNum));
-      pv.setPercentiles(1, 99);
+      if(plotArray != null){
+        pv = sp.addPixels(s1, s2, gain2(lowpass2(tpow2(plotArray, tpowNum), lowpassNum), gainNum));
+        pv.setPercentiles(1, 99);
+      }
     }
 
     /**
@@ -656,9 +670,6 @@ public class PlotTest {
       sp.setTitle("Shot " + seg.getSP());
       plotArray = seg.getF();
       updateRP();
-      // pv = sp.addPixels(s1, s2, seg.getF()));
-      pv.setPercentiles(1, 99);
-
     }
 
     /**
@@ -667,40 +678,41 @@ public class PlotTest {
      * @param s the s
      */
     public void updateRP(ArrayList<Segdata> s) {
-      int n1 = getN1(s);
-      int n2 = getN2(s);
-      int rpf = getRPF(s);
-      int rpl = rpf+n2;
-      float[] count = new float[n2];
-      float[][] stot = new float[n2][n1];
-      for (int i = 0; i < s.size(); ++i) {
-        Segdata seg = s.get(i);
-        int rpftmp = seg.getRPF();
-        int rpltmp = seg.getRPL();
-        float[][] f = seg.getF();
-        for(int j=0; j<f.length; ++j){
-          int index = j+(rpftmp-rpf);
-          if(isActive(f[j])){
-            for(int k=0; k<f[0].length; ++k){   
-              stot[index][k] += f[j][k];
+      if(s != null && s.size()>0){
+        int n1 = getN1(s);
+        int n2 = getN2(s);
+        int rpf = getRPF(s);
+        int rpl = rpf+n2;
+        float[] count = new float[n2];
+        float[][] stot = new float[n2][n1];
+        for (int i = 0; i < s.size(); ++i) {
+          Segdata seg = s.get(i);
+          int rpftmp = seg.getRPF();
+          int rpltmp = seg.getRPL();
+          float[][] f = seg.getF();
+          for(int j=0; j<f.length; ++j){
+            int index = j+(rpftmp-rpf);
+            if(isActive(f[j])){
+              for(int k=0; k<f[0].length; ++k){   
+                stot[index][k] += f[j][k];
+              }
+             ++count[index];
             }
-           ++count[index];
           }
         }
-      }
-      for(int i=0;i<n2; ++i){
-        for(int j=0;j<n1;++j){
-          stot[i][j] = stot[i][j]/count[i];
+        for(int i=0;i<n2; ++i){
+          for(int j=0;j<n1;++j){
+            stot[i][j] = stot[i][j]/count[i];
+          }
         }
+        s1 = new Sampling(n1, 0.001, 0.0);
+        s2 = new Sampling(n2, 1.0, rpf);
+        plotArray = stot;
+        updateRP();
+        sp.setHLimits(rpf, rpl);
+        sp.setTitle("Brute Stack");
+        sp.setHLabel("Station");
       }
-      s1 = new Sampling(n1, 0.001, 0.0);
-      s2 = new Sampling(n2, 1.0, rpf);
-      plotArray = stot;
-      updateRP();
-      sp.setHLimits(rpf, rpl);
-      sp.setTitle("Brute Stack");
-      sp.setHLabel("Station");
-      pv.setPercentiles(1, 99);
     }
 
     /**
@@ -710,50 +722,49 @@ public class PlotTest {
      * @param channel the channel
      */
     public void updateRP(ArrayList<Segdata> s, int channel) {
-      ArrayList<Segdata> seg = new ArrayList<Segdata>(0);
-      int min = getMinStationID(_gps);
-      int station = min+channel;
-      for(int i=0; i<s.size(); ++i){
-        Segdata t = s.get(i);
-        if(t.getF().length>=channel){
-          seg.add(t);
-        }
-      }
-      int rpf = getRPF(seg);
-      int fsp = getFirstSP(seg);
-      int lsp = getLastSP(seg);
-      int n1 = getN1(seg);
-      int n2 = lsp-fsp+1;
-      int rpl = rpf+n2;
-      float[][] chan = new float[n2][n1];     
-      // Start Trusting this more
-      for (int i = 0; i < seg.size(); ++i) {
-        Segdata tmp = seg.get(i);
-        int stmp = tmp.getSP();
-        int rpftmp = tmp.getRPF();
-        // float[] c = tmp.getF()[(rpf-rpftmp)+channel-1];
-        float[] c = tmp.getF()[channel];
-        if(isActive(c)){
-          for(int j=0;j<c.length; ++j){
-            chan[stmp-fsp][j] += c[j];
+      if(s!=null && s.size()>0){
+        ArrayList<Segdata> seg = new ArrayList<Segdata>(0);
+        int min = getMinStationID(_gps);
+        int station = min+channel;
+        for(int i=0; i<s.size(); ++i){
+          Segdata t = s.get(i);
+          if(t.getF().length>=channel){
+            seg.add(t);
           }
         }
-      }
-      s1 = new Sampling(n1, 0.001, 0.0);
-      s2 = new Sampling(n2, 1.0, fsp);
-      plotArray = chan;
-      updateRP();
-      // pv = sp.addPixels(s1, s2, (chan));
-      sp.setHLimits(fsp, maxShot(seg));
-      sp.setTitle("Channel: "+channel);
-      sp.setHLabel("Station Number");
-      pv.setPercentiles(1, 99);
-      
-      for(Segdata r:seg){
-        _bp.plotActiveReceivers(r);
-      }
-      _bp.drawCurrentSeg(seg);
+        int rpf = getRPF(seg);
+        int fsp = getFirstSP(seg);
+        int lsp = getLastSP(seg);
+        int n1 = getN1(seg);
+        int n2 = lsp-fsp+1;
+        int rpl = rpf+n2;
+        float[][] chan = new float[n2][n1];     
+        // Start Trusting this more
+        for (int i = 0; i < seg.size(); ++i) {
+          Segdata tmp = seg.get(i);
+          int stmp = tmp.getSP();
+          int rpftmp = tmp.getRPF();
+          // float[] c = tmp.getF()[(rpf-rpftmp)+channel-1];
+          float[] c = tmp.getF()[channel];
+          if(isActive(c)){
+            for(int j=0;j<c.length; ++j){
+              chan[stmp-fsp][j] += c[j];
+            }
+          }
+        }
+        s1 = new Sampling(n1, 0.001, 0.0);
+        s2 = new Sampling(n2, 1.0, fsp);
+        plotArray = chan;
+        updateRP();
+        sp.setHLimits(fsp, maxShot(seg));
+        sp.setTitle("Channel: "+channel);
+        sp.setHLabel("Station Number");     
 
+        for(Segdata r:seg){
+          _bp.plotActiveReceivers(r);
+        }
+        _bp.drawCurrentSeg(seg);
+      }
     }
 
     /**
@@ -840,7 +851,7 @@ public class PlotTest {
     }
 
     /**
-     * Checks if is active.
+     * Checks if a receiver is active.
      *
      * @param f the f
      * @return true, if is active
@@ -913,26 +924,26 @@ public class PlotTest {
      * @param e the e
      */
     public void updateElev(ArrayList<MPoint> e) {
-      // TODO: Update to make xaxis distance between points instead of
-      // stationID
-      int n = e.size();
-      float[] x = new float[n];
-      float[] y = new float[n];
-      for (int i = 0; i < n; ++i) {
-        MPoint p = e.get(i);
-        x[i] = p.getStation();
-        y[i] = (float) p.getElev();
-      }
-      elev.setHLimits(min(x) - 10, max(x) + 10);
-      elev.setVLimits(min(y) - 50, max(y) + 50);
-      if(pv == null){
-        pv = elev.addPoints(x,y);
-      }
-      else{
-        pv.set(x, y);
+      // TODO: Update to make xaxis distance between points instead of stationID
+      if(e != null && e.size() >0){
+        int n = e.size();
+        float[] x = new float[n];
+        float[] y = new float[n];
+        for (int i = 0; i < n; ++i) {
+          MPoint p = e.get(i);
+          x[i] = p.getStation();
+          y[i] = (float) p.getElev();
+        }
+        elev.setHLimits(min(x) - 10, max(x) + 10);
+        elev.setVLimits(min(y) - 50, max(y) + 50);
+        if(pv == null){
+          pv = elev.addPoints(x,y);
+        }
+        else{
+          pv.set(x, y);
+        }
       }
     }
-
   }
 
   // /////////////////////////////////////////////////////////////////////////
@@ -1063,9 +1074,6 @@ public class PlotTest {
      */
     private boolean beginMove(MouseEvent e) {
       _tile = (Tile) e.getSource();
-      // int x = e.getX();
-      // int y = e.getY();
-      // getNearestGPS(x, y);
       return true;
     }
 
@@ -1134,25 +1142,28 @@ public class PlotTest {
      * @return the nearest gps
      */
     private MPoint getNearestGPS(int x, int y) {
-      Transcaler ts = _tile.getTranscaler();
-      Projector hp = _tile.getHorizontalProjector();
-      Projector vp = _tile.getVerticalProjector();
-      double xu = ts.x(x);
-      double yu = ts.y(y);
-      double xv = hp.v(xu);
-      double yv = vp.v(yu);
-      MPoint test = new MPoint(xv, yv, true);
-      MPoint near = _gps.get(0);
-      MPoint fin = _gps.get(0);
-      double d = near.xyDist(test);
-      for (int i = 1; i < _gps.size(); ++i) {
-        near = _gps.get(i);
-        if (near.xyDist(test) < d) {
-          fin = _gps.get(i);
-          d = fin.xyDist(test);
+      if(_gps!=null && _gps.size()>0){
+        Transcaler ts = _tile.getTranscaler();
+        Projector hp = _tile.getHorizontalProjector();
+        Projector vp = _tile.getVerticalProjector();
+        double xu = ts.x(x);
+        double yu = ts.y(y);
+        double xv = hp.v(xu);
+        double yv = vp.v(yu);
+        MPoint test = new MPoint(xv, yv, true);
+        MPoint near = _gps.get(0);
+        MPoint fin = _gps.get(0);
+        double d = near.xyDist(test);
+        for (int i = 1; i < _gps.size(); ++i) {
+          near = _gps.get(i);
+          if (near.xyDist(test) < d) {
+            fin = _gps.get(i);
+            d = fin.xyDist(test);
+          }
         }
+        return fin;
       }
-      return fin;
+      return null;  
     }
 
     /**
@@ -1162,18 +1173,21 @@ public class PlotTest {
      * @return the nearest segdata
      */
     private Segdata getNearestSegdata(int stationID) {
-      Segdata seg1 = _segd.get(0);
-      Segdata seg2 = _segd.get(0);
-      int d1 = abs(seg1.getSP() - stationID);
-      for (int i = 1; i < _segd.size(); ++i) {
-        seg2 = _segd.get(i);
-        int d2 = abs(seg2.getSP() - stationID);
-        if (d2 < d1) {
-          seg1 = seg2;
-          d1 = abs(seg1.getSP() - stationID);
+      if(_segd!=null && _segd.size()>0){
+        Segdata seg1 = _segd.get(0);
+        Segdata seg2 = _segd.get(0);
+        int d1 = abs(seg1.getSP() - stationID);
+        for (int i = 1; i < _segd.size(); ++i) {
+          seg2 = _segd.get(i);
+          int d2 = abs(seg2.getSP() - stationID);
+          if (d2 < d1) {
+            seg1 = seg2;
+            d1 = abs(seg1.getSP() - stationID);
+          }
         }
+        return seg1;
       }
-      return seg1;
+      return null;
     }
 
   }
@@ -1256,7 +1270,9 @@ public class PlotTest {
      * @param chan the chan
      */
     private void adjust(int chan){
-      _rp.updateRP(_segd,chan);
+      if(_segd != null && _segd.size()>0){
+        _rp.updateRP(_segd,chan);
+      }
     }
 
   }
@@ -1482,9 +1498,11 @@ private class CircleMode extends Mode {
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
       fc.showOpenDialog(null);
       File f = fc.getSelectedFile();
-      if(_nedFiles==null)
-        _nedFiles = new ArrayList<NedFile>(0);
-      _nedFiles.add(importNed(f));
+      if(f!=null){
+        if(_nedFiles==null)
+          _nedFiles = new ArrayList<NedFile>(0);
+        _nedFiles.add(importNed(f));
+        } 
       } catch(Exception e){
         System.out.println(e);
       }
@@ -1514,10 +1532,12 @@ private class CircleMode extends Mode {
      */
     public void actionPerformed(ActionEvent event){
       try{
-      for(NedFile f:_nedFiles){
-        readNed(f,_gps);
-      }
-      _elev.updateElev(_gps);
+        if(_nedFiles.size() > 0){
+          for(NedFile f:_nedFiles){
+            readNed(f,_gps);
+          }
+          _elev.updateElev(_gps);
+        }
       } catch (Exception e){
         System.out.println(e);
       }
@@ -1547,21 +1567,24 @@ private class CircleMode extends Mode {
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
       fc.showOpenDialog(null);
       File f = fc.getSelectedFile();
-      String ext = "";
-      int i = f.getName().lastIndexOf('.');
-      if (i > 0) {
-        ext = f.getName().substring(i + 1);
+      if(f != null){
+        String ext = "";
+        int i = f.getName().lastIndexOf('.');
+        if (i > 0) {
+          ext = f.getName().substring(i + 1);
+        }
+        if (ext.equals("gpx")){
+          _gps = readLatLonFromXML(f);
+        } else if (ext.equals("csv")){
+          _gps = readLatLonFromCSV(f);
+        } else {
+          _gps = readLatLonFromTSV(f);
+        }
+        Waypoints.latLonToUTM(_gps);
+        // Waypoints.extrapolateGPS(_gps);
+        _bp.updateBPView();
+        _elev.updateElev(_gps);
       }
-      if (ext.equals("gpx"))
-        _gps = readLatLonFromXML(f);
-      else if (ext.equals("csv"))
-        _gps = readLatLonFromCSV(f);
-      else
-        _gps = readLatLonFromTSV(f);
-      Waypoints.latLonToUTM(_gps);
-      // Waypoints.extrapolateGPS(_gps);
-      _bp.updateBPView();
-      _elev.updateElev(_gps);
     }
   }
 
@@ -1588,7 +1611,9 @@ private class CircleMode extends Mode {
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
       fc.showSaveDialog(null);
       File f = fc.getSelectedFile();
-      Waypoints.exportToCSV(_gps, f);
+      if(f!=null){
+        Waypoints.exportToCSV(_gps, f);
+      }
     }
   }
 
@@ -1616,13 +1641,16 @@ private class CircleMode extends Mode {
       fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
       fc.showSaveDialog(null);
       File f = fc.getSelectedFile();
-      ArrayList<Segdata> tmp = Segd.readLineSegd(f.getAbsolutePath());
-      if(_segd == null){
-        _segd = new ArrayList<Segdata>(0);
+      if(f!=null){
+        ArrayList<Segdata> tmp = Segd.readLineSegd(f.getAbsolutePath());
+        if(_segd == null){
+          _segd = new ArrayList<Segdata>(0);
+        }
+        for(Segdata s:tmp){
+          _segd.add(s);
+        }
+        System.out.println("SEGD IMPORTED");
       }
-      for(int i=0; i<tmp.size(); ++i)
-        _segd.add(tmp.get(i));
-      System.out.println("SEGD IMPORTED");
     }
 
   }
@@ -1649,48 +1677,29 @@ private class CircleMode extends Mode {
     public void actionPerformed(ActionEvent event) {
       try{
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+      fc.setMultiSelectionEnabled(true);
+      fc.setFileFilter(new FileNameExtensionFilter("SEGD Files", "segd"));
       fc.showSaveDialog(null);
       File[] f = fc.getSelectedFiles();
-      ArrayList<Segdata> tmp = new ArrayList<Segdata>(0);
-      for(int i=0; i<f.length; ++i){
-        Segdata ts = readSegd(f[i]);
-        tmp.add(ts);
-      }
-      if(_segd == null){
-        _segd = new ArrayList<Segdata>(0);
-      }
-      for(int i=0; i<tmp.size(); ++i)
-        _segd.add(tmp.get(i));
-      System.out.println("SEGD IMPORTED");
+      if(f!=null){
+        ArrayList<Segdata> tmp = new ArrayList<Segdata>(0);
+        for(int i=0; i<f.length; ++i){
+          Segdata ts = readSegd(f[i]);
+          tmp.add(ts);
+        }
+        if(_segd == null){
+          _segd = new ArrayList<Segdata>(0);
+        }
+        for(Segdata s:tmp){
+          _segd.add(s);
+        }
+        System.out.println("SEGD IMPORTED");
+        }
       } catch(Exception e){
-        System.out.println(e);
+       System.out.println(e);
       }
     }
 
-  }
-
-  /**
-   * The Class DisplayRange.
-   */
-  private class DisplayRange extends AbstractAction {
-    
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Instantiates a new display range.
-     */
-    private DisplayRange() {
-      super("Display Range");
-
-    }
-
-    /* (non-Javadoc)
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent event) {
-      _rp.updateRP(_segd, 200); //TODO: Write logic for dynamic shots
-    }
   }
 
  /**
@@ -1713,9 +1722,14 @@ private class CircleMode extends Mode {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent event) {
-      _segd.removeAll(_segd);
-      _gps.removeAll(_gps);
-      _nedFiles.removeAll(_nedFiles);
+      if(_segd != null && _segd.size()>0){
+        _segd.removeAll(_segd);
+      } if(_gps != null && _gps.size()>0){
+        _gps.removeAll(_gps);
+      } if(_nedFiles != null && _nedFiles.size()>0){
+        _nedFiles.removeAll(_nedFiles);
+      }
+      System.out.println("Cleared Data from GPS, NED and SEGD files");
     }
   }
 

@@ -33,7 +33,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 
 \author{Advisor/Client: Dave Hale \\ Team Members: Colton Kohnke}
 \title{GPGN438 Senior Design: \\ Exploratory Seismic Data Analysis in the Field}
-\date{April 15th, 2014}
+\date{April 28th, 2014}
 
 \begin{document}
 \maketitle
@@ -43,11 +43,11 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 
 Seismic surveys take a significant amount of time and money to complete correctly. This project developed software for the Colorado School of Mines (CSM) to aid with viewing seismic survey data and geometry in the field. The software is also able to help catch errors in the field. It can serve as a teaching tool for the students of the Colorado School of Mines Geophysics Field Camp to help them better understand seismic surveys. \\
 
-The software accomplishes this by reading the SEGD files from the recording truck along with the flag locations from a GPS unit. This data is then be plotted in map and section view in order to give a snapshot of the seismic survey. The survey can then be explored in map view and the shot records can be displayed based off of user input. This exploration comes in the form of dynamic shot record display, common channel section, and displaying a brute stack of shots within a user specified range.\\
+The software accomplishes this by reading the SEGD files from the Sercel recording truck along with the station locations from a GPS unit. This data is then plotted in map and section view in order to give snapshots of the seismic survey. The survey can then be explored in map view as stations and the shot records can be displayed based off of user input. This exploration comes in the form of dynamic display of shot records, stack of shot records and common channel sections.\\
 
-Basic processing can then be completed in a dynamic and interactive way. Included processes are gain, lowpass filtering, and time-power amplitude-gain. The program handles the display of the processed data with a user controlled slider for the processes. The response plot is updated in real-time as the user changes the slider. \\
+Basic processing can then be completed in a dynamic and interactive way. The current included processes are gain, lowpass filtering, and time-power amplitude-gain. The program handles the display of the processed data with a user controlled slider for the processes. The plot of the selected data is updated in real-time as the user moves the slider. \\
 
-The project was completed by May 2014 and will be used as a replacement for ProMAX in the Summer 2014 Geophysics Field Camp. The program is developed to be robust in a field setting where ProMax is primarily for an office setting. The current state of the program is ready for field deployment, but it is not yet a full replacement for ProMAX. 
+The software is ready for use in the 2014 Geophysics field camp. The
 
 \newpage
 \tableofcontents
@@ -226,7 +226,7 @@ The main purpose of the BasePlot class is to display the survey in map view. The
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.75\textwidth]{./figs/fig1.png}
-\caption{An expected plot of the base map after data has been imported.}
+\caption{The base map after GPS and SEGD data has been imported during Roam Mode with summation turned on. This plot shows selected shots (the blue circles inside the red circle), the active receiver locations (green crosses) and the station locations (black crosses).}
 \label{FIG:BP}
 \end{figure}
 
@@ -255,7 +255,7 @@ The ResponsePlot Class is responsible for the plotting of the seismic data. Depe
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.75\textwidth]{./figs/fig4.png}
-\caption{An expected response plot during Roam Mode with no summation.}
+\caption{The Response Plot during Roam Mode with no summation. This shows a single shot record.}
 \label{FIG:RP}
 \end{figure}
 
@@ -270,7 +270,7 @@ The response plot in Roam Mode will dynamically update based on the user's actio
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.75\textwidth]{./figs/fig3.png}
-\caption{An expected response plot during Roam Mode with summation.}
+\caption{The Response Plot during Roam Mode showing an example stacked section.}
 \label{FIG:RPR}
 \end{figure}
 
@@ -285,7 +285,7 @@ Channel Mode has to behave the same way as the other two Modes. However, in Chan
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.75\textwidth]{./figs/fig5.png}
-\caption{An expected response plot during Channel Mode.}
+\caption{The Response Plot displaying a common channel section in Channel Mode.}
 \label{FIG:RPC}
 \end{figure}
 
@@ -296,7 +296,7 @@ The elevation plot is controlled by the ElevPlot Class. When the GPS is first im
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.75\textwidth]{figs/fig2.png}
-\caption{An exceptive elevation profile after NED data has been imported and read.}
+\caption{Sample of the Elevation Plot profile after the NED files have been imported and read.}
 \label{FIG:EP}
 \end{figure}
 
