@@ -22,21 +22,21 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {7}Design Solution}{7}{section.7}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {8}Implementation Plan}{8}{section.8}
+\contentsline {section}{\numberline {8}Implementation Plan}{7}{section.8}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {8.1}Safety}{8}{subsection.8.1}
+\contentsline {subsection}{\numberline {8.1}Safety}{7}{subsection.8.1}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {8.2}Timeline}{8}{subsection.8.2}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {8.3}Budget 1: Actual}{8}{subsection.8.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {8.4}Budget 2: Professional}{9}{subsection.8.4}
+\contentsline {subsection}{\numberline {8.4}Budget 2: Professional}{8}{subsection.8.4}
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {9}Program Design}{9}{section.9}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {9.1}Main Controller - PlotTest Class}{9}{subsection.9.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {9.1.1}Menu Items}{10}{subsubsection.9.1.1}
+\contentsline {subsubsection}{\numberline {9.1.1}Menu Items}{9}{subsubsection.9.1.1}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {9.2}Secondary Controller - BasePlot Class}{11}{subsection.9.2}
 \defcounter {refsection}{0}\relax 

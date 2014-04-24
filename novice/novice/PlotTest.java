@@ -1497,6 +1497,7 @@ private class CircleMode extends Mode {
       try{
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
       fc.showOpenDialog(null);
+      fc.setFileFilter(new FileNameExtensionFilter("GridFloat File", "flt"));
       File f = fc.getSelectedFile();
       if(f!=null){
         if(_nedFiles==null)
@@ -1566,6 +1567,7 @@ private class CircleMode extends Mode {
     public void actionPerformed(ActionEvent event) {
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
       fc.showOpenDialog(null);
+      fc.setFileFilter(new FileNameExtensionFilter("TSV,CSV, or GPX File", "txt", "csv", "asc", "gpx"));
       File f = fc.getSelectedFile();
       if(f != null){
         String ext = "";

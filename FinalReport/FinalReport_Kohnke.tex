@@ -45,9 +45,9 @@ Seismic surveys take a significant amount of time and money to complete correctl
 
 The software accomplishes this by reading the SEGD files from the Sercel recording truck along with the station locations from a GPS unit. This data is then plotted in map and section view in order to give snapshots of the seismic survey. The survey can then be explored in map view as stations and the shot records can be displayed based off of user input. This exploration comes in the form of dynamic display of shot records, stack of shot records and common channel sections.\\
 
-Basic processing can then be completed in a dynamic and interactive way. The current included processes are gain, lowpass filtering, and time-power amplitude-gain. The program handles the display of the processed data with a user controlled slider for the processes. The plot of the selected data is updated in real-time as the user moves the slider. \\
+Basic processing can then be completed in a dynamic and interactive way. The current included processes are gain, lowpass filtering, and time-power amplitude-gain. The program handles the display of the processed data with a user controlled slider for the processes. The plot of the selected data is updated in real-time as the user moves the slider. This allows the user to explore multiple different configurations of gain, lowpass filtering and time amplitude gain in a short amount of time and find the best parameters for the data.\\
 
-The software is ready for use in the 2014 Geophysics field camp. The
+The software is ready for use in the 2014 Geophysics Field Camp. The software has been developed to be quick and accurate in a field setting to look at the current seismic data. It has also been developed to be easy to use for the end user to be able to make decisions in the field. While the current version of the software is useful, there are many features that are missing from the software that would make this program essential to the Geophysics Field Camp. 
 
 \newpage
 \tableofcontents
@@ -57,19 +57,17 @@ The software is ready for use in the 2014 Geophysics field camp. The
 
 \section{Problem Statement}
 
-This project seeks to develop software in Java that aids with the exploration of seismic data in the field. The survey exploration includes the interactive display of survey geometry and seismographs. This software will also be able to perform simple processing tasks in the field. The program will serve as a bridge from the seismic crew to the students of Field Camp and serve as a teaching tool for the student's understanding of the seismic survey.
+This project is to develop software in Java that lets the user explore the seismic survey while in the field. The survey exploration includes the interactive display of survey geometry and seismographs. This software will also be able to perform simple processing tasks in the field. This is a new tool to be used at the Geophysics Field Camp with the intention to give a graphical user interface (GUI) to the display of the seismic survey geometry. It will be used as a teaching tool for the students to get a better understanding of the seismic survey.
 
 \section{Introduction \& Background}
 
-Geophysical data collection is an expensive operation that costs both time and money. In the field, it is in the data collector's best interest to make sure that the data collected is high quality. Poor data collection can waste time in the field and hinder processing when back in the office. \\
+Seismic data collection is an expensive operation in both time and money. In the field, it is in the data collector's best interest to make sure that the data collected is high quality. Poor data quality wastes time in the field and hinders processing when back in the office. \\
 
-ProMAX is the current system used in the field to view the seismic data coming in from the recording station. This system, while good for extensive processing, is not robust enough to quickly display survey data and interactively display the survey geometry. The CSM Field Camp is unique in that they surveys are not conventional, that is, the surveyors are trying parameters or setups that aren't typical of a corporate survey. This makes the data look unconventional and causes problems during standard processing. \\
-
-There can also be a lack of understanding between the students and the seismic survey with regards to how the data is collected in the field. This software will seek to help the students at Field Camp better understand the seismic survey while they are in the field. The software can also be used as a teaching tool to the students in Field Camp to help them better understand the aspects of a seismic surveys.
+ProMAX is the current system used in the field to view the seismic data coming in from the recording truck. This system, while good for extensive processing, is not quick enough to display survey data interactively. There is a need for a new tool that can be easily deployed in the field and has the ability to quickly display the survey geometry, shot records and other information dynamically based off of user input.
 
 \section{Deliverables to Client}
 
-The deliverables of this project include two main items. The first is a program written in Java that accomplishes the design objectives outlined in the next section. The second deliverable will be a documentation of the code in the standard Java practices and a compilation of the documentation using the Javadoc tools provided by Sun Microsystems. 
+The deliverables of this project include two main items. The first is a program written in Java that accomplishes the design objectives outlined in the next section. The second deliverable will be a documentation of the code in the standard Java practices and a compilation of the documentation using the Javadoc tools provided by Sun Microsystems. This documentation will take the appearance of standard Java web based documentation, much like the documentation found in the Mines Java Toolkit. The software will also come with commented code in order to aid further development. 
 
 \section{Design Objectives}
 \subsection{Interactive Display of Survey Geometry}
