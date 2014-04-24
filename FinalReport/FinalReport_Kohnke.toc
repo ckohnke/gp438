@@ -22,60 +22,56 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {7}Design Solution}{7}{section.7}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {8}Implementation Plan}{7}{section.8}
+\contentsline {section}{\numberline {8}Implementation Plan}{8}{section.8}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {8.1}Safety}{7}{subsection.8.1}
+\contentsline {subsection}{\numberline {8.1}Safety}{8}{subsection.8.1}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {8.2}Timeline}{8}{subsection.8.2}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {8.3}Budget 1: Actual}{8}{subsection.8.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {8.4}Budget 2: Professional}{8}{subsection.8.4}
+\contentsline {subsection}{\numberline {8.4}Budget 2: Professional}{9}{subsection.8.4}
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {9}Program Design}{9}{section.9}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {9.1}Main Controller - PlotTest Class}{9}{subsection.9.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {9.1.1}Menu Items}{9}{subsubsection.9.1.1}
+\contentsline {subsubsection}{\numberline {9.1.1}Menu Items}{10}{subsubsection.9.1.1}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {9.2}Secondary Controller - BasePlot Class}{11}{subsection.9.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {9.2.1}Zoom Mode}{12}{subsubsection.9.2.1}
+\contentsline {subsubsection}{\numberline {9.2.1}Zoom Mode}{11}{subsubsection.9.2.1}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsubsection}{\numberline {9.2.2}Roam Mode}{12}{subsubsection.9.2.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {9.2.3}Circle Mode}{13}{subsubsection.9.2.3}
-\defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {9.2.4}Channel Mode}{13}{subsubsection.9.2.4}
+\contentsline {subsubsection}{\numberline {9.2.3}Circle Mode}{12}{subsubsection.9.2.3}
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {9.3}Secondary Controller - ResponsePlot Class}{13}{subsection.9.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {9.3.1}Zoom Mode}{14}{subsubsection.9.3.1}
+\contentsline {subsubsection}{\numberline {9.3.1}Roam Mode}{13}{subsubsection.9.3.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {9.3.2}Roam Mode}{14}{subsubsection.9.3.2}
+\contentsline {subsubsection}{\numberline {9.3.2}Circle Mode}{14}{subsubsection.9.3.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {9.3.3}Circle Mode}{15}{subsubsection.9.3.3}
+\contentsline {subsubsection}{\numberline {9.3.3}Channel Mode}{14}{subsubsection.9.3.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {9.3.4}Channel Mode}{15}{subsubsection.9.3.4}
+\contentsline {subsection}{\numberline {9.4}Secondary Controller - ElevPlot Class}{15}{subsection.9.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {9.4}Secondary Controller - ElevPlot Class}{16}{subsection.9.4}
+\contentsline {subsection}{\numberline {9.5}GPS Module - MPoint \& Waypoints Classes}{15}{subsection.9.5}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {9.5}Helper Modules - MPoint \& Waypoints Classes}{17}{subsection.9.5}
+\contentsline {subsection}{\numberline {9.6}NED Module - NedFile, NedFileHeader \& NedFileReader Classes}{16}{subsection.9.6}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {9.6}Helper Modules - NedFile, NedFileHeader \& NedFileReader Classes}{17}{subsection.9.6}
+\contentsline {subsection}{\numberline {9.7}SEGD Module - Segdata \& Segd Classes}{16}{subsection.9.7}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {9.7}Helper Modules - Segdata \& Segd Classes}{17}{subsection.9.7}
+\contentsline {section}{\numberline {10}Discussion and Conclusions}{17}{section.10}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {10}Discussion and Conclusions}{18}{section.10}
+\contentsline {section}{\numberline {11}Recommendations for Future Work}{17}{section.11}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {11}Recommendations for Future Work}{18}{section.11}
+\contentsline {subsection}{\numberline {11.1}Code Reorganization}{17}{subsection.11.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {11.1}Code Reorganization}{18}{subsection.11.1}
+\contentsline {subsection}{\numberline {11.2}Feature Addition}{17}{subsection.11.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {11.2}Feature Addition}{18}{subsection.11.2}
+\contentsline {section}{\numberline {12}References}{19}{section.12}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {12}References}{20}{section.12}
+\contentsline {section}{\numberline {13}Team Resume}{20}{section.13}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {13}Team Resume}{21}{section.13}
-\defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {14}Appendices}{22}{section.14}
+\contentsline {section}{\numberline {14}Appendices}{21}{section.14}

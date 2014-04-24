@@ -21,20 +21,18 @@
 \BOOKMARK [3][-]{subsubsection.9.2.1}{Zoom Mode}{subsection.9.2}% 21
 \BOOKMARK [3][-]{subsubsection.9.2.2}{Roam Mode}{subsection.9.2}% 22
 \BOOKMARK [3][-]{subsubsection.9.2.3}{Circle Mode}{subsection.9.2}% 23
-\BOOKMARK [3][-]{subsubsection.9.2.4}{Channel Mode}{subsection.9.2}% 24
-\BOOKMARK [2][-]{subsection.9.3}{Secondary Controller - ResponsePlot Class}{section.9}% 25
-\BOOKMARK [3][-]{subsubsection.9.3.1}{Zoom Mode}{subsection.9.3}% 26
-\BOOKMARK [3][-]{subsubsection.9.3.2}{Roam Mode}{subsection.9.3}% 27
-\BOOKMARK [3][-]{subsubsection.9.3.3}{Circle Mode}{subsection.9.3}% 28
-\BOOKMARK [3][-]{subsubsection.9.3.4}{Channel Mode}{subsection.9.3}% 29
-\BOOKMARK [2][-]{subsection.9.4}{Secondary Controller - ElevPlot Class}{section.9}% 30
-\BOOKMARK [2][-]{subsection.9.5}{Helper Modules - MPoint \046 Waypoints Classes}{section.9}% 31
-\BOOKMARK [2][-]{subsection.9.6}{Helper Modules - NedFile, NedFileHeader \046 NedFileReader Classes}{section.9}% 32
-\BOOKMARK [2][-]{subsection.9.7}{Helper Modules - Segdata \046 Segd Classes}{section.9}% 33
-\BOOKMARK [1][-]{section.10}{Discussion and Conclusions}{}% 34
-\BOOKMARK [1][-]{section.11}{Recommendations for Future Work}{}% 35
-\BOOKMARK [2][-]{subsection.11.1}{Code Reorganization}{section.11}% 36
-\BOOKMARK [2][-]{subsection.11.2}{Feature Addition}{section.11}% 37
-\BOOKMARK [1][-]{section.12}{References}{}% 38
-\BOOKMARK [1][-]{section.13}{Team Resume}{}% 39
-\BOOKMARK [1][-]{section.14}{Appendices}{}% 40
+\BOOKMARK [2][-]{subsection.9.3}{Secondary Controller - ResponsePlot Class}{section.9}% 24
+\BOOKMARK [3][-]{subsubsection.9.3.1}{Roam Mode}{subsection.9.3}% 25
+\BOOKMARK [3][-]{subsubsection.9.3.2}{Circle Mode}{subsection.9.3}% 26
+\BOOKMARK [3][-]{subsubsection.9.3.3}{Channel Mode}{subsection.9.3}% 27
+\BOOKMARK [2][-]{subsection.9.4}{Secondary Controller - ElevPlot Class}{section.9}% 28
+\BOOKMARK [2][-]{subsection.9.5}{GPS Module - MPoint \046 Waypoints Classes}{section.9}% 29
+\BOOKMARK [2][-]{subsection.9.6}{NED Module - NedFile, NedFileHeader \046 NedFileReader Classes}{section.9}% 30
+\BOOKMARK [2][-]{subsection.9.7}{SEGD Module - Segdata \046 Segd Classes}{section.9}% 31
+\BOOKMARK [1][-]{section.10}{Discussion and Conclusions}{}% 32
+\BOOKMARK [1][-]{section.11}{Recommendations for Future Work}{}% 33
+\BOOKMARK [2][-]{subsection.11.1}{Code Reorganization}{section.11}% 34
+\BOOKMARK [2][-]{subsection.11.2}{Feature Addition}{section.11}% 35
+\BOOKMARK [1][-]{section.12}{References}{}% 36
+\BOOKMARK [1][-]{section.13}{Team Resume}{}% 37
+\BOOKMARK [1][-]{section.14}{Appendices}{}% 38

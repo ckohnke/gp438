@@ -1631,7 +1631,7 @@ private class CircleMode extends Mode {
      * Instantiates a new import segd dir.
      */
     private ImportSegdDir() {
-      super("Import Segd Directory");
+      super("Import SEGD Directory");
 
     }
 
@@ -1669,7 +1669,7 @@ private class CircleMode extends Mode {
      * Instantiates a new import segd file.
      */
     private ImportSegdFile() {
-      super("Import Segd File(s)");
+      super("Import SEGD File(s)");
 
     }
 
