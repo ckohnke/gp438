@@ -20,7 +20,7 @@ import static novice.Waypoints.*;
 import static novice.NedReader.*;
 
 /**
- * The Class PlotTest.
+ * The Class SeisPlot.
  * 
  * <p> The main container class for the program. Controls the contained class for plot,
  * data imports and other subroutines. Takes calls from contained classes
@@ -31,7 +31,7 @@ import static novice.NedReader.*;
  * @since April 13, 2014
  * 
  */
-public class PlotTest {
+public class SeisPlot {
 
   /**
    * The main method.
@@ -41,7 +41,7 @@ public class PlotTest {
   public static void main(String[] args) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        new PlotTest();
+        new SeisPlot();
       }
     });
   }
@@ -92,7 +92,7 @@ public class PlotTest {
    * Instantiates a new plot test.
    * Initiates the plots
    */
-  private PlotTest() {
+  private SeisPlot() {
     // _shots = new ArrayList<MPoint>(0);
     // _gps = new ArrayList<MPoint>(0);
     // _segd = new ArrayList<Segdata>(0);
@@ -970,7 +970,7 @@ public class PlotTest {
     public RoamMode(ModeManager modeManager) {
       super(modeManager);
       setName("Roaming Mode");
-      setIcon(loadIcon(PlotTest.class,"Roam16.png"));
+      setIcon(loadIcon(SeisPlot.class,"Roam16.png"));
       setMnemonicKey(KeyEvent.VK_R);
       setAcceleratorKey(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0));
       setShortDescription("Roaming Mode");
@@ -1215,7 +1215,7 @@ public class PlotTest {
     public ChannelMode(ModeManager modeManager) {
       super(modeManager);
       setName("Channel Mode");
-      setIcon(loadIcon(PlotTest.class,"Chan16.png"));
+      setIcon(loadIcon(SeisPlot.class,"Chan16.png"));
       setShortDescription("Display a Channel Mode");
     }
 
@@ -1302,7 +1302,7 @@ private class CircleMode extends Mode {
     public CircleMode(ModeManager modeManager) {
       super(modeManager);
       setName("Circle Mode");
-      setIcon(loadIcon(PlotTest.class,"Circle16.png"));
+      setIcon(loadIcon(SeisPlot.class,"Circle16.png"));
       setShortDescription("Display within a Circle");
     }
 
