@@ -15,7 +15,7 @@
 \BOOKMARK [2][-]{subsection.8.3}{Budget 1: Actual}{section.8}% 15
 \BOOKMARK [2][-]{subsection.8.4}{Budget 2: Professional}{section.8}% 16
 \BOOKMARK [1][-]{section.9}{Program Design}{}% 17
-\BOOKMARK [2][-]{subsection.9.1}{Main Controller - PlotTest Class}{section.9}% 18
+\BOOKMARK [2][-]{subsection.9.1}{Main Controller - SeisPlot Class}{section.9}% 18
 \BOOKMARK [3][-]{subsubsection.9.1.1}{Menu Items}{subsection.9.1}% 19
 \BOOKMARK [2][-]{subsection.9.2}{Secondary Controller - BasePlot Class}{section.9}% 20
 \BOOKMARK [3][-]{subsubsection.9.2.1}{Zoom Mode}{subsection.9.2}% 21
@@ -36,3 +36,4 @@
 \BOOKMARK [1][-]{section.12}{References}{}% 36
 \BOOKMARK [1][-]{section.13}{Team Resume}{}% 37
 \BOOKMARK [1][-]{section.14}{Appendices}{}% 38
+\BOOKMARK [2][-]{subsection.14.1}{Java Program and Documentation}{section.14}% 39

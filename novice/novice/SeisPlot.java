@@ -683,6 +683,8 @@ public class SeisPlot {
         int n2 = getN2(s);
         int rpf = getRPF(s);
         int rpl = rpf+n2;
+        int minSP = minShot(s);
+        int maxSP = maxShot(s);
         float[] count = new float[n2];
         float[][] stot = new float[n2][n1];
         for (int i = 0; i < s.size(); ++i) {
@@ -710,7 +712,11 @@ public class SeisPlot {
         plotArray = stot;
         updateRP();
         sp.setHLimits(rpf, rpl);
-        sp.setTitle("Brute Stack");
+        if((maxSP-minSP)==0){
+          sp.setTitle("Shot: "+minSP);
+        } else{
+          sp.setTitle("Brute Stack: "+minSP+"-"+maxSP);
+        }
         sp.setHLabel("Station");
       }
     }

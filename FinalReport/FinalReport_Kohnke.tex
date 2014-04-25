@@ -41,13 +41,13 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 
 \section{Executive Summary}
 
-Seismic surveys take a significant amount of time and money to complete correctly. This project developed software for the Colorado School of Mines (CSM) to aid with viewing seismic survey data and geometry in the field. The software is also able to help catch errors in the field. It can serve as a teaching tool for the students of the Colorado School of Mines Geophysics Field Camp to help them better understand seismic surveys. \\
+Seismic surveys take a significant amount of time and money to complete correctly. This project developed software for the Colorado School of Mines (CSM) to aid with viewing seismic survey data and survey geometry in the field. The software is also able to help catch errors in the field. Finally, it can serve as a teaching tool for the students of the Colorado School of Mines Geophysics Field Camp to help them better understand seismic surveys. \\
 
 The software accomplishes this by reading the SEGD files from the Sercel recording truck along with the station locations from a GPS unit. This data is then plotted in map and section view in order to give snapshots of the seismic survey. The survey can then be explored in map view as stations and the shot records can be displayed based off of user input. This exploration comes in the form of dynamic display of shot records, stack of shot records and common channel sections.\\
 
-Basic processing can then be completed in a dynamic and interactive way. The current included processes are gain, lowpass filtering, and time-power amplitude-gain. The program handles the display of the processed data with a user controlled slider for the processes. The plot of the selected data is updated in real-time as the user moves the slider. This allows the user to explore multiple different configurations of gain, lowpass filtering and time amplitude gain in a short amount of time and find the best parameters for the data.\\
+Basic processing can then be completed in a dynamic and interactive way. The current processes that are included are gain, lowpass filtering, and time-power amplitude-gain. The program handles the display of the processed data from user controlled sliders. The plot of the selected data is updated in real-time as the user moves the slider. This allows the user to explore multiple different configurations of gain, lowpass filtering and time amplitude gain in a short amount of time and find the best parameters for viewing the data.\\
 
-The software is ready for use in the 2014 Geophysics Field Camp. The software has been developed to be quick and accurate in a field setting to look at the current seismic data. It has also been developed to be easy to use for the end user to be able to make decisions in the field. While the current version of the software is useful, there are many features that are missing from the software that would make this program essential to the Geophysics Field Camp. 
+The software is ready for use in the 2014 Geophysics Field Camp. The software has been developed to be quick and accurate in a field setting to look at the collected seismic data. It has also been developed to be easy to use for the end user to be able to utilize. While the current version of the software is useful, there are many features that are missing from the software that would make this program essential to the Geophysics Field Camp. 
 
 \newpage
 \tableofcontents
@@ -57,17 +57,17 @@ The software is ready for use in the 2014 Geophysics Field Camp. The software ha
 
 \section{Problem Statement}
 
-This project is to develop software in Java that lets the user explore the seismic survey while in the field. The survey exploration includes the interactive display of survey geometry and seismographs. This software will also be able to perform simple processing tasks in the field. This is a new tool to be used at the Geophysics Field Camp with the intention to give a graphical user-interface (GUI) to the display of the seismic survey geometry. It will be used as a teaching tool for the students to get a better understanding of the seismic survey.
+This project is to develop software in Java that lets the user explore the seismic survey while in the field. The survey exploration includes the interactive display of survey geometry and seismographs. This software will also be able to perform simple processing tasks in the field. This is a new tool to be used at the Geophysics Field Camp with the intention to give a graphical user-interface (GUI) to the display of the seismic survey geometry. This software will also be used as a teaching tool for the students to give them a better understanding of the seismic survey and data.
 
 \section{Introduction \& Background}
 
-Seismic data collection is an expensive operation in both time and money. In the field, it is in the data collector's best interest to make sure that the data collected is high quality. Poor data quality wastes time in the field and hinders processing when back in the office. \\
+Seismic data collection is an expensive operation in both time and money. In the field, it is in the data collector's best interest to make sure that high quality data is collected. Poor data quality is a waste of time and money in the field and hinders processing when back in the office. \\
 
-ProMAX is the current system used in the field to view the seismic data coming in from the recording truck. This system, while good for extensive processing, is not quick enough to display survey data interactively. There is a need for a new tool that can be easily deployed in the field and has the ability to quickly display the survey geometry, shot records and other information dynamically based off of user input.
+ProMAX is the current system used in the field to view the seismic data coming in from the recording truck. This system, while good for extensive processing, is not quick enough to display survey data in an interactive way. There is a need for a new tool that can be easily deployed in the field and has the ability to quickly display the survey geometry, shot records and other information dynamically based off of user input.
 
 \section{Deliverables to Client}
 
-The deliverables of this project include two main items. The first is a program written in Java that accomplishes the design objectives outlined in the next section. The second deliverable will be a documentation of the code in the standard Java practices and a compilation of the documentation using the Javadoc tools provided by Sun Microsystems. This documentation will take the appearance of standard Java web based documentation, much like the documentation found in the Mines Java Toolkit. The software will also come with commented code in order to aid further development. 
+The deliverables of this project include two main items. The first is a program written in Java that accomplishes the design objectives outlined in the next section. The second deliverable will be a documentation of the code using standard Java practices and a compilation of the documentation using the Javadoc tools provided by Sun Microsystems. This documentation will take the appearance of standard Java web based documentation, much like the documentation found in the Mines Java Toolkit. The software will also come with commented code in order to aid further development. 
 
 \section{Design Objectives}
 \subsection{Interactive Display of Survey Geometry}
@@ -91,15 +91,15 @@ Finally, there is a slider to select and show points corresponding to each FFID 
 
 \subsection{Interactive Display of Seismograms} 
 
-The first step to displaying the seismograms is to convert the SEGD files (bytes) to an array of an array of floats (2D float array). Once this is accomplished, the seismograms are interactively displayed by using the mouse in the plot of GPS locations. As the user moves the mouse along the seismic survey in map view, a plot of the shot record updates in real time. Another method to display the seismograms is to combine the shots within a circle that the user draws in map view. Finally, the user is able to define a specific channel and that channel in all loaded shots will be displayed. This common-channel gather is controlled by a slider and also updates in real time as the user changes the channel number to display. \\
+The first step to displaying the seismograms is to convert the Sercel SEGD files (bytes) to an array of an array of floats (2D float array). Once this is accomplished, the seismograms are interactively displayed by using the mouse in the plot of GPS locations. As the user moves the mouse along the seismic survey in map view, a plot of the shot record updates in real time. Another method to display the seismograms is to combine the shots within a circle that the user draws in map view. Finally, the user is able to define a specific channel and that channel in all loaded shots will be displayed. This common-channel gather is controlled by a slider and also updates in real time as the user changes the channel number to display. \\
 
 \subsection{Interactive Gain, Amplitude Balancing and Lowpass Controls}
 
-All of the displays are unless the data can be seen. Therefore, interactive controls for gain, amplitude balancing and lowpass filtering (Butterworth) need to be implemented and the results plotted. This will be done by using sliders embedded in the graphical user-interface. As the user moves the slider, the plot of shot records updates in real time.
+All of the displays are useless unless the data can be seen. Therefore, interactive controls for gain, amplitude balancing and lowpass filtering (Butterworth) have been implemented. This was accomplished by using sliders embedded in the graphical user-interface. As the user moves the slider, the plot of selected shot records updates in real time.
 
 \subsection{Other Requirements}
 
-Speed is a top priority when working in the field. Decisions are typically made quickly in order to move the survey along at a reasonable rate. If this software is fast enough, it can be used as a supplement to those decisions. The field camp data set is small enough that speed should not be an issue. \\
+Speed is a top priority when working in the field. Decisions are typically made quickly in order to move the survey along at a reasonable rate. If this software is fast enough, it can be used as a supplement to those decisions. The field camp data set is small enough that speed should not be an issue. If the data set was larger, more issues would arise because currently all of the data from the survey is stored in the memory Java allocates from RAM.\\
 
 The graphical user-interface must be easy to use. The layout of the controls must be logical and follow a sequential order.  If there are errors thrown in the process of importing and plotting the data, the user needs to be made aware of what steps they are missing. This will accelerate the learning curve for this new tool and make it easier to use in the field.
 
@@ -109,11 +109,11 @@ The decisions during the main software development section of this project deal 
 
 The software is not currently optimized for speed because that would slow down development. However, specific places in the software have been marked for efficiency improvements during the testing phase. One area that has been marked for optimization is the storage of the data from the SEGD files. Currently, shots are stored as an ArrayList which is traversed linearly. In Big-O Notation, this causes an O($n^2$) search time where $n$ is the length of the List. A much faster implementation would be a Binary Search Tree which has O($n$) traversal time. Another option is implementing a Hash Table, which returns a value in near constant time, O($1$). \\
 
-The decisions during the final stages of the project revolve around end user usability. These choices include aesthetic placement of tools in the software to create a logical progression of tasks for the end user. The decisions in this section will also revolve around how to lay out the documentation for the end user.
+The decisions during the final stages of the project revolve around end user usability. These choices include aesthetic placement of tools in the software to create a logical progression of tasks for the end user. The decisions in this phase will also revolve around how to lay out the documentation for the end user.
 
 \section{Design Solution}
 
-The tool that is being used in this design project is simulation. Each method that is written is tested by calling a main method that tests against the 2013 Field Camp data. These simulations provide the developer with real data to test the software. It also provides speed/efficiency data to make sure the software is meeting the required benchmarks. \\
+The tool that is being used in this design project is simulation. Each method that is written is tested by calling a main method that tests the code with the 2013 Field Camp seismic data. These simulations provide the developer with real data to test the software. It also provides data about speed and efficiency to make sure the software is meeting the required benchmarks. \\
 
 In addition, before a feature is integrated into the larger code, it is tested for errors and correct implementation. This speeds up the development process because it limits the area where bugs can occur at a time. When the bugs occur, they are fixed in the responsible code and retested for consistency. \\ 
 
@@ -173,13 +173,13 @@ In reality, a project of this magnitude would likely cost much more than anticip
 
 \section{Program Design}
 
-The program is divided into several levels of command to aid further development. The highest level, the PlotTest class, initiates the program by constructing the three plot classes, BasePlot, ResponsePlot and ElevPlot. The three plots act as secondary controllers to the program. Finally, there are multiple helper classes that aid the three plots in calculating and obtaining data. \\
+The program is divided into several levels of command to simplify the program and aid further development. The highest level, the PlotTest class, initiates the program by constructing the three plot classes, BasePlot, ResponsePlot and ElevPlot. The BasePlot class handles the map view data that is plotting on the Base Plot (see Section \ref{SUBSEC:BPC}). The ResponsePlot class handles the seismic shot data on the Response Plot (see Section \ref{SUBSEC:RP}). Finally, the ElevPlot handles the plotting of the survey elevation data (see Section \ref{SUBSEC:EP}). The three classes act as secondary controllers to the program. Finally, there are multiple helper classes that aid the three plots in calculating and obtaining data from multiple sources. \\
 
-From the viewpoint of modular programming, the PlotTest class is the main program. The three plot classes consist of a single module because they are able to talk to each other and back to the main PlotTest class. Finally, the helper classes can be combined into specific modules that are called by the PlotTest class. The main PlotTest class can call methods in the plot classes and the plots call methods from the helper classes. The data returned then goes back into the PlotTest class so the next action can happen.
+From the viewpoint of modular programming, the SeisPlot class is the main program. The three plot classes consist of a single module because they are able to talk to each other and back to the main SeisPlot class. Finally, the helper classes can be combined into specific modules that are called by the SeisPlot class. The main SeisPlot class can call methods in the plot classes and the plots call methods from the helper classes. The data returned then goes back into the SeisPlot class so the next action can happen.
 
-\subsection{Main Controller - PlotTest Class}
+\subsection{Main Controller - SeisPlot Class}
 
-The Main Controller of the program is the PlotTest Class. Inside the PlotTest class, there exist internal classes for the three different plots. The PlotTest class is responsible for storing data that is imported, creating menu items, and for handling different modes for the plots. The PlotTest class is also responsible for taking information passed to it by its internal classes (BasePlot, ResponsePlot and ElevPlot) and then handling the parameters of what needs to be updated next. \\
+The Main Controller of the program is the SeisPlot Class. Inside the SeisPlot class there are three internal classes (BasePlot, ResponsePlot and ElevPlot) for the three different plots. The SeisPlot class is responsible for storing data that is imported, creating menu items, and for handling different modes for the plots. The SeisPlot class is also responsible for taking information passed to it by its internal classes and then handling the parameters of what needs to be updated next. \\
 
 \subsubsection{Menu Items}
 
@@ -209,7 +209,7 @@ The "Tools" Menu contains methods to import and manipulate data. The "Get HandHe
 \label{TAB:GPS2}
 \end{table}
 
-The next item is "Import NED Files" and it adds the NED GridFloat files to the PlotTest's list of NED files to search through. In Pagosa, the seismic survey was located on the edge of two NED files, so the program was written to be able to handle multiple NED files. This method requires the GridFloat file (extension ".flt") to be in the same directory as the Header file (extension ".hdr"). "Read Elevations from NED" will take the current imported GPS points and the imported NED Files and update the GPS point elevation fields. This happens based on the GPS point's latitude and longitude. The Elevation Plot is then updated with the profile of the survey (see Section \ref{SUBSEC:EP}). \\
+The next item is "Import NED Files" and it adds the NED GridFloat files to the SeisPlot's list of NED files to search through. In the 2012 Pagosa Spring Colorado Field Camp, the seismic survey was located on the edge of two NED files, so the program was written to be able to handle multiple NED files. This method requires the GridFloat file (extension ".flt") to be in the same directory as the Header file (extension ".hdr"). "Read Elevations from NED" will take the current imported GPS points and the imported NED Files and update the GPS point elevation fields. This happens based on the GPS point's latitude and longitude. The Elevation Plot is then updated with the profile of the survey (see Section \ref{SUBSEC:EP}). \\
 
 "Export GPS to CSV" will export the GPS data to a CSV file. The format of the export is defined in Table \ref{TAB:GPS}. Exporting the data will not erase the data stored in memory. \\
 
@@ -220,7 +220,7 @@ The "Test" Menu item contains methods that the developer was testing before inte
 \subsection{Secondary Controller - BasePlot Class}
 \label{SUBSEC:BPC}
 
-The main purpose of the BasePlot class is to display the survey in map view. The other purpose of this plot is to allow for exploration of the seismic survey geometry in a dynamic environment. 
+The main purpose of the BasePlot class is to display the survey in map view. The other purpose of this plot is to allow for exploration of the seismic survey geometry in a dynamic environment. \\
 
 \begin{figure}[h]
 \centering
@@ -241,7 +241,7 @@ When Roam Mode is selected, the user can click and drag their mouse along the se
 
 \subsubsection{Circle Mode}
 
-Circle Mode behaves much like Roam Mode, but instead of click and dragging the mouse to display the nearest shot, the user clicks and drags to define a circular range. As the user moves their mouse to define a range, the Base Map will update by selecting the shots within that range. The first point the user defines is the center of the circle and from there they drag the mouse to define the radius. In most cases, the circle will actually be elliptical due to the scale of the axes of the Base Plot.
+Circle Mode behaves much like Roam Mode, but instead of clicking and dragging the mouse to display the nearest shot, the user clicks and drags to define a circular range. As the user moves their mouse to define a range, the Base Map will update by selecting the shots within that range. The first point the user defines is the center of the circle and from there they drag the mouse to define the radius. In most cases, the circle will actually be elliptical due to the scale of the axes of the Base Plot.
 
 \subsection{Secondary Controller - ResponsePlot Class}
 \label{SUBSEC:RP}
@@ -272,7 +272,7 @@ The Response Plot behaves the same way in Circle Mode as in Roam Mode. As the us
 
 \subsubsection{Channel Mode}
 
-In Channel Mode all the imported shots are inherently selected. in order to make a common channel section, the Response Plot has to update based off the Channel Slider. As the Channel Slider updates, the Response Plot creates common channel section based off of all the imported SEGD data. If there is no data at a particular shot, the Response Plot displays a vertical line for that station. A sample image of what to expect with a Common Channel Section would look like in the Response Plot is seen in Figure \ref{FIG:RPC}.
+In Channel Mode all the imported shots are automatically selected. In order to make a common channel section, the Response Plot has to update based off the Channel Slider. As the Channel Slider updates, the Response Plot creates common channel section based off of all the imported SEGD data. If there is no data at a particular shot, the Response Plot displays a vertical line for that station. A sample image of what to expect with a Common Channel Section would look like in the Response Plot is seen in Figure \ref{FIG:RPC}.
 
 \begin{figure}[h]
 \centering
@@ -295,9 +295,9 @@ The Elevation Plot is controlled by the ElevPlot Class. When the GPS is first im
 
 \subsection{GPS Module - MPoint \& Waypoints Classes}
 
-The MPoint and the Waypoints classes deal with GPS points. An MPoint is essentially a map point with private fields for location in UTM and Latitude/Longitude coordinates. The MPoint class also includes methods for determining the distance between two MPoints. This is useful when trying to determine if an MPoint lies within a range of another MPoint (such as in Circle Mode). \\
+The MPoint and the Waypoints classes handles GPS points. An MPoint is essentially a map point with private fields for location in UTM and Latitude/Longitude coordinates. The MPoint class also includes methods for determining the distance between two MPoints. This is useful when trying to determine if an MPoint lies within a range of another MPoint (such as in Circle Mode). \\
 
-Waypoints include methods for dealing with collections of MPoint objects. The methods in Waypoints includes tools for importing and exporting MPoint collections from and to files respectfully. Waypoints also has methods for determining the minimum and maximum station number. Waypoints can convert a list of MPoints' Latitude/Longitude into UTM Eastings and Northings. 
+Waypoints include methods for dealing with collections of MPoint objects. The methods in Waypoints includes tools for importing and exporting MPoint collections from and to files respectfully. Waypoints also has methods for determining the minimum and maximum station number. The Waypoints class can convert a list of MPoints' Latitude/Longitude into UTM Eastings and Northings. 
 
 \subsection{NED Module - NedFile, NedFileHeader \& NedFileReader Classes}
 
@@ -305,7 +305,7 @@ The NedFile, NedFileHeader and NedFileReader Classes are are used for importing 
 
 The NedFileHeader is where the information about the actual NedFile data is read and stored; that is, information such as the GridFloat file's cell size, lower left corner, and erroneous values. This all comes from the header file of the GridFloat file (extension ".hdr"). \\
 
-The NedFileReader class contains methods for reading the GridFloat file and extracting an elevation. 
+The NedFileReader class contains methods for reading the NED GridFloat file and extracting an elevation given a Latitude and a Longitude. 
 
 \subsection{SEGD Module - Segdata \& Segd Classes}
 
@@ -326,7 +326,7 @@ The recommendations for future work fall into the categories of code cleanup and
 \subsection{Code Reorganization}
 
 \begin{itemize}
-\item More separation of the PlotTest class and its internal classes. Currently, the PlotTest class is composed of multiple inner. This can cause confusion when developing because it may not be clear to the programmer what parts of the code control what parts of the plot. It's my suggestion to separate the Plot classes from inside the PlotTest class. From here, the PlotTest class can function more as Main Controller with absolute control over everything and less of a Controller with shared power with its inner classes. A more modular design would also aid in development and allow for new features to be added with less code.
+\item More separation of the SeisPlot class and its internal classes. Currently, the SeisPlot class is composed of multiple inner. This can cause confusion when developing because it may not be clear to the programmer what parts of the code control what parts of the plot. It's my suggestion to separate the Plot classes from inside the SeisPlot class. From here, the SeisPlot class can function more as Main Controller with absolute control over everything and less of a Controller with shared power with its inner classes. A more modular design would also aid in development and allow for new features to be added with less code.
 
 \item Optimization of search features. Currently the search algorithms used to find specific shots and map points is linear through an ArrayList. In order to maximize efficiency, a Binary Search Tree (BST) or Hash Map should be used for data storage.
 
@@ -362,13 +362,14 @@ The recommendations for future work fall into the categories of code cleanup and
 \newpage
 \section{Team Resume}
 
-*to be added*
-
-%\include{./Resume_of_Colton_Kohnke}
+\begin{figure}[H]
+\includegraphics[scale=0.80]{./Resume_of_Colton_Kohnke.pdf}
+\end{figure}
 
 \newpage
 \section{Appendices}
 
-*to be added*
+\subsection{Java Program and Documentation}
+The source code and documentation is available online at \url{https://github.com/voltnor/gp438/tree/master/novice}. The GPS data is included inside this github project. The 2013 Geophysics Field Camp seismic data and NED data is not stored online due to online file size limitations. 
 
 \end{document}
