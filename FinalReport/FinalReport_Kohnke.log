@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Debian) (format=pdflatex 2013.11.17)  25 APR 2014 16:57
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Debian) (format=pdflatex 2013.11.17)  25 APR 2014 17:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -846,8 +846,8 @@ File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 329.
-[17 <./figs/fig2.png>] [18]
-Overfull \hbox (33.50285pt too wide) in paragraph at lines 361--361
+[17 <./figs/fig2.png>] [18] [19]
+Overfull \hbox (33.50285pt too wide) in paragraph at lines 363--363
 [][]\OT1/cmr/m/n/12 Drakos, Nikos (2013). \OT1/cmr/m/it/12 Time-power amplitude
 -gain cor-rec-tion\OT1/cmr/m/n/12 . \OT1/cmr/m/sc/12 url\OT1/cmr/m/n/12 : []$\O
 T1/cmtt/m/n/12 http : / / www . reproducibility .
@@ -855,38 +855,43 @@ T1/cmtt/m/n/12 http : / / www . reproducibility .
 
 Missing character: There is no Ã in font cmr12!
 Missing character: There is no ¡ in font cmr12!
-[19] <./Resume_of_Colton_Kohnke.pdf, id=368, 614.295pt x 794.97pt>
+[20] <./Resume_of_Colton_Kohnke.pdf, id=372, 614.295pt x 794.97pt>
 File: ./Resume_of_Colton_Kohnke.pdf Graphic file (type pdf)
 
 <use ./Resume_of_Colton_Kohnke.pdf>
-Package pdftex.def Info: ./Resume_of_Colton_Kohnke.pdf used on input line 366.
+Package pdftex.def Info: ./Resume_of_Colton_Kohnke.pdf used on input line 368.
 (pdftex.def)             Requested size: 491.43666pt x 635.97687pt.
 
-Overfull \hbox (21.68164pt too wide) in paragraph at lines 366--367
+Overfull \hbox (21.68164pt too wide) in paragraph at lines 368--369
 [][] 
  []
 
-[20]
+[21]
 Overfull \vbox (20.4302pt too high) has occurred while \output is active []
 
 
-[21 <./Resume_of_Colton_Kohnke.pdf>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 375.
- [22]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 375.
+[22 <./Resume_of_Colton_Kohnke.pdf>]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 377.
+ [23]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 377.
  (./FinalReport_Kohnke.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 375.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 375.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 377.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 377.
 Package rerunfilecheck Info: File `FinalReport_Kohnke.out' has not changed.
 (rerunfilecheck)             Checksum: 386DEBC8273C20FED962DE9E3451B544;2746.
+
+
+Package biblatex Warning: Please rerun LaTeX.
+(biblatex)                Page breaks have changed.
+
 Package logreq Info: Writing requests to 'FinalReport_Kohnke.run.xml'.
 \openout1 = `FinalReport_Kohnke.run.xml'.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 375.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 377.
  ) 
 Here is how much of TeX's memory you used:
- 12786 strings out of 495059
- 198597 string characters out of 3182029
+ 12787 strings out of 495059
+ 198604 string characters out of 3182029
  395594 words of memory out of 3000000
  15728 multiletter control sequences out of 15000+200000
  11369 words of font info for 41 fonts, out of 3000000 for 9000
@@ -904,10 +909,10 @@ s/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1
 s/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cms
 y10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pf
 b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on FinalReport_Kohnke.pdf (22 pages, 5375385 bytes).
+Output written on FinalReport_Kohnke.pdf (23 pages, 5376032 bytes).
 PDF statistics:
- 463 PDF objects out of 1000 (max. 8388607)
- 414 compressed objects within 5 object streams
- 86 named destinations out of 1000 (max. 500000)
+ 467 PDF objects out of 1000 (max. 8388607)
+ 417 compressed objects within 5 object streams
+ 87 named destinations out of 1000 (max. 500000)
  348 words of extra memory for PDF output out of 10000 (max. 10000000)
 
