@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Debian) (format=pdflatex 2013.11.17)  25 APR 2014 17:02
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Debian) (format=pdflatex 2013.11.17)  25 APR 2014 22:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -879,11 +879,6 @@ Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 377.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 377.
 Package rerunfilecheck Info: File `FinalReport_Kohnke.out' has not changed.
 (rerunfilecheck)             Checksum: 386DEBC8273C20FED962DE9E3451B544;2746.
-
-
-Package biblatex Warning: Please rerun LaTeX.
-(biblatex)                Page breaks have changed.
-
 Package logreq Info: Writing requests to 'FinalReport_Kohnke.run.xml'.
 \openout1 = `FinalReport_Kohnke.run.xml'.
 
@@ -909,7 +904,7 @@ s/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1
 s/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cms
 y10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pf
 b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on FinalReport_Kohnke.pdf (23 pages, 5376032 bytes).
+Output written on FinalReport_Kohnke.pdf (23 pages, 5376153 bytes).
 PDF statistics:
  467 PDF objects out of 1000 (max. 8388607)
  417 compressed objects within 5 object streams
