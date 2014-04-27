@@ -3,8 +3,5 @@
 *.class
 ./fc2013/
 *~
-.metadata/
-novice/.metadata/
-novice/.settings/
-novice/.classpath
-novice/.project
+/src/com/*
+/src/org/*
