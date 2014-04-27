@@ -157,6 +157,7 @@ public class SeisPlot {
 
       // A plot frame has a mode for zooming in tiles or tile axes.
       _plotFrame = new PlotFrame(_plotPanel);
+      _plotFrame.setTitle("Base Plot");
       TileZoomMode tzm = _plotFrame.getTileZoomMode();
 
       // Modes for Base plot
