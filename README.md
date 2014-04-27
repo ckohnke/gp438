@@ -1,19 +1,21 @@
 gp438
 =====
 
-Senior Design
+Senior Design: Exploratory Seismic Data Analysis in the Field
+-----------
 
 Dependencies:
 
-Mandatory:
+1. Mandatory:
   - edu.mines.jtk (https://github.com/dhale/jtk)
 
-For Downloading NED files:
-  - com.github.axet.wget (https://github.com/axet/wget)
-  - com.github.axet.threads (https://github.com/axet/threads)
-  - com.thoughtworks.xstream (http://xstream.codehaus.org/)
-  - org.apache.commons.io (http://commons.apache.org/)
+2. For Downloading NED files:
+  - com.github.axet.wget [link](https://github.com/axet/wget)
+  - com.github.axet.threads [link](https://github.com/axet/threads)
+  - com.thoughtworks.xstream [link](http://xstream.codehaus.org/)
+  - org.apache.commons.io [link](http://commons.apache.org/)
 
 To Run:
-cd src
-./go novice/SeisPlot
+
+    cd src
+    ./go novice/SeisPlot
