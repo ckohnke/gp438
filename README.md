@@ -6,7 +6,7 @@ Senior Design
 Dependencies:
 
 Mandatory:
-edu.mines.jtk (https://github.com/dhale/jtk)
+  - edu.mines.jtk (https://github.com/dhale/jtk)
 
 For Downloading NED files:
   - com.github.axet.wget (https://github.com/axet/wget)
