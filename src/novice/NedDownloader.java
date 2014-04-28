@@ -26,8 +26,10 @@ public class NedDownloader{
       URL url = new URL(u);
       String f = dir+"/n"+n+"w"+w+".zip";
       File target = new File(f);
+      System.out.println("NED FILE DOWNLOAD STARTING");
       WGet wg = new WGet(url, target);
       wg.download();
+      System.out.println("NED FILE DOWNLOAD FINISHED");
       } catch (MalformedURLException e) {
         e.printStackTrace();
       } catch (RuntimeException e) {
