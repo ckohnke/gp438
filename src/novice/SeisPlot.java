@@ -1384,7 +1384,7 @@ public class SeisPlot {
         sliderShot.setMaximum(maxShot(_segd));
         sliderShot.addChangeListener(cl);
 
-        sliderNum.setMinimum(0);
+        sliderNum.setMinimum(1);
         sliderNum.setMaximum(_segd.size());
         sliderNum.addChangeListener(cl);
         sliderFrame.setVisible(true);
@@ -1412,7 +1412,7 @@ public class SeisPlot {
       if(_segd != null && _segd.size()>0){
         ArrayList<Segdata> tmp = new ArrayList<Segdata>(0);
         for(Segdata s:_segd){
-          if(abs(s.getSP()-shot)<sum){
+          if(abs(s.getSP()-shot)<=(sum-1)){
             tmp.add(s);
           }
         }
