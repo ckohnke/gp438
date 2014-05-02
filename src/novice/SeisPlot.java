@@ -1640,14 +1640,14 @@ private class CircleMode extends Mode {
      */
     public void actionPerformed(ActionEvent event) {
       try{
-      JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-      fc.showOpenDialog(null);
-      fc.setFileFilter(new FileNameExtensionFilter("GridFloat File", "flt"));
-      File f = fc.getSelectedFile();
-      if(f!=null){
-        if(_nedFiles==null)
-          _nedFiles = new ArrayList<NedFile>(0);
-        _nedFiles.add(importNed(f));
+        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        fc.setFileFilter(new FileNameExtensionFilter("GridFloat File", "flt"));
+        fc.showOpenDialog(null);
+        File f = fc.getSelectedFile();
+        if(f!=null){
+          if(_nedFiles==null)
+            _nedFiles = new ArrayList<NedFile>(0);
+          _nedFiles.add(importNed(f));
         } 
       } catch(Exception e){
         System.out.println(e);
@@ -1823,31 +1823,31 @@ private class CircleMode extends Mode {
      */
     public void actionPerformed(ActionEvent event) {
       try{
-      JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-      fc.setMultiSelectionEnabled(true);
-      fc.setFileFilter(new FileNameExtensionFilter("SEGD Files", "segd"));
-      fc.showSaveDialog(null);
-      File[] f = fc.getSelectedFiles();
-      if(f!=null){
-        ArrayList<Segdata> tmp = new ArrayList<Segdata>(0);
-        for(int i=0; i<f.length; ++i){
-          Segdata ts = readSegd(f[i]);
-          tmp.add(ts);
-        }
-        if(_segd == null){
-          _segd = new ArrayList<Segdata>(0);
-        }
-        for(Segdata s:tmp){
-          _segd.add(s);
-        }
-        System.out.println("SEGD IMPORTED");
+        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        fc.setMultiSelectionEnabled(true);
+        fc.setFileFilter(new FileNameExtensionFilter("SEGD Files", "segd"));
+        fc.showSaveDialog(null);
+        File[] f = fc.getSelectedFiles();
+        if(f!=null){
+          ArrayList<Segdata> tmp = new ArrayList<Segdata>(0);
+          for(int i=0; i<f.length; ++i){
+            Segdata ts = readSegd(f[i]);
+            tmp.add(ts);
+          }
+          if(_segd == null){
+            _segd = new ArrayList<Segdata>(0);
+          }
+          for(Segdata s:tmp){
+            _segd.add(s);
+          }
+          System.out.println("SEGD IMPORTED");
         }
       } catch(Exception e){
-       System.out.println(e);
+        System.out.println(e);
       }
     }
-
   }
+
 
  /**
   * The Class ClearData.
