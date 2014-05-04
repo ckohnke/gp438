@@ -3,25 +3,25 @@ gp438 Senior Design: Exploratory Seismic Data Analysis in the Field
 
 Workflow Process
 
-1a. GPS Tools -> Get Handheld GPS
+1.  GPS Tools -> Get Handheld GPS
     Import a CSV, TSV file that is Station, Lat, Lon
     Allows user to use: 
       - Export GPS to CSV
 
-1c. SEGD Tools -> Import SEGD Directory or Import SEGD File(s)
+2.  SEGD Tools -> Import SEGD Directory or Import SEGD File(s)
     Imports all SEGD data from a directory or a specific set of files.
     Allows user to use: 
       - No GPS Mode
       - Channel Mode
       - Plot Controls
 
-2.  Import either GPS or SEGD data based on what is missing.
+3.  Import either GPS or SEGD data based on what is missing.
     Allows user to use:
       - Roam Mode
       - Circle Mode
     Assumption: GPS Station numbers are the same as SEGD Shot numbers.
 
-3.  GPS Tools -> Import NED Files
+4.  GPS Tools -> Import NED Files
     Imports the NED files for future use.
     Allows user to use:
       - Read Elevation from NED
