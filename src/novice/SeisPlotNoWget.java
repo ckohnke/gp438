@@ -17,7 +17,7 @@ import edu.mines.jtk.mosaic.*;
 
 import static novice.Segd.*;
 import static novice.Waypoints.*;
-import static novice.NedReader.*;
+import static novice.NedFileReader.*;
 
 /**
  * The Class SeisPlotNoWget.
