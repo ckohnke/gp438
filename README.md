@@ -1,11 +1,12 @@
 gp438 Senior Design: Exploratory Seismic Data Analysis in the Field
 =====
 
-Workflow Process
+Workflow
+---
 
 1.  GPS Tools > Get Handheld GPS
 
-    Import a CSV, TSV file that is Station, Lat, Lon
+    Import a CSV, TSV or GPX file of GPS points.
 
     Allows user to use: 
       - Export GPS to CSV
@@ -21,12 +22,12 @@ Workflow Process
 
 3.  GPS Tools > Import NED Files
 
-    Imports the NED files for future use.
+    Imports the NED files for reading the elevations.
 
     Allows user to use:
       - Read Elevation from NED
 
-4.  Once both the GPS and the SEGD are imported, the user can use any of the modes.
+4.  Once the GPS and the SEGD data is imported, the user can use any of the modes.
 
     Allows user to use:
       - Roam Mode
@@ -41,6 +42,7 @@ Actions avaliable at all times:
   - Zoom Mode
 
 Dependencies
+---
 
 1. Required:
   - Mines Java Toolkit edu.mines.jtk (https://github.com/dhale/jtk)
@@ -52,7 +54,8 @@ Dependencies
      - com.thoughtworks.xstream (http://xstream.codehaus.org/)
      - org.apache.commons.io (http://commons.apache.org/)
 
-To Compile and Run:
+Compile and Run
+---
 
     cd src
     ./go
