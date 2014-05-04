@@ -20,7 +20,7 @@ import static novice.Waypoints.*;
 import static novice.NedReader.*;
 
 /**
- * The Class SeisPlot.
+ * The Class SeisPlotNoWget.
  * 
  * <p> The main container class for the program. Controls the contained class for plot,
  * data imports and other subroutines. Takes calls from contained classes
@@ -31,7 +31,7 @@ import static novice.NedReader.*;
  * @since April 13, 2014
  * 
  */
-public class SeisPlot {
+public class SeisPlotNoWget {
 
   /**
    * The main method.
@@ -41,7 +41,7 @@ public class SeisPlot {
   public static void main(String[] args) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        new SeisPlot();
+        new SeisPlotNoWget();
       }
     });
   }
@@ -92,7 +92,7 @@ public class SeisPlot {
    * Instantiates a new plot test.
    * Initiates the plots
    */
-  private SeisPlot() {
+  private SeisPlotNoWget() {
     // _shots = new ArrayList<MPoint>(0);
     // _gps = new ArrayList<MPoint>(0);
     // _segd = new ArrayList<Segdata>(0);
@@ -990,7 +990,7 @@ public class SeisPlot {
     public RoamMode(ModeManager modeManager) {
       super(modeManager);
       setName("Roaming Mode");
-      setIcon(loadIcon(SeisPlot.class,"Roam16.png"));
+      setIcon(loadIcon(SeisPlotNoWget.class,"Roam16.png"));
       setMnemonicKey(KeyEvent.VK_R);
       setAcceleratorKey(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0));
       setShortDescription("Roaming Mode");
@@ -1240,7 +1240,7 @@ public class SeisPlot {
     public ChannelMode(ModeManager modeManager) {
       super(modeManager);
       setName("Channel Mode");
-      setIcon(loadIcon(SeisPlot.class,"Chan16.png"));
+      setIcon(loadIcon(SeisPlotNoWget.class,"Chan16.png"));
       setShortDescription("Display a Channel Mode");
     }
 
@@ -1331,7 +1331,7 @@ public class SeisPlot {
     public NoGPSMode(ModeManager modeManager) {
       super(modeManager);
       setName("No GPS Mode");
-      setIcon(loadIcon(SeisPlot.class,"NoGPS16.png"));
+      setIcon(loadIcon(SeisPlotNoWget.class,"NoGPS16.png"));
       setShortDescription("Explore Without GPS");
     }
 
@@ -1447,7 +1447,7 @@ private class CircleMode extends Mode {
     public CircleMode(ModeManager modeManager) {
       super(modeManager);
       setName("Circle Mode");
-      setIcon(loadIcon(SeisPlot.class,"Circle16.png"));
+      setIcon(loadIcon(SeisPlotNoWget.class,"Circle16.png"));
       setShortDescription("Display within a Circle");
     }
 
@@ -1905,7 +1905,7 @@ private class CircleMode extends Mode {
   }
 
  /**
-  * The Class ShowPlotSettings.
+  * The Class DownloadNedFile.
   */
  private class DownloadNedFile extends AbstractAction {
     
@@ -1924,7 +1924,7 @@ private class CircleMode extends Mode {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent event) {
-      Object[] opt = {"Continue","Cancel"};
+      /* Object[] opt = {"Continue","Cancel"};
       int k = JOptionPane.showOptionDialog(null,
         "Warning, this may take a long time.",
         "Warning: Time Conflict",
@@ -1948,12 +1948,12 @@ private class CircleMode extends Mode {
           fc.showSaveDialog(null);
           File f = fc.getSelectedFile();
           if(f!=null){
-            NedFileDownloader.get(n,w,f.getAbsolutePath());
+            NedDownloader.get(n,w,f.getAbsolutePath());
           }
         }catch(IOException e){
           e.printStackTrace();
         }
-      }
+      }*/
     }
   }
 

@@ -1,6 +1,49 @@
 #!/bin/bash
 export CLASSPATH=.:../edu_mines_jtk.jar
+ned=true
+
+# Check for Packages to do wget io (NED Files)
+if [ ! -d "./com/github/axet/threads" ]; then
+  ned=false
+  echo "--- package com.github.axet.threads not found"
+  echo "--- Running without NED file download support"
+fi
+if [ ! -d "./com/github/axet/wget" ]; then
+  ned=false
+  echo "--- package com.github.axet.wget not found"
+  echo "--- Running without NED file download support"
+fi
+if [ ! -d "./com/thoughtworks/xstream" ]; then
+  ned=false
+  echo "--- com.thoughtworks.xstream not found"
+  echo "--- Running without NED file download support"
+fi
+if [ ! -d "./org/apache/commons/io" ]; then
+  ned=false
+  echo "--- package org.apache.commons.io not found"
+  echo "--- Running without NED file download support"
+fi
+
 rm novice/*.class
-javac novice/*.java
-#javadoc -d ./javadoc novice
-java -ea -Xmx8g $*
+# Compile all required classes
+echo "--- Compiling required classes"
+javac novice/MPoint.java
+javac novice/NedFile.java
+javac novice/NedFileHeader.java
+javac novice/NedReader.java
+javac novice/Segd.java
+javac novice/Segdata.java
+javac novice/Waypoints.java
+#javadoc -d ./javadoc novice # Compile javadocs
+
+if [ "$ned" = "true" ]; then
+  echo "--- all optional packages found - Compiling"
+  javac novice/NedFileDownloader.java
+  javac novice/SeisPlot.java
+  echo "--- --------------------------- - Running"
+  java -ea -Xmx8g novice/SeisPlot
+else 
+  echo "--- Optional packages not found - Running"
+  javac novice/SeisPlotNoWget.java
+  java -ea -Xmx8g novice/SeisPlotNoWget
+fi
