@@ -34,7 +34,7 @@ javac novice/NedFileReader.java
 javac novice/Segd.java
 javac novice/Segdata.java
 javac novice/Waypoints.java
-javadoc -d ./javadoc novice # Compile javadocs
+#javadoc -d ./javadoc novice # Compile javadocs
 
 if [ "$ned" = "true" ]; then
   echo "--- all optional packages found - Compiling"
