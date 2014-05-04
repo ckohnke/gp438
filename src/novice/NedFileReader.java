@@ -21,12 +21,12 @@ import edu.mines.jtk.dsp.Sampling;
  * @version 1.0
  * @since April 13, 2014
  */
-public class NedReader{
+public class NedFileReader{
 
   /**
    * Instantiates a new ned reader. Private.
    */
-  private NedReader(){}
+  private NedFileReader(){}
 
   /**
    * Import NedFile from file.
