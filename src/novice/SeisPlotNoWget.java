@@ -20,7 +20,7 @@ import static novice.Waypoints.*;
 import static novice.NedReader.*;
 
 /**
- * The Class SeisPlotNoWget.
+ * The Class SeisPlot.
  * 
  * <p> The main container class for the program. Controls the contained class for plot,
  * data imports and other subroutines. Takes calls from contained classes
@@ -31,7 +31,7 @@ import static novice.NedReader.*;
  * @since April 13, 2014
  * 
  */
-public class SeisPlotNoWget {
+public class SeisPlot {
 
   /**
    * The main method.
@@ -41,7 +41,7 @@ public class SeisPlotNoWget {
   public static void main(String[] args) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        new SeisPlotNoWget();
+        new SeisPlot();
       }
     });
   }
@@ -92,7 +92,7 @@ public class SeisPlotNoWget {
    * Instantiates a new plot test.
    * Initiates the plots
    */
-  private SeisPlotNoWget() {
+  private SeisPlot() {
     // _shots = new ArrayList<MPoint>(0);
     // _gps = new ArrayList<MPoint>(0);
     // _segd = new ArrayList<Segdata>(0);
@@ -181,26 +181,26 @@ public class SeisPlotNoWget {
       modeMenu.add(new ModeMenuItem(cm));
       modeMenu.add(new ModeMenuItem(gm));
 
-      JMenu toolMenu = new JMenu("Tools");
-      toolMenu.setMnemonic('T');
-      toolMenu.add(new GetFlagsFromHH()).setMnemonic('f');
-      toolMenu.add(new GetDEM(_plotPanel)).setMnemonic('g');
-      toolMenu.add(new ReadNedElevation(_plotPanel));
-      toolMenu.add(new ExportFlagsToCSV()).setMnemonic('e');
-      toolMenu.add(new ImportSegdDir()).setMnemonic('s');
-      toolMenu.add(new ImportSegdFile()).setMnemonic('d');
+      JMenu gpsMenu = new JMenu("GPS Tools");
+      gpsMenu.add(new GetFlagsFromHH()).setMnemonic('f');
+      gpsMenu.add(new GetDEM(_plotPanel)).setMnemonic('g');
+      gpsMenu.add(new ReadNedElevation(_plotPanel));
+      gpsMenu.add(new ExportFlagsToCSV()).setMnemonic('e');
 
-      JMenu testMenu = new JMenu("Test");
+      JMenu segdMenu = new JMenu("SEGD Tools");
+      segdMenu.add(new ImportSegdDir()).setMnemonic('s');
+      segdMenu.add(new ImportSegdFile()).setMnemonic('d');
+
+      JMenu testMenu = new JMenu("Dev");
       testMenu.setMnemonic('E');
       testMenu.add(new ClearData()).setMnemonic('c');
       testMenu.add(new DownloadNedFile()).setMnemonic('d');
-      testMenu.add(new ShowPlotSettings()).setMnemonic('p'); 
-
 
       JMenuBar menuBar = new JMenuBar();
       menuBar.add(fileMenu);
       menuBar.add(modeMenu);
-      menuBar.add(toolMenu);
+      menuBar.add(gpsMenu);
+      menuBar.add(segdMenu);
       menuBar.add(testMenu);
 
       _plotFrame.setJMenuBar(menuBar);
@@ -635,9 +635,13 @@ public class SeisPlotNoWget {
       fileMenu.add(new SaveAsPngAction(sp)).setMnemonic('a');
       fileMenu.add(new ExitAction()).setMnemonic('x');
 
+      JMenu plotMenu = new JMenu("Plot Tools");
+      plotMenu.add(new ShowPlotSettings()).setMnemonic('p'); 
+
       // Menu bar for Response Plot
       JMenuBar menuBar = new JMenuBar();
       menuBar.add(fileMenu);
+      menuBar.add(plotMenu);
 
       sp.setJMenuBar(menuBar);
 
@@ -990,7 +994,7 @@ public class SeisPlotNoWget {
     public RoamMode(ModeManager modeManager) {
       super(modeManager);
       setName("Roaming Mode");
-      setIcon(loadIcon(SeisPlotNoWget.class,"Roam16.png"));
+      setIcon(loadIcon(SeisPlot.class,"Roam16.png"));
       setMnemonicKey(KeyEvent.VK_R);
       setAcceleratorKey(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0));
       setShortDescription("Roaming Mode");
@@ -1240,7 +1244,7 @@ public class SeisPlotNoWget {
     public ChannelMode(ModeManager modeManager) {
       super(modeManager);
       setName("Channel Mode");
-      setIcon(loadIcon(SeisPlotNoWget.class,"Chan16.png"));
+      setIcon(loadIcon(SeisPlot.class,"Chan16.png"));
       setShortDescription("Display a Channel Mode");
     }
 
@@ -1331,7 +1335,7 @@ public class SeisPlotNoWget {
     public NoGPSMode(ModeManager modeManager) {
       super(modeManager);
       setName("No GPS Mode");
-      setIcon(loadIcon(SeisPlotNoWget.class,"NoGPS16.png"));
+      setIcon(loadIcon(SeisPlot.class,"NoGPS16.png"));
       setShortDescription("Explore Without GPS");
     }
 
@@ -1447,7 +1451,7 @@ private class CircleMode extends Mode {
     public CircleMode(ModeManager modeManager) {
       super(modeManager);
       setName("Circle Mode");
-      setIcon(loadIcon(SeisPlotNoWget.class,"Circle16.png"));
+      setIcon(loadIcon(SeisPlot.class,"Circle16.png"));
       setShortDescription("Display within a Circle");
     }
 

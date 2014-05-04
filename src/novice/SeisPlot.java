@@ -181,26 +181,26 @@ public class SeisPlot {
       modeMenu.add(new ModeMenuItem(cm));
       modeMenu.add(new ModeMenuItem(gm));
 
-      JMenu toolMenu = new JMenu("Tools");
-      toolMenu.setMnemonic('T');
-      toolMenu.add(new GetFlagsFromHH()).setMnemonic('f');
-      toolMenu.add(new GetDEM(_plotPanel)).setMnemonic('g');
-      toolMenu.add(new ReadNedElevation(_plotPanel));
-      toolMenu.add(new ExportFlagsToCSV()).setMnemonic('e');
-      toolMenu.add(new ImportSegdDir()).setMnemonic('s');
-      toolMenu.add(new ImportSegdFile()).setMnemonic('d');
+      JMenu gpsMenu = new JMenu("GPS Tools");
+      gpsMenu.add(new GetFlagsFromHH()).setMnemonic('f');
+      gpsMenu.add(new GetDEM(_plotPanel)).setMnemonic('g');
+      gpsMenu.add(new ReadNedElevation(_plotPanel));
+      gpsMenu.add(new ExportFlagsToCSV()).setMnemonic('e');
 
-      JMenu testMenu = new JMenu("Test");
+      JMenu segdMenu = new JMenu("SEGD Tools");
+      segdMenu.add(new ImportSegdDir()).setMnemonic('s');
+      segdMenu.add(new ImportSegdFile()).setMnemonic('d');
+
+      JMenu testMenu = new JMenu("Dev");
       testMenu.setMnemonic('E');
       testMenu.add(new ClearData()).setMnemonic('c');
       testMenu.add(new DownloadNedFile()).setMnemonic('d');
-      testMenu.add(new ShowPlotSettings()).setMnemonic('p'); 
-
 
       JMenuBar menuBar = new JMenuBar();
       menuBar.add(fileMenu);
       menuBar.add(modeMenu);
-      menuBar.add(toolMenu);
+      menuBar.add(gpsMenu);
+      menuBar.add(segdMenu);
       menuBar.add(testMenu);
 
       _plotFrame.setJMenuBar(menuBar);
@@ -635,9 +635,13 @@ public class SeisPlot {
       fileMenu.add(new SaveAsPngAction(sp)).setMnemonic('a');
       fileMenu.add(new ExitAction()).setMnemonic('x');
 
+      JMenu plotMenu = new JMenu("Plot Tools");
+      plotMenu.add(new ShowPlotSettings()).setMnemonic('p'); 
+
       // Menu bar for Response Plot
       JMenuBar menuBar = new JMenuBar();
       menuBar.add(fileMenu);
+      menuBar.add(plotMenu);
 
       sp.setJMenuBar(menuBar);
 
