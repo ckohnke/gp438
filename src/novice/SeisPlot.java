@@ -652,6 +652,7 @@ public class SeisPlot {
         public void stateChanged(ChangeEvent e) {
           gainNum = gainSlider.getValue();
           lowpassNum = lowpassSlider.getValue();
+          if(lowpassNum==0) lowpassNum=0.01; //butterworth filter must be > 0 
           tpowNum = tpowSlider.getValue()/10.0f;
           updateRP();
           gainLabel.setText("Gain Number: "+gainNum);
