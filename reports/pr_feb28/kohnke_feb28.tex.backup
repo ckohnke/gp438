@@ -1,0 +1,27 @@
+\documentclass[a4paper,12pt]{texMemo}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\memoto{Prof. Dave Hale, Prof. T.K. Young}
+\memofrom{Colton Kohnke}
+\memodate{Feb 28, 2014}
+\memosubject{GPGN438 Project Progress Report}
+
+\begin{document}
+\maketitle
+
+This memo is to report on the monthly progress senior design project for GPGN438 titled ``Exploratory seismic data analysis in the field.'' \\
+
+In the past month I have overhauled the code in order to make future development easier. This includes making several classes incorporate the ``static'' keyword. The rest of the code was then updated to make the code run faster and more efficiently. The main portion of the code was then updated include the use of the static methods. Obsolete and erroneous code was deleted and fixed. \\
+
+Plotting map points was updated to dynamically change with where the survey is located. This is a great feature because it allows the user to see where the erroneous GPS points are regardless of survey location. The axis' label is still displaying the large values of UTM coordinates. \\
+
+This month I also added a plot of the elevation profile from the GPS data. The x-axis of the plot is StationID, which is uniformly spaced, so drastic slope changes are not reflected. This can be mitigated by adding in functions that calculate the distance between two GPS points. \\
+
+Finally I created a mode that will display a range of shots. Currently, this mode displays all of the shots that are in the in a range. This will be expanded in the next weeks to dynamically change to a range that is in a circle that the user selects on the map. I also attempted to create a ``movie mode'' that flips through shots and displays them, but there is a excessive amount of lag and it only displays the final shot in the stream.\\
+
+The timeline to finishing this project is currently being reviewed. 
+
+
+
+\end{document}

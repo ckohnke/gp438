@@ -1,0 +1,1621 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{timeline}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{mathtools}
+
+\usepackage[style=authoryear, backend=bibtex]{biblatex}
+\addbibresource{final_bib.bib}
+\nocite{*} 
+
+\usepackage{listings}
+\lstset{ %
+language=JAVA,                % choose the language of the code
+basicstyle=\footnotesize,       % the size of the fonts that are used for the code
+numbers=left,                   % where to put the line-numbers
+numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
+stepnumber=1,                   % the step between two line-numbers. If it is 1 each line will be numbered
+numbersep=5pt,                  % how far the line-numbers are from the code
+backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=false,         % underline spaces within strings
+showtabs=false,                 % show tabs within strings adding particular underscores
+frame=single,           % adds a frame around the code
+tabsize=2,          % sets default tabsize to 2 spaces
+captionpos=b,           % sets the caption-position to bottom
+breaklines=true,        % sets automatic line breaking
+breakatwhitespace=false,    % sets if automatic breaks should only happen at whitespace
+escapeinside={\%*}{*)}          % if you want to add a comment within your code
+}
+
+\author{Advisor/Client: Dave Hale \\ Team Members: Colton Kohnke}
+\title{GPGN438 Senior Design: \\ Exploratory Seismic Data Analysis in the Field}
+\date{December 9th, 2013}
+
+\begin{document}
+\maketitle
+\newpage
+
+\tableofcontents
+\listoffigures
+\listoftables
+\newpage
+
+\section{Executive Summary}
+
+Seismic surveys take a significant amount of time and money to complete correctly. This project aims to develop software for the Colorado School of Mines (CSM) to aid with viewing seismic survey data and geometry in the field. The software will also be able to help catch errors in the field. It will also serve as a teaching tool for the students of the Colorado School of Mines Geophysics Field Camp to help them better understand seismic surveys. \\
+
+The software will accomplish this by reading the SEGD files in real time from the recording truck along with the observation notes and the flag locations from a GPS unit. This data will then be plotted in map and section view in order to give a snapshot of the seismic survey. Basic processing can then be done quickly including gain, amplitude balancing, lowpass filtering, normal-moveout correction and surface-wave attenuation to create a dynamic stacked section. \\
+
+The project will be completed by May 2014 and will be used as a replacement for ProMAX in the Summer 2014 Geophysics Field Camp. 
+
+\section{Problem Statement}
+
+This project seeks to develop software in JAVA that aids with the exploration of seismic data in the field. The survey exploration includes the interactive display of survey geometry and seismographs. This software will also be able to perform simple processing tasks in the field. The program will serve as a bridge from the seismic crew to the students of Field Camp and serve as a teaching tool for the student's understanding of the seismic survey.
+
+\section{Introduction \& Background}
+
+Geophysical data collection is an expensive operation that costs both time and money. In the field, it is in the data collector's best interest to make sure that the data collected is good quality. \\
+
+ProMAX is the current system used in the field to view the seismic data coming in from the recording station. This system, while good for in depth processing, is not robust enough to quickly display survey data and interactively display the survey geometry. The CSM Field Camp is unique in that they surveys are not conventional, that is, the surveyors are trying parameters or setups that aren't typical of a corporate survey. \\
+
+There can also be a lack of understanding between the students and the seismic survey with regards to how the data is collected in the field. This software will seek to help the students at Field Camp better understand the seismic survey while they are in the field. The software can also be used as a teaching tool to the students in Field Camp to help them better understand the aspects of a seismic surveys.
+
+\section{Deliverables to Client}
+
+The deliverables of this project include two main items. The first is a program written in JAVA that accomplishes the design objectives outlined in the next section. The second deliverable will be a documentation of the code in both standard notation and as a PDF "how-to" style guide.
+
+\section{Design Objectives}
+\subsection{Interactive Display of Survey Geometry}
+
+The first objective is to be able to import station (flag) locations. This needs to be accomplished from a variety of GPS sources including CSV, Excel, GPX and tab-delimited text files. The GPS coordinates need to then be converted to UTM for easier processing. Once these stations have been imported and converted, they need to have the option of being exported so the conversion does not need to be applied again. The suggested columns are listed in Table \ref{TAB:GPS}. Once the conversion is applied, the next step is to plot the locations in map view.
+
+\begin{table}[H]
+\caption{GPS Export Spreadsheet Fields}
+\centering
+\begin{tabular}{ c | c | c | c}
+  \hline                  
+  StationID & UTM Easting & UTM Northing & Elevation \\
+  \hline
+\end{tabular}
+\label{TAB:GPS}
+\end{table}
+
+The second objective is to be able to compute source and receiver locations. This is done for each valid shot FFID (Field File ID) by using the observer files to determine the source station number, live recording channels and receiver station numbers. The station locations are then used to find the location of the source and the elevation is read from a USGS Digital Elevation Map. All of this data is then stored into a spreadsheet file with columns denoted in Table \ref{TAB:SRL}. Some FFIDs correspond to bad shots and will need to be ignored dynamically by the program routines. \\
+
+\begin{table}[H]
+\caption{Source-Receiver Locations Spreadsheet Fields}
+\centering
+\begin{tabular}{ l | l | l | l | l | l | l}
+  \hline                  
+  FFID & SEGD Filename & Source & StationID & Channel Number & SourceXYZ & ReceiverXYZ \\
+  \hline
+\end{tabular}
+\label{TAB:SRL}
+\end{table}
+
+Once the data has been extracted from the observation files, the program needs to be able to plot source, receiver and midpoint locations in map view. In map view, there needs to be able to plot a piecewise curve that represents the seismic line. The program also needs to be able to plot elevation profiles along the source, receiver and midpoint lines. Finally, there needs to be a slider to select and show points corresponding to each FFID that will provide a graphical history of the seismic survey and help to catch mistakes. 
+
+\subsection{Interactive Display of Seismograms}
+
+The first step to displaying the seismograms is to convert the SEGD files (bytes) to an array of an array of floats (2D flaot array). Once this is accomplished, the seismograms need to be interactively displayed by using the FFID slider. This will display all seismograms for a particular FFID. \\
+
+Another method of display will be to display all seismograms within a circle that the user draws in map view. \\
+
+Two more sliders, called the min-max sliders, that are populated with the minimum and maximum offsets will be implemented. As these sliders move, the program will plot all seismograms with offsets within the range of the min-max sliders. \\
+
+All of this is useless unless the data can actually be seen. Therefore, interactive controls for gain, amplitude balancing and lowpass filtering (Butterworth) need to be implemented and the results plotted. This will be done by using sliders, or interactive graphical menus.
+
+\subsection{Simple Processing}
+
+In the field, there is often the need to do basic processing in order to see a better picture of what is happening in the subsurface. Tools for basic processing of the data will be included in the developed software. The guaranteed processing tools will be for surface-wave attenuation and normal-moveout correction, but more are being investigated.
+
+\subsection{Other Requirements}
+
+Speed is a top priority when working in the field. Decisions are typically made quickly in order to move the survey along at a reasonable rate. If this software is fast enough, it can be used as a supplement to those decisions. \\
+
+The user-interface must also be easy to use. The layout of the controls must be logical and follow a sequential order. These different features must be documented in the end-user documentation and be consistent in their implementation. 
+
+\section{Decision-making \& Assessment of Alternative Approaches}
+
+The decisions during the main software development section of this project deal with efficiency. It is possible that choices in the field need to be made very quickly and as a result, the software needs to be able to perform operations efficiently to keep pace. If the software is called to display a seismic trace, it needs to be able to find the data and display it in the least amount of operations. Similarly, if an operation is applied to a set of data, it should be applied in the least amount of compute time. \\
+
+The software is not currently optimized for speed because that would slow down development. However, specific places in the software have been marked for efficiency improvements during the testing phase. One area that has been marked for optimization is the storage of the data from the SEGD files. Currently, shots are stored as a JAVA ArrayList and is traversed linearly. This causes an O($n^2$) search time where $n$ is the length of the array. A much faster implementation would be a Binary Search Tree which has O($n$) traversal time. Another option is implementing a hast table, which returns a value in near constant time, O($1$). \\
+
+The decisions during the later stages will revolve around end user usability. These choices will include aesthetic placement of tools in the software to create a logical progression of tasks for the end user. The decisions in this section will also revolve around how to lay out the documentation for the end user. These decisions will be made during the final stages of the project and will likely involve bringing in fresh eyes to test the documented work flows. \\
+
+\section{Design Solution}
+
+The tool that is being used in this design project is simulation. Each method that is written is tested by calling the method on the 2013 Field Camp data. These simulations provide the developer with real data to test the software against and with speed/efficiency benchmarks to try to improve. \\
+
+In addition, before a feature is integrated into the larger code, it is tested against itself for errors and correct implementation. This speeds up the development process because it limits the area where bugs can occur at any given time.
+
+\section{Implementation Plan}
+\subsection{Safety}
+
+The main safety concern of this project is the ergonomics of the developer. This project does not require field work or manual labor in the traditional sense. However, it does require a significant amount of time to be spent coding at a computer which may cause irritation of the wrist or forearm. The developer will mitigate the risk of encountering this problem by taking breaks, stretching and using correct posture while at the workstation.
+
+\subsection{Timeline}
+
+\begin{figure}[H]
+
+\begin{timeline}{2013}{2015}{200}{300}
+  \categorylabel{Senior Design Timeline}{60}
+  
+  \MonthAndYearEvent{9}{2013}{Project start}
+  \MonthAndYearEvent{10}{2013}{JAVA code}
+  \MonthAndYearEvent{11}{2013}{Sercel SEGD reading and plotting Jython code converted to JAVA.}
+  \MonthAndYearEvent{11}{2013}{Demo with interactive plots created}
+  \MonthAndYearEvent{1}{2014}{Core features implemented}
+  \MonthAndYearEvent{1}{2014}{Alpha testing starts}
+  \MonthAndYearEvent{1}{2014}{Code optimization begins}
+  \MonthAndYearEvent{3}{2014}{Beta testing begins}
+  \MonthAndYearEvent{3}{2014}{Documentation writing begins}
+  \MonthAndYearEvent{5}{2014}{Final product ready for use at CSM Field Camp 2014}
+  
+\end{timeline}
+\caption{Senior Design Project Timeline}
+\end{figure}
+
+\subsection{Division of Responsibility \& Effort}
+
+The project team is composed of a single developer, so the whole responsibility is on the only member of the team. 
+
+\subsection{Budget 1: Actual}
+
+No budget is required for the actual project as the project does not require any traveling or other expenditures outside the realm of a standard class at CSM.
+
+\subsection{Budget 2: Professional}
+
+Ideally to get a working product to the client, the following budget would be used in a professional setting. 
+
+\begin{table}[H]
+\caption{The Professional Budget}
+\begin{tabular}{ l | l | l || l | l}
+  \hline                        
+  Item & Base Cost & Quantity & Total & Notes \\ \hline
+  Developers & \$20.00/hr & 360 & \$7,200 & 2 Devs for 4 work weeks.\\
+  Continued Support & \$15.00/hr & 260 & \$3,900 & 1 Dev at 5 hours/week for 1 year.\\ \hline
+  Base Total & & & \$11,100 & \\
+  Overshoot & & & \$1,110 & 10\% addition\\ \hline
+  Total & & & \$12,210 & \\
+  \hline  
+\end{tabular} 
+\end{table}
+
+\section{Implementation}
+\subsection{Data Acquisition}
+
+The data used to help develop the software is the 2012 CSM Geophysics Field Camp seismic data provided by Dr. Dave Hale. No further data acquisition is planned for this project. 
+
+\subsection{Data Reduction, Analysis, Interpretation, Integration}
+
+This project revolves more around the display of field data than the analysis and active interpretation of the data. Certain reductions will be implemented to the data in an interactive way. These reductions include gain, lowpass filtering and amplitude balancing. The software will also serve as a hub for a place to view all the seismic data for a survey and integrate it together to make plots of the seismic line, such as a brute stack.
+
+\subsection{Error Analysis}
+
+The error analysis of this project will be related to the processing and display of imported data. These processes include making sure tools like the gain and filtering are correct, and the plotting of the data is accurate. \\
+
+Currently the code for the gaining and filtering the data has been written, but it has not been tested against a known working algorithm. The shot plotting function has been tested against the known working Jython code and has been confirmed to work as expected.
+
+\subsection{Results}
+
+The results so far of the project have been the implementation of software that imports GPS points from Lat/Lon and transforms them into UTM coordinates before plotting them in map view. The software also imports SEGD files from the Sercel format and plots the nearest shot interactively as the user moves a mouse around the map view screen. The GPS and SEGD data can be imported and exported to files for easier imports later. Basic tools for manipulating the data have also been implemented, including gaining the data and passing the data through a lowpass filter.
+
+\subsection{Discussion and Conclusions}
+
+So far, everything has been running well and the setbacks have been mitigated by meetings with the advising professor.  \\
+
+The main pitfall the team has faced on this project has been time. As a single developer, I have not been able to dedicate enough time to this project and I should be much farther along at this point in time. The second half of the project will be more strenuous, but the results will come faster because my own coding ability has increased throughout this project. 
+
+\section{Recommendations for Future Work}
+
+The next step for the project is to read the observation reports and finish implementing the main core features to create an alpha product. From there, code optimization can begin to occur and more efficient testing can begin. \\
+
+After the software has been optimized for speed, it then needs to be optimized for usability. This will allow for the end-user to efficiently use the software.
+
+\section{References}
+
+\printbibliography
+
+\newpage
+\section{Resumes}
+
+%\include{./Resume_of_Colton_Kohnke}
+
+\section{Appendices}
+\subsection{Appendix A: JAVA Code}
+
+\begin{enumerate}
+
+\item MPoint.java
+\begin{lstlisting}
+import java.util.*;
+
+public class MPoint {
+  // from xyz coord
+  MPoint(double x, double y, boolean UTM){
+    this.x = x; 
+    this.y = y;
+  }
+
+  // from xyz coord
+  MPoint(int stationID, double x, double y, double z, boolean UTM){
+    this.stationID = stationID;
+    this.x = x; 
+    this.y = y;
+    this.z = z;
+  }
+   
+  MPoint(int stationID, double x, double y, int UTMzone, boolean UTM){
+    this.stationID = stationID;
+    this.x = x; 
+    this.y = y;
+    this.UTMzone = UTMzone;
+  }
+
+  MPoint(int stationID, double x, double y, double z, int UTMzone, boolean UTM){
+    this.stationID = stationID;
+    this.x = x; 
+    this.y = y;
+    this.z = z;
+    this.UTMzone = UTMzone;
+  }
+
+  // from xy coord
+  MPoint(int stationID, double x, double y, boolean temp, boolean UTM){
+    this.stationID = stationID;
+    this.x = x; 
+    this.y = y;
+  }
+  
+  MPoint(int stationID, double lat, double lon){
+    this.stationID = stationID;
+    this.lat = lat; 
+    this.lon = lon;
+  }
+
+  MPoint(int stationID, double lat, double lon, double z){
+    this.stationID = stationID;
+    this.lat = lat; 
+    this.lon = lon;
+    this.z = z;
+  }
+
+
+  public double xyDist(MPoint p){
+    return Math.sqrt((x-p.x)*(x-p.x)+(y-p.y)*(y-p.y));
+  }
+
+  public double xDist(MPoint p){
+    return Math.sqrt((x-p.x)*(x-p.x));
+  }
+
+  public double yDist(MPoint p){
+    return Math.sqrt((y-p.y)*(y-p.y));
+  }
+
+  public double zDist(MPoint p){
+    return Math.sqrt((z-p.z)*(z-p.z));
+  }
+
+  public double xyzDist(MPoint p){
+    return Math.sqrt((x-p.x)*(x-p.x)+(y-p.y)*(y-p.y)+(z-p.z)*(z-p.z));
+  }
+
+  public int stationID;
+  public double x, y, z;
+  public double lat, lon;
+  public int UTMzone;  
+  public boolean selected;
+}
+
+class MPointComp implements Comparator<MPoint>{
+
+  //@Override
+  public int compare(MPoint p1, MPoint p2) {
+    if(p1.stationID > p2.stationID){
+       return 1;
+    } else {
+       return -1;
+    }
+  }
+}
+\end{lstlisting}
+
+\item PlotTest.java
+\begin{lstlisting}
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.ArrayList;
+import javax.swing.*;
+import java.util.Scanner;
+
+import edu.mines.jtk.awt.*;
+import edu.mines.jtk.dsp.*;
+import edu.mines.jtk.util.Cdouble;
+import edu.mines.jtk.mosaic.*;
+import static edu.mines.jtk.util.ArrayMath.*;
+
+public class PlotTest{
+
+  public static void main(String[] args){
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        new PlotTest();
+      }
+    });
+  }
+
+  // Location and size of overlay plot.
+  private static final int M_X = 100;
+  private static final int M_Y = 0;
+  private static final int M_WIDTH = 520;
+  private static final int M_HEIGHT = 550;
+
+  // Location and size of response plot.
+  private static final int RP_X = M_X+M_WIDTH;
+  private static final int RP_Y = 0;
+  private static final int RP_WIDTH = 520;
+  private static final int RP_HEIGHT = 550;
+  
+  // Plot of source/receivers
+  // private ArrayList<MPoint> _shots;
+  private ArrayList<MPoint> _recs;
+  public ArrayList<MPoint> _gps;
+  public ArrayList<Segdata> _segd;
+  private BasePlot _bp;
+  private ResponsePlot _rp;
+  private Waypoints wPoints;
+  private Segd seg;
+
+
+  private PlotTest(){
+    // _shots = new ArrayList<MPoint>(0);
+    _gps = new ArrayList<MPoint>(0);
+    _segd = new ArrayList<Segdata>(0);
+    _bp = new BasePlot();
+    _rp = new ResponsePlot();
+  }
+
+  private void addMPoint(MPoint p) {
+    _recs.add(p);
+    _bp.updateBPView();
+  }
+
+
+///////////////////////////////////////////////////////////////////////////
+
+  private class BasePlot {
+
+    private PlotFrame _plotFrame;
+    private PlotPanel _plotPanel;
+    private PointsView _baseView;
+    
+    private BasePlot() {
+
+      // The plot panel.
+      _plotPanel = new PlotPanel();
+      _plotPanel.setTitle("Base Plot Test");
+      _plotPanel.setHLabel("Easting (UTM)");
+      _plotPanel.setVLabel("Northing (UTM)");
+      _plotPanel.setHLimits(317600,320600); //TODO: plot displays E+06 for large ints
+      _plotPanel.setVLimits(4121800,4123600);   //TODO: plot displays E+06 for large ints
+
+      // A grid view for horizontal and vertical lines (axes).
+      _plotPanel.addGrid("H0-V0-");
+
+      // A plot frame has a mode for zooming in tiles or tile axes.
+      _plotFrame = new PlotFrame(_plotPanel);
+      TileZoomMode tzm = _plotFrame.getTileZoomMode();
+
+      // We add two more modes for editing poles and zeros.
+      ModeManager mm = _plotFrame.getModeManager();
+      RoamMode rm = new RoamMode(mm); // roam and plot
+      // PoleZeroMode zm = new PoleZeroMode(mm,false);  // for zeros
+
+      // The menu bar includes a mode menu for selecting a mode.
+      JMenu fileMenu = new JMenu("File");
+      fileMenu.setMnemonic('F');
+      fileMenu.add(new SaveAsPngAction(_plotFrame)).setMnemonic('a');
+      fileMenu.add(new ExitAction()).setMnemonic('x');
+      
+      JMenu modeMenu = new JMenu("Mode");
+      modeMenu.setMnemonic('M');
+      modeMenu.add(new ModeMenuItem(tzm));
+      modeMenu.add(new ModeMenuItem(rm));
+      
+      JMenu toolMenu = new JMenu("Tools");
+      toolMenu.setMnemonic('T');
+      toolMenu.add(new GetFlagsFromHH()).setMnemonic('f');
+      toolMenu.add(new GetDEM(_plotPanel)).setMnemonic('g');
+      toolMenu.add(new ExportFlagsToCSV()).setMnemonic('e');
+      toolMenu.add(new ImportSegdDir()).setMnemonic('s');
+      
+      JMenuBar menuBar = new JMenuBar();
+      menuBar.add(fileMenu);
+      menuBar.add(modeMenu);
+      menuBar.add(toolMenu);
+    
+      _plotFrame.setJMenuBar(menuBar);
+
+      // The tool bar includes toggle buttons for selecting a mode.
+      JToolBar toolBar = new JToolBar(SwingConstants.VERTICAL);
+      toolBar.setRollover(true);
+      toolBar.add(new ModeToggleButton(tzm));
+      toolBar.add(new ModeToggleButton(rm));
+      _plotFrame.add(toolBar,BorderLayout.WEST);
+
+      // Initially, enable editing of poles.
+      // pm.setActive(true);
+
+      // Make the plot frame visible.
+      _plotFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      _plotFrame.setLocation(M_X,M_Y);
+      _plotFrame.setSize(M_WIDTH,M_HEIGHT);
+      _plotFrame.setFontSizeForPrint(8,240);
+      _plotFrame.setVisible(true);
+
+    }
+
+    // Makes poles view consistent with the list of poles.
+    private void updateBPView() {
+      int np = wPoints._gps.size();
+      float[] xp = new float[np];
+      float[] yp = new float[np];
+      for (int ip=0; ip<np; ++ip) {
+        MPoint p = wPoints._gps.get(ip);
+        xp[ip] = (float)p.x;
+        yp[ip] = (float)p.y;
+      }
+      if (_baseView==null) {
+        _baseView = _plotPanel.addPoints(xp,yp);
+        _baseView.setMarkStyle(PointsView.Mark.CROSS);
+        _baseView.setLineStyle(PointsView.Line.NONE);
+      } else {
+        _baseView.set(xp,yp);
+      }
+    }
+
+ }
+
+  ///////////////////////////////////////////////////////////////////////////
+
+  private class ResponsePlot {
+
+    private PlotPanel _plotPanelH;
+    private PlotFrame _plotFrame;
+    private SequenceView _hView;
+    private PointsView _pView;
+    public SimplePlot sp;
+     
+   
+    // The amplitude response can be in decibels (db).
+    private ResponsePlot() {
+
+      // One plot panel for the impulse response.
+      _plotPanelH = new PlotPanel();
+      _plotPanelH.setHLabel("Station");
+      _plotPanelH.setVLabel("Time (s)");
+      _plotPanelH.setTitle("Shot");
+
+      // This first update constructs a sequence view for the impulse 
+      // response, and a points view for amplitude and phase responses.
+      // updateViews();
+
+      _plotFrame = new PlotFrame(_plotPanelH);
+
+      // The menu bar.
+      JMenu fileMenu = new JMenu("File");
+      fileMenu.setMnemonic('F');
+      fileMenu.add(new SaveAsPngAction(_plotFrame)).setMnemonic('a');
+      fileMenu.add(new ExitAction()).setMnemonic('x');
+      JMenuBar menuBar = new JMenuBar();
+      menuBar.add(fileMenu);
+      
+      _plotFrame.setJMenuBar(menuBar);
+
+      // Make the plot frame visible.
+      _plotFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      _plotFrame.setLocation(RP_X,RP_Y);
+      _plotFrame.setSize(RP_WIDTH,RP_HEIGHT);
+      _plotFrame.setFontSizeForPrint(8,240);
+      _plotFrame.setVisible(false);
+      sp = new SimplePlot(SimplePlot.Origin.UPPER_LEFT);
+      sp.setSize(900,900);
+      sp.setVLabel("Time (s)");
+
+    }
+
+    public void updateRP(Segdata seg){
+      int n1 = seg.f[0].length;
+      int n2 = seg.f.length;
+      Sampling s1 = new Sampling(n1, 0.001, 0.0);
+      Sampling s2 = new Sampling(n2, 1.0, seg.rpf);
+      if(s2.getDelta() ==1.0)
+        sp.setHLabel("Station");
+      else
+        sp.setHLabel("Offset (km)");
+      sp.setHLimits(seg.rpf, seg.rpl);
+      sp.setTitle("Shot "+seg.sp);
+      PixelsView pv = sp.addPixels(s1,s2,seg.f);
+      pv.setPercentiles(1,99);
+    }
+
+  }
+
+  ///////////////////////////////////////////////////////////////////////////
+
+  private class RoamMode extends Mode {
+    public RoamMode(ModeManager modeManager) {
+      super(modeManager);
+        setName("Roaming Mode");
+        // setIcon(loadIcon(PolesAndZerosDemo.class,"Poles16.png"));
+        setMnemonicKey(KeyEvent.VK_R);
+        setAcceleratorKey(KeyStroke.getKeyStroke(KeyEvent.VK_R,0));
+        setShortDescription("Roaming Mode");
+      }
+    
+    // When this mode is activated (or deactivated) for a tile, it simply 
+    // adds (or removes) its mouse listener to (or from) that tile.
+    protected void setActive(Component component, boolean active) {
+      if (component instanceof Tile) {
+        if (active) {
+          component.addMouseListener(_ml);
+        } else {
+          component.removeMouseListener(_ml);
+        }
+      }
+    }
+    
+    private boolean _moving; // if true, currently moving
+    private Tile _tile; // tile in which editing began
+    
+    private MouseListener _ml = new MouseAdapter() {
+      public void mousePressed(MouseEvent e) {
+        if(beginMove(e)){
+          _moving = true;
+          _tile.addMouseMotionListener(_mml);
+        }
+      }
+      public void mouseReleased(MouseEvent e) {
+        _tile.removeMouseMotionListener(_mml);
+        endMove(e);
+        _moving = false;
+      }
+    };
+    // Handles mouse dragged events.
+    private MouseMotionListener _mml = new MouseMotionAdapter() {
+      public void mouseDragged(MouseEvent e) {
+        if (_moving)
+          duringMove(e);
+      }
+    };
+
+    private boolean beginMove(MouseEvent e){
+      _tile = (Tile)e.getSource();
+      int x = e.getX();
+      int y = e.getY();
+      MPoint nearest = getNearestGPS(x,y);    
+      return true;
+    }
+
+    private void duringMove(MouseEvent e) {
+      int x = e.getX();
+      int y = e.getY();
+      //System.out.println("x: " + x + " y: " + y);
+      MPoint gpsNear = getNearestGPS(x,y);
+      //System.out.println(gpsNear.stationID);
+      Segdata segNear = getNearestSegdata(gpsNear.stationID);
+      //System.out.println(segNear.sp);
+      _rp.updateRP(segNear);
+    }
+
+    private void endMove(MouseEvent e) {
+      duringMove(e);      
+    }
+
+    private MPoint getNearestGPS(int x, int y){
+      Transcaler ts = _tile.getTranscaler();
+      Projector hp = _tile.getHorizontalProjector();
+      Projector vp = _tile.getVerticalProjector();
+      double xu = ts.x(x);
+      double yu = ts.y(y);
+      double xv = hp.v(xu);
+      double yv = vp.v(yu);
+      MPoint test = new MPoint(xv, yv, true);
+      MPoint near = wPoints._gps.get(0);
+      MPoint fin = wPoints._gps.get(0);
+      double d = near.xyDist(test);
+      for(int i = 1; i<wPoints._gps.size(); ++i){
+        near = wPoints._gps.get(i);
+        if(near.xyDist(test) < d){
+          fin = wPoints._gps.get(i);
+          d = fin.xyDist(test);
+        }
+      }
+      return fin;
+    }
+
+    private Segdata getNearestSegdata(int stationID){
+      Segdata seg1 = seg._segd.get(0);
+      Segdata seg2 = seg._segd.get(0);
+      int d1 = abs(seg1.sp-stationID);
+      for(int i=1; i<seg._segd.size(); ++i){
+        seg2 = seg._segd.get(i);
+        int d2 = abs(seg2.sp-stationID);
+        if(d2 < d1){
+          seg1 = seg2;
+          d1 = abs(seg1.sp-stationID);
+        }
+      }
+      return seg1;
+    }
+
+  }
+
+  ///////////////////////////////////////////////////////////////////////////
+  
+  // Actions common to both plot frames.
+  private class ExitAction extends AbstractAction {
+    private ExitAction() {
+      super("Exit");
+    }
+    public void actionPerformed(ActionEvent event) {
+      System.exit(0);
+    }
+  }
+  private class SaveAsPngAction extends AbstractAction {
+    private PlotFrame _plotFrame;
+    private SaveAsPngAction(PlotFrame plotFrame) {
+      super("Save as PNG");
+      _plotFrame = plotFrame;
+    }
+    public void actionPerformed(ActionEvent event) {
+      JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+      fc.showSaveDialog(_plotFrame);
+      File file = fc.getSelectedFile();
+      if (file!=null) {
+        String filename = file.getAbsolutePath();
+        _plotFrame.paintToPng(300,6,filename);
+      }
+    }
+  }
+  private class GetDEM extends AbstractAction {
+    private GetDEM(PlotPanel plotPanel){
+      super("Get USGS Elevation");
+     
+    }
+    public void actionPerformed(ActionEvent event){
+      //TODO
+    }
+  }
+  private class GetFlagsFromHH extends AbstractAction {
+    private GetFlagsFromHH(){
+      super("Get HandHeld GPS");
+    }
+    public void actionPerformed(ActionEvent event) {
+      JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+      fc.showOpenDialog(null);
+      File f = fc.getSelectedFile();
+      wPoints = new Waypoints(f);
+      _bp.updateBPView(); 
+    }
+  }
+  private class ExportFlagsToCSV extends AbstractAction {
+    private ExportFlagsToCSV(){
+      super("Export GPS to CSV");
+        
+    }
+    public void actionPerformed(ActionEvent event) {
+        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        fc.showSaveDialog(null);
+        File f = fc.getSelectedFile();
+        wPoints.exportToCSV(f);
+      } 
+    }
+  private class ImportSegdDir extends AbstractAction {
+    private ImportSegdDir(){
+      super("Import Segd Directory");
+        
+    }
+    public void actionPerformed(ActionEvent event) {
+        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.showSaveDialog(null);
+        File f = fc.getSelectedFile();
+        seg = new Segd(f.getAbsolutePath());
+        System.out.println("SEGD IMPORTED");
+      } 
+    }
+
+
+  ///////////////////////////////////////////////////////////////////////////
+
+
+
+}
+\end{lstlisting}
+
+\item Segd.java
+\begin{lstlisting}
+import java.awt.*;
+import java.io.*;
+import java.lang.*;
+import java.nio.*;
+import java.util.*;
+import javax.swing.*;
+
+import edu.mines.jtk.awt.*;
+import edu.mines.jtk.dsp.*;
+import edu.mines.jtk.interp.*;
+import edu.mines.jtk.io.*;
+import edu.mines.jtk.mosaic.*;
+import edu.mines.jtk.ogl.Gl.*;
+import edu.mines.jtk.util.*;
+import static edu.mines.jtk.util.ArrayMath.*;
+
+public class Segd{
+
+  public Segd(String segdDir){
+    this.segdDir = segdDir;
+    _segd = new ArrayList<Segdata>(0);
+    readLineSegd();
+  }
+
+  public void readLineSegd(){
+    try{
+    File[] segdList = (new File(segdDir)).listFiles();
+    //File[] segdList = new File[1];
+    //segdList[0] = new File(segdDir+"/00000001.00000293.segd");
+    int nshot = segdList.length; 
+    for(int i=0; i<segdList.length; ++i){
+      System.out.println(segdList[i].getName());
+      Segdata seg = readSegd(segdList[i]);
+      //System.out.println("sln ="+sln+" spn ="+spn+" rpf ="+rpf+" rpl ="+rpl);
+      int n1 = seg.f[0].length;
+      int n2 = seg.f.length;
+      Sampling s1 = new Sampling(n1, 0.001, 0.0);
+      Sampling s2 = new Sampling(n2, 1.0, seg.rpf);
+      //lowpass2(seg.f);
+      //tpow2(seg.f);
+      //gain2(seg.f);
+      //plot(s1,s2,seg,"Shot "+seg.sp);
+      if(!(seg.sp < 0))
+        _segd.add(seg);
+    }
+      Collections.sort(_segd, new SegdataComp());
+    }catch(IOException e){
+      System.out.println(e);
+    }
+  }
+
+  public Segdata readSegd(File segdFile) throws IOException{ //return tiltdata-esque
+    byte[] gh = zerobyte(32); // general header
+    byte[] th = zerobyte(20); // trace header
+    byte[] the = zerobyte(32); // trace header extension
+    byte[] csh = zerobyte(32); // channel set header
+    ArrayInputStream ais = new ArrayInputStream(segdFile,ByteOrder.BIG_ENDIAN);
+    ais.readBytes(gh); // general header 1
+    int fn = bcd2(gh,0); // file number
+    ais.readBytes(gh); // general header 2
+    ais.readBytes(gh); // general header 3
+    int sln, spn;
+    sln = bin5(gh,3); // source line number
+    spn = bin5(gh,8); // source point number
+    System.out.println("fn=" + fn + ", sln=" + sln + ", spn=" + spn);
+    int cns = 0; // channel set number for seismic trace
+    int nct = 0; // total number of channels, including aux channels
+    int ncs = 0; // number of seismic channels 
+    int cn, ct, nc, ic, rln, rpn;
+    for(int i=0; i<16; ++i){ // for each channel set header, ...
+      ais.readBytes(csh); // read channel set header 
+      cn = csh[1]; // channel set number
+      ct = (csh[10]>>4)&0xf; // channel type (high 4 bits)
+      nc = bcd2(csh,8); // number of channels
+      if(nc>0){ // if we have channels of this type, ...
+        System.out.println("cn =" + cn + " nc =" + nc + " ct =" + ct);
+        if(ct==1){ // if seismic, ...
+          cns = cn; // remember channel set number for seismic
+          ncs = nc; // remember number of seismic channels
+        }
+       
+      nct += nc; // count total number of channels
+      }
+    }
+    System.out.println("nct =" + nct + " cns =" + cns + " ncs =" + ncs);
+    ais.skipBytes(1024); // skip extended header
+    ais.skipBytes(1024); // skip external header
+    int rpf = 1;
+    int rpl = 1;
+    int n1 = 0; // # samples
+    int n2 = ncs; // #traces 
+    float[][] f = null; 
+    for(int j=0; j<nct; ++j){ // for all channels (including aux channels)
+      ais.readBytes(th); // trace header
+      cn = th[3]; // channel set number
+      ic = bcd2(th,4); // channel (trace) number
+      ais.readBytes(the); // trace header extension 1
+      rln = bin3(the,0); // receiver line number
+      rpn = bin3(the,3); // receiver point number
+      n1 = bin3(the,7); // number of samples
+      //System.out.println("n1 = "+n1 + " the[7-9]: " + the[7] +" "+ the[8] +" "+the[9]); 
+      //System.out.println("ic =" + ic + " rln =" + rln + " rpn =" + rpn + " n1 =" + n1);
+      if(ic==1){
+        rpf = rpn;
+      } else if(ic == n2){
+        rpl = rpn;
+      }
+      ais.skipBytes(6*the.length); // skip trace header extensions 2-7
+      if(cn==cns){ // if seismic channel, ...
+        if(f == null)
+          f = new float[n2][n1];
+        //System.out.println("ic =" + ic + " rln =" + rln + " rpn =" + rpn);
+        ais.readFloats(f[ic-1]); // get the seismic trace
+      } else{
+        ais.skipBytes(4*n1); // skip the aux trace
+      }
+    }
+    ais.close();
+    f = mul(1.0e-14f,f); // scale values to approx. range [-10,10]
+    return new Segdata(sln,spn,rpf,rpl,f);
+  }
+
+  public void plot(Sampling s1, Sampling s2, Segdata seg, String title){
+    SimplePlot sp = new SimplePlot(SimplePlot.Origin.UPPER_LEFT);
+    sp.setSize(900,900);
+    sp.setVLabel("Time (s)");
+    if(s2.getDelta() ==1.0)
+      sp.setHLabel("Station");
+    else
+      sp.setHLabel("Offset (km)");
+    sp.setHLimits(seg.rpf, seg.rpl);
+    sp.setTitle(title);
+    PixelsView pv = sp.addPixels(s1,s2,seg.f);
+    pv.setPercentiles(1,99);
+  }
+
+  public void tpow2(float[][] f){
+    int n1 = f[0].length;
+    int n2 = f.length;
+    float[][] t = rampfloat(0.0f,0.002f,0.0f,n1,n2);
+    mul(t,t,t);
+    mul(t,f);
+  }
+
+  public void gain2(float[][] f){
+    RecursiveExponentialFilter ref = new RecursiveExponentialFilter(40.0);
+    for(int m = 0; m<f.length; ++m){
+      if(max(abs(f))>0.0f){
+        float[][] g = mul(f,f);
+        ref.apply1(g,g);
+        div(f,sqrt(g),f);
+      }
+    }
+  }
+
+  public void lowpass2(float[][] f){
+    double f3db = 25.0*0.002;
+    ButterworthFilter bf = new ButterworthFilter(f3db,6,ButterworthFilter.Type.LOW_PASS);
+    bf.apply1ForwardReverse(f,f);
+  }
+
+  public int bcd2(byte[] b, int k){
+    return (1000*((b[k  ]>>4)&0xf)+100*(b[k  ]&0xf)+
+	      10*((b[k+1]>>4)&0xf)+  1*(b[k+1]&0xf));
+  }
+
+  public int bin3(byte[] b, int k){
+    byte b0 = b[k  ];
+    byte b1 = b[k+1];
+    byte b2 = b[k+2]; 
+    return (b2 & 0xFF) | ((b1 & 0xFF) << 8) | ((b0 & 0x0F) << 16);
+  }
+
+  public int bin5(byte[] b, int k){
+    byte b0 = b[k  ];
+    byte b1 = b[k+1];
+    byte b2 = b[k+2];
+    byte b3 = b[k+3];
+    byte b4 = b[k+4];
+    return (int)(256.0+b0*65536.0+b1*256.0+b2+b3/256.0+b4/65536.0);
+  }
+  
+  //public String segdDir = "/gpfc/ckohnke/fc2013/segd/140/"; // Linux Lab
+  public String segdDir = "/home/colton/Documents/School/SrDesign/fc2013/segd/139/"; // Laptop
+
+  public ArrayList<Segdata> _segd;
+  
+}
+\end{lstlisting}
+
+\item Segdata.java
+\begin{lstlisting}
+import static edu.mines.jtk.util.ArrayMath.*;
+import java.util.*;
+
+public class Segdata{
+  public Segdata(int sl,int sp,int rpf,int rpl,float[][] f){
+    this.sl = sl;
+    this.sp = sp;
+    this.rpf = rpf;
+    this.rpl = rpl;
+    this.f = ccopy(f);
+  }
+  public int sl,sp,rpf,rpl;
+  public float[][] f;
+}
+
+class SegdataComp implements Comparator<Segdata>{
+
+  //@Override
+  public int compare(Segdata p1, Segdata p2) {
+    if(p1.sp > p2.sp){
+       return 1;
+    } else {
+       return -1;
+    }
+  }
+}
+\end{lstlisting}
+
+\item Waypoints.java
+\begin{lstlisting}
+///////////////////////////////////////////////////////////////////////////
+
+import java.io.*;
+import java.util.*;
+
+public class Waypoints{
+  public ArrayList<MPoint> _gps;
+
+  public static void main(String[] args){
+    System.out.println("GPS TEST START");
+    //File input = new File("/home/colton/Documents/School/SrDesign/PlotTest/gps_input_test1.txt");
+    File input = new File("./gps_input_test1.txt");    
+    Waypoints w = new Waypoints(input);
+    //for(int i=0; i< w._gps.size(); ++i){
+      //MPoint p = w._gps.get(i);
+      //System.out.println("Station: " + p.stationID+ " lat: " + p.lat + " lon: " + p.lon + " x: " + p.x + " y: " + p.y + " z: " + p.z);
+    //}
+    for(int i=0; i< w._gps.size(); ++i){
+      MPoint p = w._gps.get(i);
+      System.out.println("Station: " + p.stationID+ " lat: " + p.lat + " lon: " + p.lon + " x: " + p.x + " y: " + p.y + " z: " + p.z);
+    }
+
+    System.out.println("GPS TEST FINISH");    
+  }
+
+  public Waypoints(File f){
+    _gps = new ArrayList<MPoint>(0);
+    readLatLonFromTSV(f);
+    latLonToUTM();
+    extrapolateGPS();
+  }
+
+  public double degToRad(double deg){
+    return (deg / 180 * PI);
+  }
+
+  public double radToDeg(double rad){
+    return (rad / PI * 180);
+  }
+
+  public void readUTMFromTSV(File f){
+    try{
+      Scanner s = new Scanner(f);
+      s.nextLine(); // header skip = 1
+      while(s.hasNext()){
+        int stationID = s.nextInt();
+        double x = s.nextDouble();
+        double y = s.nextDouble();
+        double z = s.nextDouble();
+        MPoint p = new MPoint(stationID, x, y, z);
+        _gps.add(p);
+      }
+      s.close();
+    } catch(IOException ex){
+      System.out.println(ex);  
+    }
+  }
+
+  public void readLatLonFromTSV(File f){
+    try{
+      Scanner s = new Scanner(f);
+      s.nextLine(); //header skip=1;
+      while(s.hasNext()){
+        int stationID = s.nextInt();
+        double lat = s.nextDouble();
+        double lon = s.nextDouble();
+        MPoint p = new MPoint(stationID, lat, lon);
+        _gps.add(p);
+      }
+      s.close();
+    } catch(IOException ex){
+      System.out.println(ex);  
+    }
+  }
+  
+  public void readLatLonFromXML(File f){
+    try {
+      Scanner s = new Scanner(f);
+      String current = "";
+      String[] c = null;
+      while(s.hasNext()){
+        while(!current.contains("lat")){
+          current = s.next();
+        }
+        c = current.split("\"");
+        double lat = Double.parseDouble(c[1]);
+        current = s.next();
+        c = current.split("\"");
+        double lon = Double.parseDouble(c[1]);
+        c = current.split("[><]");
+        double elev = Double.parseDouble(c[3]);
+        int name = Integer.parseInt(c[11]);
+        MPoint p = new MPoint(name, lat, lon, elev);
+        _gps.add(p);
+        s.next();
+      }
+      s.close();
+    } catch(IOException ex){
+      System.out.println(ex);
+    }
+    
+  }
+
+  public void latLonToUTM(){
+    for(int i=0; i<_gps.size(); ++i){
+      MPoint p = _gps.get(i);
+      double lat = p.lat;
+      double lon = p.lon;
+      int UTMzone = (int)(Math.floor((lon+180.0)/6)+1);
+      double a = 6378.137;
+      double f = 1.0/298.257223563;
+      double n = f/(2.0-f);
+      double e0 = 500.0;
+      double n0 = 0;
+      double k0 = 0.9996;
+      double aa = a/(1.0+n)*(1.0+n*n*(1.0/4.0+n*n/64.0));
+      double a1 = n*(0.5-n*(2.0/3.0-n*5.0/16.0));
+      double a2 = n*n*(13.0/48.0-n*3.0/5.0);
+      double a3 = n*n*n*61.0/240.0;
+      double st = 2.0*Math.sqrt(n)/(1.0+n);
+      double lon0 = -183.0+(UTMzone*6.0); // reference longitude for arbitrary UTM Zone
+      lon -= lon0;
+      lat *= PI/180.0;
+      lon *= PI/180.0;
+      double t = Math.sinh(atanh(Math.sin(lat))-st*atanh(st*Math.sin(lat)));
+      double ep = Math.atan(t/Math.cos(lon));
+      double np = atanh(Math.sin(lon)/Math.sqrt(1.0+t*t));
+      double sx  = a1*Math.cos(2.0*ep)*Math.sinh(2.0*np);
+      sx += a2*Math.cos(4.0*ep)*Math.sinh(4.0*np);
+      sx += a3*Math.cos(6.0*ep)*Math.sinh(6.0*np);
+      double sy  = a1*Math.sin(2.0*ep)*Math.cosh(2.0*np);
+      sy += a2*Math.sin(4.0*ep)*Math.cosh(4.0*np);
+      sy += a3*Math.sin(6.0*ep)*Math.cosh(6.0*np);
+      double x = e0+k0*aa*(np+sx);
+      double y = n0+k0*aa*(ep+sy);
+      x *= 1000.0;
+      y *= 1000.0;
+      p.x = x; p.y = y; p.UTMzone = UTMzone;
+    }
+  }
+
+  public void UTMToLatLong(){
+    
+  }
+  
+  public void readUTMFromCSV(File f){
+    try{
+      Scanner s = new Scanner(f);
+      s.useDelimiter(",");
+      s.nextLine(); // header skip = 1
+      while(s.hasNext()){
+        int stationID = s.nextInt();
+        double x = s.nextDouble();
+        double y = s.nextDouble();
+        double z = s.nextDouble();
+        MPoint p = new MPoint(stationID, x, y, z);
+        _gps.add(p);
+      }
+    } catch(IOException ex){
+      System.out.println(ex);
+    }
+    
+  }
+
+  public void exportToCSV(File f){
+    try{
+      if (f!=null) {
+        String filename = f.getAbsolutePath();
+        BufferedWriter w = new BufferedWriter(new FileWriter(f));
+        w.write("Station,Easting,Northing,Elevation");
+        w.newLine();
+        for(int i=0; i<_gps.size(); ++i){
+          MPoint p = _gps.get(i);
+          w.write(p.stationID + "," + p.x + "," + p.y + "," + p.z);
+          w.newLine();
+        }
+        w.close();
+      }
+    } catch(IOException ex){
+      System.out.println(ex);  
+    }
+  }
+
+  public void extrapolateGPS(){ //assumes 
+    Collections.sort(_gps, new MPointComp());    
+    int start, end, dn;
+    double dx, dy, dz, r;
+    double x, y, z;
+    ArrayList<MPoint> gnew = new ArrayList<MPoint>(0);
+    for(int i=0; i<_gps.size()-1; ++i){
+      MPoint p1 = _gps.get(i);
+      MPoint p2 = _gps.get(i+1);
+      start = p1.stationID;
+      end = p2.stationID;
+      dx = p1.xDist(p2);
+      dy = p1.yDist(p2);
+      dz = p1.zDist(p2);
+      r =  p1.xyzDist(p2);
+      dn = end-start-1;
+      for(int m=1; m<=dn; ++m){
+        x = p1.x + dx*m/dn;
+        y = p1.y + dy*m/dn;
+        z = p1.z + dz*m/dn;
+        MPoint a = new MPoint(start+m, x, y, z, true);
+        gnew.add(a);
+      }
+    }
+    for(int i=0; i<gnew.size(); ++i)
+      _gps.add(gnew.get(i));
+    Collections.sort(_gps, new MPointComp());
+  }
+
+  protected double atanh(double x){
+    return 0.5*Math.log((1.0+x)/(1.0-x));
+  }
+
+  private final double PI = Math.PI;
+
+}
+\end{lstlisting}
+\end{enumerate}
+
+\subsection{Appendix B: Reference Jython Code}
+\begin{enumerate}
+\item segd.py
+\begin{lstlisting}
+"""
+Reads segd files from CSM field camp, assuming these are in Sercel's 
+SEG-D Rev 1 format, and writes a dat file containing a 3D array of 
+floats. The byte order for floats in the dat file is BIG_ENDIAN. 
+
+Author: Dave Hale, Colorado School of Mines
+Version: 2012.05.09
+"""
+from imports import *
+
+"""
+Line10, 2011
+station spacing is 30 m
+line was shot east to west
+Vibrator A is 3 stations to the east of channel 1
+Vibrator B is 81 stations to the west of channel 120
+"""
+"""
+Line10, 2012
+station spacing is 15 m
+line was shot SW to NE
+shots from 1003 - 1217
+Vibrator A is 3 stations to the east of channel 1
+Vibrator B is 81 stations to the west of channel 120
+"""
+s1 = Sampling(4001,0.002,0.000) # time sampling
+s2 = Sampling(342,1,954) # station sampling, sweep 1
+s3 = Sampling(215,1.0,1003) # first shotpoint is 1003
+#s2 = Sampling(277,0.015,-0.030) # channel sampling
+#s3 = Sampling(1,1.0,1001.0) # shotpoint station sampling A
+#shotDir = "/data/seis/csm/fc2012/"
+#segdDir = "/data/seis/csm/fc2012/segd/test139/"
+
+#shotDir = "/data/seis/csm/fc2013/" #Linux Lab
+#segdDir = "/gpfc/ckohnke/fc2013/segd/141/" #Linux Lab
+
+shotDir = "/home/colton/Documents/School/SrDesign/fc2013/" #Laptop
+segdDir = "/home/colton/Documents/School/SrDesign/fc2013/segd/141/" #Laptop
+#############################################################################
+def main(args):
+  readLine141Segd()
+  #displayLine141()
+  #displayLine140S1()
+  #readLine140Segd()
+  #readTestSegd()
+
+def readLine141Segd():
+  #global s3
+  csegdList = File(segdDir).listFiles() # list of segd files
+  nshot = len(segdList)-3 # ignore first 3 shots
+  s3 = Sampling(nshot,1,1003) # first shotpoint is 1003
+  g = zerofloat(s1.count,s2.count,s3.count)
+  print "s1.count ", s1.count
+  print "s2.count ", s2.count
+  print "s3.count ", s3.count
+  #print segdList
+  for segdFile in segdList[3:]:
+    print segdFile
+    sl,sp,rpf,rpl,f = readSegd(segdFile)
+    print "sl =",sl," sp =",sp," rpf =",rpf," rpl =",rpl
+    i3 = int(sp-s3.first)
+    zero(f[42]) # no geophone string at station 996
+    copy(f,g[i3])
+    #lowpass2(f)
+    #tpow2(f)
+    #gain2(f)
+    plot(s1,s2,f,title="Shot "+str(sp))
+    #plotAmp(s1,s2,f,title="Shot "+str(sp))
+  writeData(g,shotDir+"shotsp.dat")
+
+def displayLine141():
+  f = readData(s1,s2,s3,shotDir+"shotsp.dat")
+  lowpass3(f)
+  tpow3(f)
+  gain3(f)
+  sf = SimpleFrame()
+  ip = sf.addImagePanels(f)
+  #ip.setClips(-2.5,2.5)
+
+def displayLine140S1():
+  f = readData(s1,s2,s3,shotDir+"shotsp.dat")
+  lowpass3(f)
+  tpow3(f)
+  gain3(f)
+  sf = SimpleFrame()
+  ip = sf.addImagePanels(f)
+  #ip.setClips(-2.5,2.5)
+
+def readLine140Segd():
+  segdList = File(segdDir).listFiles() # list of segd files
+  nshot = len(segdList)
+  g = zerofloat(s1.count,s2.count,nshot)
+  #print segdList
+  ishot = 0
+  for segdFile in segdList[:]:
+    print segdFile
+    sl,sp,rpf,rpl,f = readSegd(segdFile)
+    #s2 = Sampling(len(f),0.015,-0.030) # offset sampling
+    #s2 = Sampling(len(f),1,954) # station sampling
+    #tpow2(f)
+    #lowpass2(f)
+    #gain2(f)
+    print "sl =",sl," sp =",sp," rpf =",rpf," rpl =",rpl
+    copy(f,g[ishot])
+    ishot += 1
+    #plot(s1,s2,f,title="Shot "+str(ishot))
+    #plotAmp(s1,s2,f,title="Test "+str(ishot))
+  #sf = SimpleFrame()
+  #ip = sf.addImagePanels(g)
+  #ip.setPercentiles(2,98)
+  writeData(g,shotDir+"shots.dat")
+  writeData(g,shotDir+"shotsp.dat",bo=ByteOrder.LITTLE_ENDIAN)
+
+def readTestSegd():
+  segdList = File(segdDir).listFiles() # list of segd files
+  #print segdList
+  itest = 0
+  for segdFile in segdList:
+    print segdFile
+    sl,sp,rpf,rpl,f = readSegd(segdFile)
+    s1 = Sampling(len(f[0]),0.002,0.000) # time sampling
+    #s2 = Sampling(len(f),0.015,-0.030) # offset sampling
+    s2 = Sampling(len(f),1,1001) # station sampling
+    tpow2(f)
+    lowpass2(f)
+    gain2(f)
+    print "sl =",sl," sp =",sp," rpf =",rpf," rpl =",rpl
+    itest += 1
+    plot(s1,s2,f,title="Test "+str(itest))
+    #plotAmp(s1,s2,f,title="Test "+str(itest))
+
+def readData(s1,s2,s3,fileName,bo=ByteOrder.LITTLE_ENDIAN):
+  n1,n2,n3 = s1.count,s2.count,s3.count
+  f = zerofloat(n1,n2,n3)
+  ais = ArrayInputStream(fileName,bo)
+  ais.readFloats(f)
+  ais.close()
+  return f
+
+def writeData(flist,fileName,bo=ByteOrder.LITTLE_ENDIAN):
+  n3 = len(flist)
+  print "writing",n3," shot records to",fileName
+  aos = ArrayOutputStream(fileName,bo)
+  for f in flist:
+    aos.writeFloats(f)
+  aos.close()
+
+def tpow2(f):
+  n1,n2 = len(f[0]),len(f)
+  t = rampfloat(0,0.002,0.0,n1,n2) # time
+  mul(t,t,t) # time squared
+  return mul(t,f)
+
+def tpow3(f):
+  n1,n2,n3 = len(f[0][0]),len(f[0]),len(f)
+  t = rampfloat(s1.first,s1.delta,0.0,n1,n2) # time
+  mul(t,t,t) # time squared
+  for f3 in f:
+    mul(t,f3,f3)
+
+def gain2(f):
+  ref = RecursiveExponentialFilter(40.0)
+  for f2 in f:
+    if max(abs(f2))>0.0:
+      g = mul(f2,f2)
+      ref.apply1(g,g)
+      div(f2,sqrt(g),f2)
+
+def gain3(f):
+  ref = RecursiveExponentialFilter(40.0)
+  for f3 in f:
+    if max(abs(f3))>0.0:
+      g = mul(f3,f3)
+      ref.apply1(g,g)
+      div(f3,sqrt(g),f3)
+
+def lowpass2(f):
+  f3db = 25.0*0.002
+  #f3db = 35.0*0.002
+  bf = ButterworthFilter(f3db,6,ButterworthFilter.Type.LOW_PASS)
+  bf.apply1ForwardReverse(f,f)
+
+def lowpass3(f):
+  bf = ButterworthFilter(0.05,6,ButterworthFilter.Type.LOW_PASS)
+  bf.apply1ForwardReverse(f,f)
+
+def plot(s1,s2,f,title=None):
+  print "plot f: min =",min(f),"max =",max(f)
+  sp = SimplePlot(SimplePlot.Origin.UPPER_LEFT)
+  #sp.setSize(750,1000)
+  sp.setSize(900,900)
+  sp.setVLabel("Time (s)")
+  if s2.delta==1.0:
+    sp.setHLabel("Station")
+  else:
+    sp.setHLabel("Offset (km)")
+  sp.setVLimits(0.0,8.0)
+  if title:
+    sp.setTitle(title)
+  pv = sp.addPixels(s1,s2,f)
+  #pv.setColorModel(ColorMap.BLUE_WHITE_RED)
+  pv.setPercentiles(1,99)
+  #pv.setClips(-2.5,2.5)
+
+def plotAmp(s1,s2,f,title=None):
+  fft = Fft(s1)
+  sf = fft.getFrequencySampling1()
+  ff = zerofloat(sf.count,s2.count)
+  for i2 in range(s2.count):
+    ff[i2] = cabs(fft.applyForward(f[i2]))
+  sp = SimplePlot(SimplePlot.Origin.UPPER_LEFT)
+  #sp.setSize(750,1000)
+  sp.setSize(900,900)
+  sp.setVLabel("Frequency (Hz)")
+  if s2.delta==1.0:
+    sp.setHLabel("Station")
+  else:
+    sp.setHLabel("Offset (km)")
+  sp.setVLimits(0.0,120.0)
+  if title:
+    sp.setTitle(title)
+  pv = sp.addPixels(sf,s2,ff)
+  pv.setColorModel(ColorMap.JET)
+  pv.setPercentiles(1,99)
+  #pv.setClips(-2.5,2.5)
+
+def readSegd(segdFile):
+  #n1,n2 = 4001,230 # number of samples, number of traces
+  #n1,n2 = 4001,277 # number of samples, number of traces (1 sweep)
+  n1,n2 = 4001,342 # number of samples, number of traces (5 sweeps)
+  gh = zerobyte(32) # general header
+  th = zerobyte(20) # trace header
+  the = zerobyte(32) # trace header extension
+  csh = zerobyte(32) # channel set header
+  ais = ArrayInputStream(segdFile,ByteOrder.BIG_ENDIAN)
+  ais.readBytes(gh) # general header 1
+  fn = bcd2(gh,0) # file number
+  ais.readBytes(gh) # general header 2
+  ais.readBytes(gh) # general header 3
+  sln = bin5(gh,3) # source line number
+  print "gh[3-7] = ",gh[3], " ",gh[4]," ",gh[5]," ",gh[6]," ",gh[7] 
+  spn = bin5(gh,8) # source point number
+  print "file =",segdFile
+  print "fn = ",fn," sln =",sln," spn =",spn
+  cns = 0 # channel set number for seismic traces
+  nct = 0 # total number of channels, including aux channels
+  for ics in range(16): # for each channel set header, ...
+    ais.readBytes(csh) # read channel set header
+    cn = csh[1] # channel set number
+    ct = (csh[10]>>4)&0xf # channel type (in high 4 bits)
+    nc = bcd2(csh,8) # number of channels
+    if nc>0: # if we have channels of this type, ...
+      print "cn =",cn," nc =",nc," ct =",ct
+      if ct==1: # if seismic, ...
+        cns = cn # remember channel set number for seismic
+        ncs = nc # remember number of seismic channels
+      nct += nc # count total number of channels
+  print "nct =",nct,"cns =",cns
+  ais.skipBytes(1024) # skip extended header
+  ais.skipBytes(1024) # skip external header
+  rpf = 1
+  rpl = 1
+  f = None
+  for ict in range(nct): # for all channels (including aux channels)
+    ais.readBytes(th) # trace header
+    cn = th[3] # channel set number
+    ic = bcd2(th,4) # channel (trace) number
+    ais.readBytes(the) # trace header extension 1
+    rln = bin3(the,0) # receiver line number
+    rpn = bin3(the,3) # receiver point number
+    n1 = bin3(the,7) # number of samples
+    #print "n1 = ",n1," the[7-9]: ",the[7]," ",the[8]," ",the[9]
+    print "ic =",ic," rln =",rln," rpn =",rpn," n1 =",n1
+    if ic==1:
+      rpf = rpn
+    elif ic==n2:
+      rpl = rpn
+    ais.skipBytes(6*len(the)) # skip trace header extensions 2-7
+    if cn==cns: # if seismic channel, ...
+      #print "ic =",ic," rln =",rln," rpn =",rpn
+      if not f:
+        f = zerofloat(n1,n2) # the traces
+      ais.readFloats(f[ic-1]) # get the seismic trace
+    else:
+      ais.skipBytes(4*n1) # skip the auxiliary trace
+  ais.close()
+  f = mul(1.0e-14,f) # scale values to approximate range [-10,10]
+  return sln,spn,rpf,rpl,f
+
+def readLine10Segd():
+  segdList = File(segdDir).listFiles() # list of segd files
+  n1,n2 = s1.count,s2.count
+  fzeros = zerofloat(n1,n2)
+  spfa = int(s3a.first) # first shot point for vib A
+  spfb = int(s3b.first) # first shot point for vib B
+  faList,fbList = [],[] # lists of shot records
+  spa,spb = spfa-1,spfb-1 # shots last appended
+  for segdFile in segdList:
+    sl,sp,rpf,rpl,f = readSegd(segdFile)
+    #print segdFile
+    print "sl =",sl," sp =",sp," rpf =",rpf," rpl =",rpl
+    if sl==10: # vibrator A
+      if sp==spa: # if same station as before, count the last one
+        faList.pop()
+      for i in range(spa+1,sp): # if necessary, insert zero records
+        faList.append(fzeros)
+        print "a: zero ",i
+      print "a: append ",sp
+      spa = sp
+      faList.append(f)
+    elif sl==20: # vibrator B
+      if sp==spb:
+        fbList.pop()
+      for i in range(spb+1,sp):
+        fbList.append(fzeros)
+        print "b: zero ",i
+      print "b: append ",sp
+      spb = sp
+      fbList.append(f)
+  na = len(faList)
+  nb = len(fbList)
+  print "na =",na," nb =",nb
+  writeData(faList,shotDir+"shota.dat")
+  writeData(fbList,shotDir+"shotb.dat")
+
+def readSegd2011(segdFile):
+  n1,n2 = 3001,120 # number of samples, number of traces
+  f = zerofloat(n1,n2) # the traces
+  gh = zerobyte(32) # general header
+  th = zerobyte(20) # trace header
+  the = zerobyte(32) # trace header extension
+  csh = zerobyte(32) # channel set header
+  ais = ArrayInputStream(segdFile,ByteOrder.BIG_ENDIAN)
+  ais.readBytes(gh) # general header 1
+  fn = bcd2(gh,0) # file number
+  ais.readBytes(gh) # general header 2
+  ais.readBytes(gh) # general header 3
+  sln = bin5(gh,3) # source line number
+  spn = bin5(gh,8) # source point number
+  #print "file =",segdFile
+  #print "fn = ",fn," sln =",sln," spn =",spn
+  cns = 0 # channel set number for seismic traces
+  nct = 0 # total number of channels, including aux channels
+  for ics in range(16): # for each channel set header, ...
+    ais.readBytes(csh) # read channel set header
+    cn = csh[1] # channel set number
+    ct = (csh[10]>>4)&0xf # channel type (in high 4 bits)
+    nc = bcd2(csh,8) # number of channels
+    if nc>0: # if we have channels of this type, ...
+      #print "cn =",cn," nc =",nc," ct =",ct
+      if ct==1: # if seismic, ...
+        cns = cn # remember channel set number for seismic
+        ncs = nc # remember number of seismic channels
+      nct += nc # count total number of channels
+  #print "nct =",nct,"cns =",cns
+  ais.skipBytes(1024) # skip extended header
+  ais.skipBytes(1024) # skip external header
+  for ict in range(nct): # for all channels (including aux channels)
+    ais.readBytes(th) # trace header
+    cn = th[3] # channel set number
+    ic = bcd2(th,4) # channel (trace) number
+    ais.readBytes(the) # trace header extension 1
+    rln = bin3(the,0) # receiver line number
+    rpn = bin3(the,3) # receiver point number
+    if ic==1:
+      rpf = rpn
+    elif ic==120:
+      rpl= rpn
+    ais.skipBytes(6*len(the)) # skip trace header extensions 2-7
+    if cn==cns: # if seismic channel, ...
+      #print "ic =",ic," rln =",rln," rpn =",rpn
+      ais.readFloats(f[ic-1]) # get the seismic trace
+    else:
+      ais.skipBytes(4*n1) # skip the auxiliary trace
+  ais.close()
+  f = mul(1.0e-14,f) # scale values to approximate range [-10,10]
+  return sln,spn,rpf,rpl,f
+
+def bcd2(b,k):
+  """ Returns binary-coded decimal integer from bytes k,k+1 in b."""
+  return (1000*((b[k  ]>>4)&0xf)+100*(b[k  ]&0xf)+
+            10*((b[k+1]>>4)&0xf)+  1*(b[k+1]&0xf))
+
+def displayLine10(vib):
+  if vib=="A":
+    f = readData(s1,s2,s3a,shotDir+"shota.dat")
+  elif vib=="B":
+    f = readData(s1,s2,s3b,shotDir+"shotb.dat")
+  lowpass3(f)
+  tpow3(f)
+  gain3(f)
+  sf = SimpleFrame()
+  ip = sf.addImagePanels(f)
+  ip.setPercentiles(2,98)
+
+def bin3(b,k):
+  """ Returns binary integer from bytes k,k+1,k+2 in b."""
+  b0 = b[k  ]
+  b1 = b[k+1]
+  b2 = b[k+2] 
+  if b0<0: b0 += 256
+  if b1<0: b1 += 256
+  if b2<0: b2 += 256
+  return (b0<<16)|(b1<<8)|(b2)
+
+def bin5(b,k):
+  """ Returns binary integer from bytes k,k+1,...,k+4 in b."""
+  b0 = b[k  ]
+  b1 = b[k+1]
+  b2 = b[k+2] 
+  b3 = b[k+3] 
+  b4 = b[k+4] 
+  if b0<0: b0 += 256
+  if b1<0: b1 += 256
+  if b2<0: b2 += 256
+  if b3<0: b3 += 256
+  if b4<0: b4 += 256
+  return b0*65536.0+b1*256.0+b2+b3/256.0+b4/65536.0
+
+#############################################################################
+class RunMain(Runnable):
+  def run(self):
+    main(sys.argv)
+SwingUtilities.invokeLater(RunMain()) 
+\end{lstlisting}
+\end{enumerate}
+
+\end{document}
