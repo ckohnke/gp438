@@ -48,7 +48,7 @@ Dependencies
   - Mines Java Toolkit edu.mines.jtk (https://github.com/dhale/jtk)
 
 2. Optional:
-   For Downloading NED files:
+   - For Downloading NED files:
      - com.github.axet.wget (https://github.com/axet/wget)
      - com.github.axet.threads (https://github.com/axet/threads)
      - com.thoughtworks.xstream (http://xstream.codehaus.org/)
