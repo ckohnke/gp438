@@ -6,22 +6,22 @@ ned=true
 if [ ! -d "./com/github/axet/threads" ]; then
   ned=false
   echo "--- package com.github.axet.threads not found"
-  echo "--- Running without NED file download support"
+  echo "--- --- Running without NED file download support"
 fi
 if [ ! -d "./com/github/axet/wget" ]; then
   ned=false
   echo "--- package com.github.axet.wget not found"
-  echo "--- Running without NED file download support"
+  echo "--- --- Running without NED file download support"
 fi
 if [ ! -d "./com/thoughtworks/xstream" ]; then
   ned=false
   echo "--- com.thoughtworks.xstream not found"
-  echo "--- Running without NED file download support"
+  echo "--- --- Running without NED file download support"
 fi
 if [ ! -d "./org/apache/commons/io" ]; then
   ned=false
   echo "--- package org.apache.commons.io not found"
-  echo "--- Running without NED file download support"
+  echo "--- --- Running without NED file download support"
 fi
 
 rm novice/*.class
@@ -43,7 +43,7 @@ if [ "$ned" = "true" ]; then
   echo "--- --------------------------- - Running"
   java -ea -Xmx8g novice/SeisPlot
 else 
-  echo "--- Optional packages not found - Running"
+  echo "--- Some optional packages not found - Running"
   javac novice/SeisPlotNoWget.java
   java -ea -Xmx8g novice/SeisPlotNoWget
 fi
