@@ -184,6 +184,22 @@ public class Segd {
     return min;
   }
 
+
+  /**
+   * Minimum shot in an ArrayList of Segdata.
+   *
+   * @param s the ArrayList to search.
+   * @return the minimum shot in list s
+   */
+  public static Segdata firstShot(ArrayList<Segdata> s){
+    Segdata min = s.get(0);
+    for(Segdata tmp:s){
+      if(tmp.getSP() < min.getSP()){
+        min = tmp;
+      }
+    }
+    return min;
+  }
  
   /**
    * Tpow2. Tpow of a 2D array of data.

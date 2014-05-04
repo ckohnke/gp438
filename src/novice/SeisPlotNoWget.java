@@ -739,7 +739,7 @@ public class SeisPlot {
       }
     }
 
-    /**
+   /**
      * Update rp.
      *
      * @param s the s
@@ -748,7 +748,7 @@ public class SeisPlot {
     public void updateRP(ArrayList<Segdata> s, int channel) {
       if(s!=null && s.size()>0){
         ArrayList<Segdata> seg = new ArrayList<Segdata>(0);
-        int min = getMinStationID(_gps);
+        int min = firstShot(s).getRPF();
         int station = min+channel;
         for(int i=0; i<s.size(); ++i){
           Segdata t = s.get(i);
@@ -763,7 +763,6 @@ public class SeisPlot {
         int n2 = lsp-fsp+1;
         int rpl = rpf+n2;
         float[][] chan = new float[n2][n1];     
-        // Start Trusting this more
         for (int i = 0; i < seg.size(); ++i) {
           Segdata tmp = seg.get(i);
           int stmp = tmp.getSP();
@@ -783,11 +782,13 @@ public class SeisPlot {
         sp.setHLimits(fsp, maxShot(seg));
         sp.setTitle("Channel: "+channel);
         sp.setHLabel("Station Number");     
-
-        for(Segdata r:seg){
-          _bp.plotActiveReceivers(r);
+    
+        if(_gps != null && _gps.size()>0){
+          for(Segdata r:seg){
+            _bp.plotActiveReceivers(r);
+          }
+          _bp.drawCurrentSeg(seg);
         }
-        _bp.drawCurrentSeg(seg);
       }
     }
 
