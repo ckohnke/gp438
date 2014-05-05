@@ -144,8 +144,8 @@ public class SeisPlotNoWget {
       // The plot panel.
       _plotPanel = new PlotPanel();
       _plotPanel.setTitle("Base Plot");
-      _plotPanel.setHLabel("Easting (UTM)");
-      _plotPanel.setVLabel("Northing (UTM)");
+      _plotPanel.setHLabel("Easting (m) (UTM)");
+      _plotPanel.setVLabel("Northing (m) (UTM)");
       _plotPanel.setHLimits(317600, 320600);  
       _plotPanel.setVLimits(4121800, 4123600);
       _plotPanel.setHFormat("%s");
