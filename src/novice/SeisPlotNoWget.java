@@ -734,7 +734,7 @@ public class SeisPlotNoWget {
         if((maxSP-minSP)==0){
           sp.setTitle("Shot: "+minSP);
         } else{
-          sp.setTitle("Brute Stack: "+minSP+"-"+maxSP);
+          sp.setTitle("Stack: "+minSP+"-"+maxSP);
         }
         sp.setHLabel("Station");
       }
@@ -1877,8 +1877,10 @@ private class CircleMode extends Mode {
     public void actionPerformed(ActionEvent event) {
       if(_segd != null && _segd.size()>0){
         _segd.removeAll(_segd);
+        System.out.println("_segd.length: "+_segd.size());
       } if(_gps != null && _gps.size()>0){
         _gps.removeAll(_gps);
+        System.out.println("_gps.length: "+_gps.size());        
       } if(_nedFiles != null && _nedFiles.size()>0){
         _nedFiles.removeAll(_nedFiles);
       }

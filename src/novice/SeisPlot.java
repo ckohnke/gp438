@@ -734,7 +734,7 @@ public class SeisPlot {
         if((maxSP-minSP)==0){
           sp.setTitle("Shot: "+minSP);
         } else{
-          sp.setTitle("Brute Stack: "+minSP+"-"+maxSP);
+          sp.setTitle("Stack: "+minSP+"-"+maxSP);
         }
         sp.setHLabel("Station");
       }

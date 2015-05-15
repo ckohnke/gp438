@@ -1,5 +1,5 @@
 #!/bin/bash
-export CLASSPATH=.:./edu_mines_jtk.jar
+export CLASSPATH=.:./edu_mines_jtk.jar:/Users/thomasrapstine/minesjtk/jtk/build/libs/edu_mines_jtk.jar
 ned=true
 
 # Check for Packages to do wget io (NED Files)

@@ -44,7 +44,7 @@ public class Segd {
         System.out.println(segdList[i].getName());
         Segdata seg = readSegd(segdList[i]);
         // min:max range for shots to not add empty shots.
-        if (!(seg.getSP() < 3000) && notEmpty(seg) && !(seg.getSP() > 10000)) 
+        if (!(seg.getSP() < 0) && notEmpty(seg) && !(seg.getSP() > 10000)) 
           _segd.add(seg);
       }
       Collections.sort(_segd, new SegdataComp()); // sort by shot point number
