@@ -700,6 +700,10 @@ public class SeisPlotNoWget {
       if(s != null && s.size()>0){
         int n1 = getN1(s);
         int n2 = getN2(s);
+ 
+        System.out.println("n1: "+n1);
+        System.out.println("n2: "+n2);
+
         int rpf = getRPF(s);
         int rpl = rpf+n2;
         int minSP = minShot(s);
@@ -1803,6 +1807,7 @@ private class CircleMode extends Mode {
           _segd.add(s);
         }
         System.out.println("SEGD IMPORTED");
+        System.out.println("_segd size: "+_segd.size());
       }
     }
 
@@ -1847,6 +1852,7 @@ private class CircleMode extends Mode {
             _segd.add(s);
           }
           System.out.println("SEGD IMPORTED");
+          System.out.println("_segd size: "+_segd.size());
         }
       } catch(Exception e){
         System.out.println(e);
