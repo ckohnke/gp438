@@ -1803,6 +1803,7 @@ private class CircleMode extends Mode {
           _segd.add(s);
         }
         System.out.println("SEGD IMPORTED");
+        System.out.println("_segd size: "+_segd.size());
       }
     }
 
