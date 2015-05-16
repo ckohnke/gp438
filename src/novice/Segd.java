@@ -4,9 +4,7 @@ import static edu.mines.jtk.util.ArrayMath.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.Collections;
-
+import java.util.*;
 
 import edu.mines.jtk.dsp.ButterworthFilter;
 import edu.mines.jtk.dsp.RecursiveExponentialFilter;
@@ -38,11 +36,20 @@ public class Segd {
   public static ArrayList<Segdata> readLineSegd(String segdDir) {
     ArrayList<Segdata> _segd = new ArrayList<Segdata>(0);
     try {
-      File[] segdList = (new File(segdDir)).listFiles();
-      int nshot = segdList.length;
+      List<File> segdList = new ArrayList<File>(Arrays.asList((new File(segdDir)).listFiles()));
+      Iterator<File> iterator = segdList.iterator();
+      while(iterator.hasNext()){
+          File currentFile = iterator.next();
+          String tmp = currentFile.getName();
+          if(currentFile.isHidden() || !(tmp.endsWith(".segd") || tmp.endsWith(".SEGD")) || currentFile.isDirectory()){
+              iterator.remove();
+          }
+      }
+
+      int nshot = segdList.size();
       for (int i = 0; i < nshot; ++i) {
-        System.out.println(segdList[i].getName());
-        Segdata seg = readSegd(segdList[i]);
+        System.out.println(segdList.get(i).getName());
+        Segdata seg = readSegd(segdList.get(i));
         // min:max range for shots to not add empty shots.
         if (!(seg.getSP() < 0) && notEmpty(seg) && !(seg.getSP() > 10000)) 
           _segd.add(seg);
@@ -75,7 +82,7 @@ public class Segd {
     int sln, spn;
     sln = bin5(gh, 3); // source line number
     spn = bin5(gh, 8); // source point number
-    System.out.println("fn=" + fn + ", sln=" + sln + ", spn=" + spn);
+    System.out.println("file number=" + fn + ", source line num=" + sln + ", shot point num=" + spn);
     int cns = 0; // channel set number for seismic trace
     int nct = 0; // total number of channels, including aux channels
     int ncs = 0; // number of seismic channels
@@ -86,7 +93,7 @@ public class Segd {
       ct = (csh[10] >> 4) & 0xf; // channel type (high 4 bits)
       nc = bcd2(csh, 8); // number of channels
       if (nc > 0) { // if we have channels of this type, ...
-        System.out.println("cn =" + cn + " nc =" + nc + " ct =" + ct);
+        System.out.println("channel num =" + cn + " num channel =" + nc + " channel type =" + ct);
         if (ct == 1) { // if seismic, ...
           cns = cn; // remember channel set number for seismic
           ncs = nc; // remember number of seismic channels
@@ -95,7 +102,7 @@ public class Segd {
         nct += nc; // count total number of channels
       }
     }
-    System.out.println("nct =" + nct + " cns =" + cns + " ncs =" + ncs);
+    System.out.println("num channel total =" + nct + " channel num seis =" + cns + " num channel seis =" + ncs);
     ais.skipBytes(1024); // skip extended header
     ais.skipBytes(1024); // skip external header
     int rpf = 1;

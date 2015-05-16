@@ -1796,7 +1796,7 @@ private class CircleMode extends Mode {
     public void actionPerformed(ActionEvent event) {
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
       fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-      fc.showSaveDialog(null);
+      fc.showOpenDialog(null);
       File f = fc.getSelectedFile();
       if(f!=null){
         ArrayList<Segdata> tmp = Segd.readLineSegd(f.getAbsolutePath());
@@ -1837,7 +1837,7 @@ private class CircleMode extends Mode {
         JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
         fc.setMultiSelectionEnabled(true);
         fc.setFileFilter(new FileNameExtensionFilter("SEGD Files", "segd"));
-        fc.showSaveDialog(null);
+        fc.showOpenDialog(null);
         File[] f = fc.getSelectedFiles();
         if(f!=null){
           ArrayList<Segdata> tmp = new ArrayList<Segdata>(0);

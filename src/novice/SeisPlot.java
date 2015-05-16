@@ -1770,7 +1770,7 @@ private class CircleMode extends Mode {
     }
   }
 
-  /**
+   /**
    * The Class ImportSegdDir.
    */
   private class ImportSegdDir extends AbstractAction {
@@ -1792,7 +1792,7 @@ private class CircleMode extends Mode {
     public void actionPerformed(ActionEvent event) {
       JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
       fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-      fc.showSaveDialog(null);
+      fc.showOpenDialog(null);
       File f = fc.getSelectedFile();
       if(f!=null){
         ArrayList<Segdata> tmp = Segd.readLineSegd(f.getAbsolutePath());
@@ -1833,7 +1833,7 @@ private class CircleMode extends Mode {
         JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
         fc.setMultiSelectionEnabled(true);
         fc.setFileFilter(new FileNameExtensionFilter("SEGD Files", "segd"));
-        fc.showSaveDialog(null);
+        fc.showOpenDialog(null);
         File[] f = fc.getSelectedFiles();
         if(f!=null){
           ArrayList<Segdata> tmp = new ArrayList<Segdata>(0);
@@ -1848,7 +1848,7 @@ private class CircleMode extends Mode {
             _segd.add(s);
           }
           System.out.println("SEGD IMPORTED");
-          System.out.println("_segd size: "+_segd.size());        
+          System.out.println("_segd size: "+_segd.size());
         }
       } catch(Exception e){
         System.out.println(e);
@@ -1879,8 +1879,10 @@ private class CircleMode extends Mode {
     public void actionPerformed(ActionEvent event) {
       if(_segd != null && _segd.size()>0){
         _segd.removeAll(_segd);
+        System.out.println("_segd.length: "+_segd.size());
       } if(_gps != null && _gps.size()>0){
         _gps.removeAll(_gps);
+        System.out.println("_gps.length: "+_gps.size());        
       } if(_nedFiles != null && _nedFiles.size()>0){
         _nedFiles.removeAll(_nedFiles);
       }
