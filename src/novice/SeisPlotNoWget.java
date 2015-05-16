@@ -701,9 +701,6 @@ public class SeisPlotNoWget {
         int n1 = getN1(s);
         int n2 = getN2(s);
  
-        System.out.println("n1: "+n1);
-        System.out.println("n2: "+n2);
-
         int rpf = getRPF(s);
         int rpl = rpf+n2;
         int minSP = minShot(s);
@@ -829,7 +826,8 @@ public class SeisPlotNoWget {
         if(t1<s1) s1=t1;
         if(t2>s2) s2=t2;
       }
-      return s2-s1+1;
+      return (s2-s1)+1;
+      //return 540;
     }
 
     /**

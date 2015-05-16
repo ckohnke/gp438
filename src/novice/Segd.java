@@ -139,6 +139,7 @@ public class Segd {
     }
     ais.close();
     f = mul(1.0e-14f, f); // scale values to approx. range [-10,10]
+    System.out.println("------------------------------------");
     return new Segdata(sln, spn, rln, rpf, rpl, f);
   }
 
