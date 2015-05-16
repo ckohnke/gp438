@@ -526,10 +526,12 @@ public class SeisPlotNoWget {
 
     /** The sp. */
     public SimplePlot sp;
-    
+    public SimplePlot ap;
+
     /** The pv. */
     private PixelsView pv;
-    
+    private PointsView apv;
+
     /** The gain num. */
     private double gainNum = 40.0;
     private JLabel gainLabel;    
@@ -629,6 +631,13 @@ public class SeisPlotNoWget {
       sp.setLocation(500,0);
       pv = null;
 
+      ap = new SimplePlot(SimplePlot.Origin.LOWER_LEFT);
+      ap.setSize(600, 600);
+      ap.setVLabel("Frequency");
+      ap.setHLabel("Trace");
+      ap.setLocation(500,0);
+      apv = null;
+
       // Menu for Response Plot
       JMenu fileMenu = new JMenu("File");
       fileMenu.setMnemonic('F');
@@ -644,6 +653,7 @@ public class SeisPlotNoWget {
       menuBar.add(plotMenu);
 
       sp.setJMenuBar(menuBar);
+      ap.setJMenuBar(menuBar);
 
     }
 
@@ -666,8 +676,21 @@ public class SeisPlotNoWget {
      */
     public void updateRP(){
       if(plotArray != null){
-        pv = sp.addPixels(s1, s2, gain2(lowpass2(tpow2(plotArray, tpowNum), lowpassNum), gainNum));
+
+        if(pv==null){
+          pv = sp.addPixels(s1, s2, gain2(lowpass2(tpow2(plotArray, tpowNum), lowpassNum), gainNum));
+        } else{
+          pv.set(s1, s2, gain2(lowpass2(tpow2(plotArray, tpowNum), lowpassNum), gainNum));
+        }
+
         pv.setPercentiles(1, 99);
+
+        if(apv==null){
+          apv = ap.addPoints(s1,plotArray[0]);
+        } else{
+          apv.set(s1,plotArray[0]);
+        }
+
       }
     }
 
