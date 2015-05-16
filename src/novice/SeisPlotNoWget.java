@@ -12,8 +12,8 @@ import javax.swing.event.*;
 import javax.swing.filechooser.*;
 
 import edu.mines.jtk.awt.*;
-import edu.mines.jtk.dsp.Sampling;
 import edu.mines.jtk.mosaic.*;
+import edu.mines.jtk.dsp.*;
 
 import static novice.Segd.*;
 import static novice.Waypoints.*;
@@ -530,7 +530,7 @@ public class SeisPlotNoWget {
 
     /** The pv. */
     private PixelsView pv;
-    private PointsView apv;
+    private PixelsView apv;
 
     /** The gain num. */
     private double gainNum = 40.0;
@@ -556,6 +556,8 @@ public class SeisPlotNoWget {
     
     /** The s2. */
     private Sampling s2;
+
+    private Sampling s3;
     
     /** The plot array. */
     private float[][] plotArray;
@@ -631,10 +633,10 @@ public class SeisPlotNoWget {
       sp.setLocation(500,0);
       pv = null;
 
-      ap = new SimplePlot(SimplePlot.Origin.LOWER_LEFT);
+      ap = new SimplePlot(SimplePlot.Origin.UPPER_LEFT);
       ap.setSize(600, 600);
       ap.setVLabel("Frequency");
-      ap.setHLabel("Trace");
+      ap.setHLabel("Station");
       ap.setLocation(500,0);
       apv = null;
 
@@ -652,8 +654,22 @@ public class SeisPlotNoWget {
       menuBar.add(fileMenu);
       menuBar.add(plotMenu);
 
+      // Menu for Response Plot
+      JMenu fileMenu2 = new JMenu("File");
+      fileMenu2.setMnemonic('F');
+      fileMenu2.add(new SaveAsPngAction(sp)).setMnemonic('a');
+      fileMenu2.add(new ExitAction()).setMnemonic('x');
+
+      JMenu plotMenu2 = new JMenu("Plot Tools");
+      plotMenu2.add(new ShowPlotSettings()).setMnemonic('p'); 
+
+      // Menu bar for Response Plot
+      JMenuBar menuBar2 = new JMenuBar();
+      menuBar2.add(fileMenu2);
+      menuBar2.add(plotMenu2);
+
       sp.setJMenuBar(menuBar);
-      ap.setJMenuBar(menuBar);
+      ap.setJMenuBar(menuBar2);
 
     }
 
@@ -677,19 +693,24 @@ public class SeisPlotNoWget {
     public void updateRP(){
       if(plotArray != null){
 
+        float[][] temp =  gain2(lowpass2(tpow2(plotArray, tpowNum), lowpassNum), gainNum);
         if(pv==null){
-          pv = sp.addPixels(s1, s2, gain2(lowpass2(tpow2(plotArray, tpowNum), lowpassNum), gainNum));
+          pv = sp.addPixels(s1, s2, temp);
         } else{
-          pv.set(s1, s2, gain2(lowpass2(tpow2(plotArray, tpowNum), lowpassNum), gainNum));
+          pv.set(s1, s2, temp);
         }
-
+        
         pv.setPercentiles(1, 99);
-
+        
+        float[][] amp = getAmp2D(s2,s1,plotArray);
+        //float[][] amp = getAmp2D(s2,s1,temp);
+        
         if(apv==null){
-          apv = ap.addPoints(s1,plotArray[0]);
+          apv = ap.addPixels(s3,s2,amp);
         } else{
-          apv.set(s1,plotArray[0]);
+          apv.set(s3,s2,amp);
         }
+        apv.setPercentiles(1, 99);
 
       }
     }
@@ -820,7 +841,7 @@ public class SeisPlotNoWget {
     /**
      * Gets the n1.
      *
-     * @param s the s
+2    * @param s the s
      * @return the n1
      */
     private int getN1(ArrayList<Segdata> s){
@@ -923,6 +944,79 @@ public class SeisPlotNoWget {
     public void showPlotSlider(){
       sliderFrame.setVisible(true);
     }
+
+
+      /**
+   * Returns FFT image for columns of a 2D array.
+   * @param missing value that represents missing data.
+   * @param s1 input Sampling (shot info).
+   * @param s2 input Sampling (time info).
+   * @param I  float[][] to be plotted in image
+   * @return Y float[][] containing frequencies in first dimension [i1], 
+   *         shots in second dimension [i2], and amplitudes as values in Y[i1][i2]
+   */
+  public float[][] getAmp2D(Sampling s1, Sampling s2, float[][] I) {
+    int n1=s1.getCount();
+    int n2=s2.getCount();
+    float[][] Y = new float[n1][n2];
+    for (int i1=0; i1<n1; ++i1) {
+      Y[i1] = getAmp1D(I[i1]); 
+    }
+    
+    return Y;
+  }
+
+  ///** 
+  // * Returns amplitudes from FFT for 2D array 
+  // * @param x  input to apply FFT on 
+  // * @return xfft  output with amplitude values for FFT 
+  // */
+  //public static float[] getAmps(float[] x, int nx) {
+
+  /** 
+   * Returns amplitudes from FFT 1D.
+   * @param x  input to apply FFT on 
+   * @return xfft  output with amplitude values for FFT 
+   */
+  public float[] getAmp1D(float[] x) {
+    int     nx   = x.length;
+    int     nfft = FftReal.nfftSmall(nx*2);
+    float[] xfft = new float[nfft+2];
+    FftReal fft  = new FftReal(nfft);
+    s3 = getFreq(nfft+2);
+
+    //Define input array of proper size
+    float[] rx = new float[nfft];
+
+    //Input values from specified sequence sx into rx
+    //(fft will be performed on rx, but it needs the length nfft)
+    for (int i=0;i<nfft;++i) {
+      if (i>=nx && i<=(nx+nfft)/2 ) {
+        rx[i] = x[nx-1]; //need to add in padding later
+      } else if (i>(nx+nfft)/2) { 
+        rx[i] = x[0];
+      } else { 
+        rx[i] = x[i];
+      }
+    }
+    fft.realToComplex(1,rx,xfft);    
+    for (int i=0; i<nx; ++i) {
+      xfft[i]= (float) Math.abs(xfft[i]);
+    } 
+    return xfft;
+  }
+
+  /** 
+   * Returns Sampling for FFT 1D.
+   * @param nfft int length of fft 
+   * @return sf output Sampling for frequencies  
+   */
+  public Sampling getFreq(int nfft) {
+    double df = 1.0/(2.0*nfft*0.001);
+    Sampling sf = new Sampling(nfft,df,0.0);
+    return sf; 
+  }
+
 
   }
 
